@@ -1,6 +1,8 @@
-# GranaSatDashboard
+# GranaSATDashboard
 
+GranaSAT Dashboard project aims to control our Ground Station via web, including:
 
-test
-
-test2
+- Antenna Rotors
+- ICOM 9100 radio transceiver
+- TCN
+- Sotfware Defined Radios
