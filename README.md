@@ -1,4 +1,4 @@
-# GranaSATDashboard
+# GranaSAT Dashboard
 
 GranaSAT Dashboard project aims to control our Ground Station via web, including:
 
