@@ -1,0 +1,22 @@
+{
+  "name": "granasatdashboard",
+  "version": "1.0.0",
+  "description": "GranaSAT Dashboard",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/granasat/GranaSatDashboard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/granasat/GranaSatDashboard/issues"
+  },
+  "homepage": "https://github.com/granasat/GranaSatDashboard#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
