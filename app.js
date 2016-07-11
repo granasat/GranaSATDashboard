@@ -8,6 +8,10 @@ var app = express();
 var HOST = "0.0.0.0" //Listen to every IP address
 var PORT = 8000 //Listening port
 
+app.get('/', function(req, res) {
+    //main
+});
+
 
 app.get('/rotors', function(req, res) {
     //Generate a response with elevation and azimuth information

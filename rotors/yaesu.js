@@ -17,6 +17,7 @@ function Yaesu(serialAddress) {
 
     return {
         open: open,
+        close: close,
         move: r.move,
         query: r.query
     }
