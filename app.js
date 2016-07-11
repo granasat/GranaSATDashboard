@@ -1,8 +1,9 @@
+"use strict"
+
 var express = require('express');
 var app = express();
 
 //TODO: Require serial package to interface with rotors and radiostation
-
 
 var HOST = "0.0.0.0" //Listen to every IP address
 var PORT = 8000 //Listening port
