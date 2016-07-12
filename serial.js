@@ -1,6 +1,6 @@
 var SerialPort = require('serialport');
 
-portName ='/dev/cu.Bluetooth-Incoming-Port';
+portName ='SERIAL_DEVICE';
 
 /*
 // list serial ports:
