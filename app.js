@@ -7,7 +7,7 @@ var app = express();
 var Yaesu = require('./rotors/yaesu.js');
 
 var HOST = "0.0.0.0" //Listen to every IP address
-var PORT = 8000 //Listening port
+var PORT = 8002 //Listening port
 
 app.get('/radiostation', function(req, res) {
   	//Generate a response with radio information (mode, frequecy...)
