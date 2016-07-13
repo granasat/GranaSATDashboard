@@ -1,5 +1,7 @@
 'use strict';
 
+var SERIAL_DEVICE = '/dev/ttyUSB0';
+
 var SerialPort = require('serialport');
 var port = new SerialPort(SERIAL_DEVICE);
 
@@ -14,7 +16,7 @@ SerialPort.list(function (err, ports) {
 function getBuffer() {
   
   var buffer = new Buffer(10);
-  
+
   buffer[0] = 0x05;   
   buffer[1] = 0xAA;  
   buffer[2] = 0x55;  
