@@ -15,18 +15,18 @@ SerialPort.list(function (err, ports) {
 
 function getBuffer() {
   
-  var buffer = new Buffer(10);
+  var buffer = new Buffer(8);  
 
-  buffer[0] = 0x05;   
-  buffer[1] = 0xAA;  
-  buffer[2] = 0x55;  
-  buffer[3] = 0xFA;   
-  buffer[4] = 0x00;   
-  buffer[5] = 0x56;
-  buffer[6] = 0x00;
-  buffer[7] = 0x03;
-  buffer[8] = 0x9E;
-  buffer[9] = 0x00;
+  buffer[0] = 0x57;   
+  buffer[1] = 0x30;  
+  buffer[2] = 0x33;
+  buffer[3] = 0x30;  
+
+  buffer[4] = 0x20; 
+
+  buffer[5] = 0x30;
+  buffer[6] = 0x33;
+  buffer[7] = 0x30;
   
   return buffer;
 
