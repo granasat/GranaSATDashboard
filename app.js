@@ -16,20 +16,20 @@ var app = express();
 // ROUTES, GET AND POST ////////////////////////////////////////////////
 app.get('/radiostation', function(req, res) {
   	//Generate a response with radio information (mode, frequecy...)
-  	res.send('GET RADIOSTATION');    
+  	res.send('GET RADIOSTATION');
   });
 
 app.post('/radiostation', function(req, res) {
 	//Set radio information (mode, frequecy...) available on the HTTP request
-	
+
 	var mode = req.param('mode') ;
 	var freq = req.param('freq');
 
-	if (mode && freq ){ 		
+	if (mode && freq ){
 		res.send(mode + ',' + freq)
 	}else{
 		res.send('Parámetros no definidos')
-	}  
+	}
 
 });
 
@@ -37,8 +37,8 @@ app.get('/rotors', function(req, res) {
 	//Generate a response with elevation and azimuth information
 	var y = new Yaesu(SERIAL_DEVICE);
 	y.open();
-  res.send(y.query()); 	
-    
+  res.send(y.query());
+
 });
 
 app.post('/rotors', function(req, res) {
@@ -47,7 +47,7 @@ app.post('/rotors', function(req, res) {
   var elevation = req.param('ele');
   var azimuth = req.param('azi');
 
-  if (elevation && azimuth ){  			
+  if (elevation && azimuth ){
 		var y = new Yaesu("/dev/rotorspath");
 		y.open();
 	  y.move(elevation,azimuth)
@@ -55,11 +55,11 @@ app.post('/rotors', function(req, res) {
 	}else{
 		res.send('Parámetros no definidos')
 	}
-    
+
 });
 
 app.get('/*', function(req, res, next) {
-  	console.log('index')  
+  	console.log('index')
     next();
 }, function (req, res){
     res.send('INDEX');
