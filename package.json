@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/granasat/GranaSatDashboard#readme",
   "dependencies": {
-    "express": "^4.14.0"
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "left-pad": "^1.1.1",
+    "serialport": "^4.0.1"
   }
 }
