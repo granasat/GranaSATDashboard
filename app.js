@@ -41,7 +41,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cookieParser());
 app.use(require('express-session')({
-    secret: '561a1ce41fe5d35e8eb1ad08172c34b437903e8e5a14b80d78815465a46247e4',
+    secret: 'cambia esto cuando puedas',
     cookie: {
         maxAge: 1800000
     },
@@ -53,14 +53,6 @@ app.use(passport.session());
 
 
 //PASSPORTJS AND AUTH/ /////////////////////////////////////////////////
-//PASSPORTJS STUFF//
-
-// console.log("pablogs9");
-// var salt = createSalt();
-// var hashedPassword = hashPassword("pablogs9", salt);
-// console.log(salt);
-// console.log(hashedPassword);
-
 function log(s) {
     console.log(s);
     //TODO: Save to a file
@@ -149,6 +141,9 @@ passport.deserializeUser(function(id, done) {
     });
 });
 
+
+// ROUTES, GET AND POST ////////////////////////////////////////////////
+
 app.post('/login', passport.authenticate('login'), function(req, res) {
     log("Logged: " + req.user.USER_NAME);
     res.json({
@@ -163,7 +158,6 @@ app.get('/logout', function(req, res) {
     })
 });
 
-// ROUTES, GET AND POST ////////////////////////////////////////////////
 app.get('/radiostation', function(req, res) {
     //Generate a response with radio information (mode, frequecy...)
     res.send('GET RADIOSTATION');
@@ -183,7 +177,7 @@ app.post('/radiostation', function(req, res) {
 
 });
 
-app.get('/rotors', isAuthenticated, function(req, res) {
+app.get('/rotors', function(req, res) {
     //Generate a response with elevation and azimuth information
     var y = new Yaesu(SERIAL_DEVICE);
 
@@ -193,34 +187,11 @@ app.get('/rotors', isAuthenticated, function(req, res) {
 
 });
 
-app.post('/rotors', isAuthenticated, function(req, res) {
+app.post('/rotors',isAuthenticated, function(req, res) {
     //Set the elevation and azimuth information available on the HTTP request
 
     var elevation = leftPad(parseInt(req.body.ele), 3, 0);
     var azimuth = leftPad(parseInt(req.body.azi), 3, 0);
-
-    log("Seting rotors to " + elevation + "/" + azimuth + "[" + req.user + "]")
-
-    if (elevation != "" && azimuth != "") {
-        var SerialPort = require("serialport");
-        var s = new SerialPort(SERIAL_DEVICE);
-        s.on("open", function() {
-                s.write(new Buffer("W" + azimuth + " " + elevation + "\n", "utf8"), function() {
-                    res.json({
-                        status: "Done"
-                    })
-                    s.close()
-                })
-            })
-            // var y = new Yaesu(SERIAL_DEVICE);
-            // y.open();
-            // y.move(elevation, azimuth)
-            // res.send('Pos: ' + y.query());
-    } else {
-        res.json({
-            status: "Error"
-        })
-    }
     var y = new Yaesu(SERIAL_DEVICE);
 
     y.move(azimuth, elevation, function(data){
@@ -230,9 +201,7 @@ app.post('/rotors', isAuthenticated, function(req, res) {
 });
 
 app.get('/*', function(req, res, next) {
-    next();
-}, function(req, res) {
-    res.end();
+    res.end()
 });
 
 app.listen(PORT, HOST)

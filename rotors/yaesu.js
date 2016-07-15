@@ -4,7 +4,7 @@ var SerialPort = require("serialport");
 module.exports = function Yaesu(sAddress) {
     var serialAddress = sAddress;
 
-    function getData(callback){
+    function getData(callback) {
         var s = new SerialPort(serialAddress);
         s.on("open", function() {
             s.write(new Buffer("C2\n", "utf8"), function() {
@@ -25,12 +25,12 @@ module.exports = function Yaesu(sAddress) {
 
     }
 
-    function move(azimuth, elevation, callback){
+    function move(azimuth, elevation, callback) {
         if (elevation != "" && azimuth != "") {
-    
-        var SerialPort = require("serialport");
-        var s = new SerialPort(serialAddress);
-        s.on("open", function() {
+
+            var SerialPort = require("serialport");
+            var s = new SerialPort(serialAddress);
+            s.on("open", function() {
                 s.write(new Buffer("W" + azimuth + " " + elevation + "\n", "utf8"), function() {
                     callback({
                         status: "Done"
@@ -38,13 +38,33 @@ module.exports = function Yaesu(sAddress) {
                     s.close()
                 })
             })
-    
+
         } else {
             callback({
                 status: "Error"
-        })
+            })
         }
+    }
 
+    function move(azimuth, elevation, callback) {
+        if (elevation != "" && azimuth != "") {
+
+            var SerialPort = require("serialport");
+            var s = new SerialPort(serialAddress);
+            s.on("open", function() {
+                s.write(new Buffer("W" + azimuth + " " + elevation + "\n", "utf8"), function() {
+                    callback({
+                        status: "Done"
+                    })
+                    s.close()
+                })
+            })
+
+        } else {
+            callback({
+                status: "Error"
+            })
+        }
     }
 
 
@@ -52,4 +72,5 @@ module.exports = function Yaesu(sAddress) {
         getData: getData,
         move: move
     }
+}
 }
