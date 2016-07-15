@@ -1,14 +1,28 @@
 "use strict"
 
 // REQUIRES ////////////////////////////////////////////////////////////
-//todo: Require serial package to interface with rotors and radiostation
+//Express stuff
 var express = require('express');
 var bodyParser = require("body-parser");
 var leftPad = require('left-pad')
 
+//Rotors and transceivers
 var Yaesu = require('./rotors/yaesu.js');
 
-// CONSTs //////////////////////////////////////////////////////////////
+//Database stuff
+var mysql      = require('mysql');
+var database = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'me',
+  password : 'secret',
+  database : 'my_db'
+});
+
+database.query('SELECT 1', function(err, rows) {
+  // connected! (unless `err` is set)
+});
+
+// CONF //////////////////////////////////////////////////////////////
 var HOST = "0.0.0.0" //Listen to every IP address
 var PORT = 8002 //Listening port
 var SERIAL_DEVICE = "/dev/ttyUSB0" // Rotors path
