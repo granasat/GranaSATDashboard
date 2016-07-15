@@ -13,7 +13,7 @@ module.exports = function Yaesu(sAddress) {
                     answer += data
                     if (answer.substring(answer.length - 2, answer.length) == "\r\n") {
                         callback({
-                            status: "Rotors Done",
+                            status: "Done",
                             azi: parseInt(answer.split('+')[1]),
                             ele: parseInt(answer.split('+')[2])
                         })
