@@ -191,14 +191,15 @@ app.get('/rotors', isAuthenticated, function(req, res) {
         res.json(data);
     })
 
-
 });
 
 app.post('/rotors', isAuthenticated, function(req, res) {
     //Set the elevation and azimuth information available on the HTTP request
+
     var elevation = leftPad(parseInt(req.body.ele), 3, 0);
     var azimuth = leftPad(parseInt(req.body.azi), 3, 0);
 
+<<<<<<< HEAD
     log("Seting rotors to " + elevation + "/" + azimuth + "[" + req.user + "]")
 
     if (elevation != "" && azimuth != "") {
@@ -221,6 +222,13 @@ app.post('/rotors', isAuthenticated, function(req, res) {
             status: "Error"
         })
     }
+=======
+    var y = new Yaesu(SERIAL_DEVICE);
+
+    y.move(azimuth, elevation, function(data){
+        res.json(data);
+    })
+>>>>>>> master
 
 });
 
