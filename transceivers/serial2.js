@@ -12,8 +12,22 @@ module.exports = function Kenwood(sAddress) {
         var s = new SerialPort(serialAddress);
         s.on("open", function() {
             var command = "DISPLAY";
-            
-            
+            port.write(new Buffer('DISPLAY','utf8'), function() {
+            // At this point, data may still be buffered and not sent out over the port yet
+            // write function returns asynchronously even on the system level.
+            //
+            // Note: The write operation is non-blocking. When it returns, 
+            // data may still have not actually been written to the serial port.
+            console.log('Write callback returned');
+            console.log('Calling drain');
+            port.drain(function() {
+              // Waits until all output data has been transmitted to the serial port
+              console.log('Drain callback returned');
+              // Now the data has "left the pipe".
+            });
+
+          });  
+
         })
 
     }

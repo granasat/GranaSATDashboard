@@ -1,68 +1,85 @@
-'use strict';
+"use strict"
+var SerialPort = require("serialport");
 
-var SERIAL_DEVICE = '/dev/ttyUSB0';
+module.exports = function Kenwood(sAddress) {
+    var serialAddress = sAddress;
+    var FREQ_MIN = 1;
+    var FREQ_MAX=10;
+    var MSG_MIN;
+    var MSG_MAX;
 
-var SerialPort = require('serialport');
-var port = new SerialPort(SERIAL_DEVICE);
+    function getData(callback){
+        var s = new SerialPort(serialAddress);
+        s.on("open", function() {
+            var command = "DISPLAY";
+            s.write(new Buffer(command + "\n", "utf8"), function() {
+                var answer = ""
+                s.on("data", function(data) {
+                    answer += data
 
-// list serial ports:
-SerialPort.list(function (err, ports) {
-  ports.forEach(function(port) {
-    console.log(port.comName);
-  });
-});
+                    
+                        callback({
+                            status: "Done"
+                        })
+                        
+                        
+                    
+                })
+
+                s.close()
+            })
+        })
+
+    }
+
+    function writeData(command, callback){
+        console.log(command)
+        callback({
+            command:command
+        })
+    }
+
+    function configure(body,callback){
+
+        if (body.freq){
+            if(parseInt(body.freq)>FREQ_MIN && parseInt(body.freq)<FREQ_MAX){
+                //write("set frequency")
+
+                var command = "cambia la freq a "+body.freq 
+
+                writeData(command,function(data){
+                    callback({
+                        status: "OK, FREQ: "+ body.freq +" | "+ command,
+                    })
+                })
+                
+            }else{
+                callback({
+                    status: "ERROR, FREQ out of range ["+FREQ_MIN+","+FREQ_MAX+"]",
+                })
+            }
+        }
+
+        if (body.mode && (body.mode=="FM" || body.mode=="AM" )) {
+            //write("set mode")
+        }
+
+        if (body.msg && (body.msg.length<MSG_MAX || body.msg.length>MSG_MIN )) {
+            //write("send message") ???
+        }
+
+        callback({status:0})    
 
 
-function getBuffer() {
-  
-  var buffer = new Buffer(8);  
+    }
 
-  buffer[0] = 0x57;   
-  buffer[1] = 0x30;  
-  buffer[2] = 0x33;
-  buffer[3] = 0x30;  
-
-  buffer[4] = 0x20; 
-
-  buffer[5] = 0x30;
-  buffer[6] = 0x33;
-  buffer[7] = 0x30;
-  
-  return buffer;
-
+    return {
+        getData: getData,
+        configure:configure
+    }
 }
-
-port.on('open', function() {
-
-  var message = getBuffer();
-  //console.log(message);
-  console.log('Calling write');
-
-  port.write(message, function() {
-    // At this point, data may still be buffered and not sent out over the port yet
-    // write function returns asynchronously even on the system level.
-    //
-    // Note: The write operation is non-blocking. When it returns, 
-    // data may still have not actually been written to the serial port.
-    console.log('Write callback returned');
-    console.log('Calling drain');
-    port.drain(function() {
-      // Waits until all output data has been transmitted to the serial port
-      console.log('Drain callback returned');
-      // Now the data has "left the pipe".
-    });
-
-  });
-
-});
-
-port.on('data', function(data) {
-  console.log('Received: \t', data.toString('utf8'));
-});
-
-port.on('error', function(error) {
-  console.log('ERROR: \t', error);
-});
-
-
-
+var Kenwood = require('./serial.js');
+var k = new Kenwood("/dev/ttyS0");
+k.getData(function(data){
+        console.log(data)
+    })
