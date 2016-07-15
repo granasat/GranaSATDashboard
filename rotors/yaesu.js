@@ -73,4 +73,3 @@ module.exports = function Yaesu(sAddress) {
         move: move
     }
 }
-}
