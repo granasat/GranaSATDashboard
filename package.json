@@ -18,9 +18,13 @@
   "homepage": "https://github.com/granasat/GranaSatDashboard#readme",
   "dependencies": {
     "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
+    "express-session": "^1.14.0",
     "left-pad": "^1.1.1",
     "mysql": "^2.11.1",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
     "serialport": "^4.0.1"
   }
 }
