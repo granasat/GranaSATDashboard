@@ -10,6 +10,8 @@ var cookieParser = require('cookie-parser');
 //Commons
 var leftPad = require('left-pad');
 var crypto = require('crypto');
+var path = require('path');
+
 
 //Rotors and transceivers
 var Yaesu = require('./rotors/yaesu.js');
@@ -38,6 +40,7 @@ var SERIAL_TRANSCEIVER = "/dev/ttyS0" // Transceiver path
 
 // APPs ////////////////////////////////////////////////////////////////
 var app = express();
+app.use(express.static('static'));
 app.use(bodyParser.urlencoded({
     extended: true
 }));
@@ -81,8 +84,7 @@ function isAuthenticated(req, res, next) {
         return next();
     } else {
         res.json({
-            status: "Error",
-            error: "Logged out"
+            status: "No auth",
         })
     }
 }
@@ -152,7 +154,7 @@ passport.deserializeUser(function(id, done) {
 app.post('/login', passport.authenticate('login'), function(req, res) {
     log("Logged: " + req.user.USER_NAME);
     res.json({
-        status: "Auth Done"
+        status: "Done"
     })
 });
 
@@ -207,8 +209,8 @@ app.post('/rotors',isAuthenticated, function(req, res) {
 
 });
 
-app.get('/*', function(req, res, next) {
-    res.end()
+app.get('/', function(req, res, next) {
+    res.sendFile(path.join(__dirname + '/static/index.html'));
 });
 
 app.listen(PORT, HOST)
