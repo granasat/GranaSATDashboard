@@ -45,23 +45,23 @@ module.exports = function Yaesu(sAddress) {
             })
         }
     }
-	
-	function stopRotor(callback) {
-		var SerialPort = require("serialport");
-		var s = new SerialPort(serialAddress);
-		s.on("open", function() {
-			s.write(new Buffer("S\n", "utf8"), function() {
-				callback({
-					status: "Done"
-				})
-				s.close()
-			})
-		})
+
+    function stopRotor(callback) {
+        var SerialPort = require("serialport");
+        var s = new SerialPort(serialAddress);
+        s.on("open", function() {
+            s.write(new Buffer("S\n", "utf8"), function() {
+                callback({
+                    status: "Done"
+                })
+                s.close()
+            })
+        })
     }
 
     return {
         getData: getData,
         move: move,
-		stopRotor: stopRotor
+        stopRotor: stopRotor
     }
 }
