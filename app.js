@@ -12,6 +12,9 @@ var leftPad = require('left-pad');
 var crypto = require('crypto');
 var path = require('path');
 
+//config
+var configFile = require('./config.js')
+var config = new configFile()
 
 //Rotors and transceivers
 var Yaesu = require('./rotors/yaesu.js');
@@ -20,8 +23,8 @@ var Yaesu = require('./rotors/yaesu.js');
 var mysql = require('mysql');
 var database = mysql.createConnection({
     host: 'localhost',
-    user: 'adminboard',
-    password: 'granada2016',
+    user: config.database_user,
+    password: config.database_password,
     database: 'dashboard'
 });
 
@@ -29,12 +32,6 @@ var database = mysql.createConnection({
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
-
-
-// CONF //////////////////////////////////////////////////////////////
-var HOST = "0.0.0.0" //Listen to every IP address
-var PORT = 8002 //Listening port
-var SERIAL_DEVICE = "/dev/ttyUSB0" // Rotors path
 
 // APPs ////////////////////////////////////////////////////////////////
 var app = express();
@@ -54,13 +51,12 @@ app.use(require('express-session')({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-//PASSPORTJS AND AUTH/ /////////////////////////////////////////////////
 function log(s) {
     console.log(s);
     //TODO: Save to a file
 }
 
+//PASSPORTJS AND AUTH/ /////////////////////////////////////////////////
 function hashPassword(password, salt) {
     var hash = crypto.createHash('sha256');
     hash.update(password);
@@ -181,7 +177,7 @@ app.post('/radiostation', function(req, res) {
 
 app.get('/rotors', function(req, res) {
     //Generate a response with elevation and azimuth information
-    var y = new Yaesu(SERIAL_DEVICE);
+    var y = new Yaesu(config.serial_rotors);
 
     y.getData(function(data) {
         res.json(data);
@@ -189,14 +185,14 @@ app.get('/rotors', function(req, res) {
 
 });
 
-app.post('/rotors',isAuthenticated, function(req, res) {
+app.post('/rotors', isAuthenticated, function(req, res) {
     //Set the elevation and azimuth information available on the HTTP request
 
     var elevation = leftPad(parseInt(req.body.ele), 3, 0);
     var azimuth = leftPad(parseInt(req.body.azi), 3, 0);
-    var y = new Yaesu(SERIAL_DEVICE);
+    var y = new Yaesu(config.serial_rotors);
 
-    y.move(azimuth, elevation, function(data){
+    y.move(azimuth, elevation, function(data) {
         res.json(data);
     })
 
@@ -206,4 +202,5 @@ app.get('/', function(req, res, next) {
     res.sendFile(path.join(__dirname + '/static/index.html'));
 });
 
-app.listen(PORT, HOST)
+app.listen(config.web_port, config.web_host)
+log
