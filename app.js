@@ -12,6 +12,11 @@ var leftPad = require('left-pad');
 var crypto = require('crypto');
 var path = require('path');
 
+//Log
+var log = require('./log/logger.js').Logger;
+
+//Config
+var config = require('./config.js').config
 
 //Rotors and transceivers
 var Yaesu = require('./rotors/yaesu.js');
@@ -21,8 +26,8 @@ var Kenwood = require('./transceivers/kenwoodts2000.js');
 var mysql = require('mysql');
 var database = mysql.createConnection({
     host: 'localhost',
-    user: 'adminboard',
-    password: 'granada2016',
+    user: config.database_user,
+    password: config.database_password,
     database: 'dashboard'
 });
 
@@ -30,13 +35,6 @@ var database = mysql.createConnection({
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
-
-
-// CONF //////////////////////////////////////////////////////////////
-var HOST = "0.0.0.0" //Listen to every IP address
-var PORT = 8002 //Listening port
-var SERIAL_ROTORS = "/dev/ttyUSB0" // Rotors path
-var SERIAL_TRANSCEIVER = "/dev/ttyS0" // Transceiver path
 
 // APPs ////////////////////////////////////////////////////////////////
 var app = express();
@@ -56,14 +54,13 @@ app.use(require('express-session')({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-//PASSPORTJS AND AUTH/ /////////////////////////////////////////////////
 function log(s) {
     var l = new Date() + "-> " + s;
     console.log(l);
     //TODO: Save to a file
 }
 
+//PASSPORTJS AND AUTH/ /////////////////////////////////////////////////
 function hashPassword(password, salt) {
     var hash = crypto.createHash('sha256');
     hash.update(password);
@@ -186,6 +183,7 @@ app.post('/radiostation', function(req, res) {
 
 app.get('/rotors', function(req, res) {
     //Generate a response with elevation and azimuth information
+    var y = new Yaesu(config.serial_rotors);
 
     log("Asking for rotors: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
@@ -202,7 +200,7 @@ app.post('/rotors', isAuthenticated, function(req, res) {
 
     var elevation = leftPad(parseInt(req.body.ele), 3, 0);
     var azimuth = leftPad(parseInt(req.body.azi), 3, 0);
-    var y = new Yaesu(SERIAL_ROTORS);
+    var y = new Yaesu(config.serial_rotors);
 
     y.move(azimuth, elevation, function(data) {
         res.json(data);
@@ -214,4 +212,5 @@ app.get('/', function(req, res, next) {
     res.sendFile(path.join(__dirname + '/static/index.html'));
 });
 
-app.listen(PORT, HOST)
+app.listen(config.web_port, config.web_host)
+log("Web server listening: " + config.web_host + ":" + config.web_port)

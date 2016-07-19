@@ -25,7 +25,6 @@ module.exports = function Yaesu(sAddress) {
 
     }
 
-
     function move(azimuth, elevation, callback) {
         if (elevation != "" && azimuth != "") {
 
@@ -47,9 +46,22 @@ module.exports = function Yaesu(sAddress) {
         }
     }
 
+    function stopRotor(callback) {
+        var SerialPort = require("serialport");
+        var s = new SerialPort(serialAddress);
+        s.on("open", function() {
+            s.write(new Buffer("S\n", "utf8"), function() {
+                callback({
+                    status: "Done"
+                })
+                s.close()
+            })
+        })
+    }
 
     return {
         getData: getData,
-        move: move
+        move: move,
+        stopRotor: stopRotor
     }
 }

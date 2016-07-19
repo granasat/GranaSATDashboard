@@ -1,5 +1,7 @@
 copytoproduction.sh
 
+config.js
+
 # Logs
 logs
 *.log
