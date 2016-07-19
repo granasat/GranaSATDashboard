@@ -6,7 +6,7 @@ var con = new SimpleConsole({
 });
 
 var user = "";
-var turnCurrentStatus = false;
+var turnCurrentStatus = true;
 
 document.body.appendChild(con.element);
 
@@ -16,10 +16,14 @@ con.logHTML(
 
 setInterval(function() {
     if (turnCurrentStatus) {
-        $.getJSON("/rotors", function(data) {
-            if (data.status == "Done") {
-                $("#currentStatus").text("Elevation: " + data.ele + "º Azimuth: " + data.azi + "º")
-            }
+        $.getJSON("/rotors", function(dataRot) {
+            $.getJSON("radiostation/freq", function(dataFreq) {
+                $("#currentStatus").text("Elevation: " + dataRot.ele + "º Azimuth: " + dataRot.azi + "º" +
+                    " | VFO A: " + (dataFreq.VFOA/1E6).toFixed(3) + " MHz " +
+                    "VFO B: " + (dataFreq.VFOB/1E6).toFixed(3) + " MHz " +
+                    "VFO C: " + (dataFreq.VFOC/1E6).toFixed(3) + " MHz")
+            });
+
         });
     } else {
         $("#currentStatus").text("")
@@ -44,6 +48,13 @@ var f = {
         s += "</br>logout"
         con.logHTML(s)
     },
+    "turnCurrentStatus": function(c) {
+        if (c[1] == "on") {
+            turnCurrentStatus = true;
+        } else {
+            turnCurrentStatus = false;
+        }
+    },
     "getRotors": function(c) {
         $.getJSON("/rotors", function(data) {
             if (data.status == "Done") {
@@ -53,12 +64,14 @@ var f = {
             }
         });
     },
-    "turnCurrentStatus": function(c) {
-        if (c[1] == "on") {
-            turnCurrentStatus = true;
-        } else {
-            turnCurrentStatus = false;
-        }
+    "getRadio": function(c) {
+        $.getJSON("radiostation/freq", function(data) {
+            if (data.status == "Done") {
+                con.log("VFO A: " + data.VFOA + " VFO B: " + data.VFOB + " VFO C:" + data.VFOB)
+            } else {
+                con.log("Reading error")
+            }
+        });
     },
     "setRotors": function(c) {
         $.post("rotors", {
@@ -67,6 +80,21 @@ var f = {
         }, function(data) {
             if (data.status == "Done") {
                 con.log("Starting movement as " + user)
+            } else if (data.status == "No auth") {
+                con.log("Please, log in.")
+            } else {
+                con.log("Error")
+            }
+        });
+    },
+    "setRadio": function(c) {
+        $.post("radiostation/freq", {
+            VFOA: c[1],
+            VFOB: c[2],
+            VFOC: c[3]
+        }, function(data) {
+            if (data.status == "Done") {
+                con.log("Frequencies changed as " + user)
             } else if (data.status == "No auth") {
                 con.log("Please, log in.")
             } else {

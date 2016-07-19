@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/granasat/GranaSatDashboard#readme",
   "dependencies": {
+    "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
     "colors": "^1.1.2",
     "cookie-parser": "^1.4.3",

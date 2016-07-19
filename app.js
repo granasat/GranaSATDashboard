@@ -20,6 +20,7 @@ var config = require('./config.js').config
 
 //Rotors and transceivers
 var Yaesu = require('./rotors/yaesu.js');
+var Kenwood = require('./transceivers/kenwoodts2000.js');
 
 //Database stuff
 var mysql = require('mysql');
@@ -54,7 +55,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function log(s) {
-    console.log(s);
+    var l = new Date() + "-> " + s;
+    console.log(l);
     //TODO: Save to a file
 }
 
@@ -90,7 +92,7 @@ passport.use("login", new LocalStrategy({
     passwordField: 'password',
     passReqToCallback: true,
 }, function(req, username, password, done) {
-    log("Trying to login: " + username + " at " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+    log("Trying to login: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
     database.query('select * from USERS where USER_NAME = ?', username, function(err, rows) {
         if (err) {
             log(err);
@@ -100,11 +102,14 @@ passport.use("login", new LocalStrategy({
             var user = rows[0];
             var hash = hashPassword(password, user.USER_PASSWORD.split(":")[0]);
             if (hash == user.USER_PASSWORD.split(":")[1]) {
+                log("Logged " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
                 done(null, user);
             } else {
+                log("Non valid password for " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
                 return done(null, false);
             }
         } else {
+            log("Non valid username: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
             return done(null, false);
         }
     });
@@ -143,42 +148,46 @@ passport.deserializeUser(function(id, done) {
 
 
 // ROUTES, GET AND POST ////////////////////////////////////////////////
+// Radiostation
 
 app.post('/login', passport.authenticate('login'), function(req, res) {
-    log("Logged: " + req.user.USER_NAME);
     res.json({
         status: "Done"
     })
 });
 
 app.get('/logout', function(req, res) {
+    Logger("Logging out " + req.user.USER_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
     req.logout();
     res.json({
         status: "Done"
     })
 });
 
-app.get('/radiostation', function(req, res) {
-    //Generate a response with radio information (mode, frequecy...)
-    res.send('GET RADIOSTATION');
+var radioStation = new Kenwood(config.serial_transceiver);
+
+app.get('/radiostation/freq', function(req, res) {
+
+    // log("Asking for radio freq: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+
+    radioStation.getFrequency(function(freq) {
+        res.json(freq);
+    })
+
 });
 
-app.post('/radiostation', function(req, res) {
-    //Set radio information (mode, frequecy...) available on the HTTP request
+app.post('/radiostation/freq', isAuthenticated, function(req, res) {
+    log("Moving radio freq: " + req.user.USER_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
-    var mode = req.param('mode') ;
-    var freq = req.param('freq');
-
-    if (mode && freq) {
-        res.send(mode + ',' + freq)
-    } else {
-        res.send('Parámetros no definidos')
-    }
-
+    radioStation.setFrequency(req.body, function(data) {
+        res.json(data);
+    })
 });
 
 app.get('/rotors', function(req, res) {
-    //Generate a response with elevation and azimuth information
+
+    // log("Asking for rotors: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+
     var y = new Yaesu(config.serial_rotors);
 
     y.getData(function(data) {
