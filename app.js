@@ -8,7 +8,6 @@ var cookieParser = require('cookie-parser');
 
 
 //Commons
-var leftPad = require('left-pad');
 var crypto = require('crypto');
 var path = require('path');
 

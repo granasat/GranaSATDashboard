@@ -1,5 +1,7 @@
 "use strict"
 var SerialPort = require("serialport");
+var leftPad = require('left-pad');
+
 
 module.exports = function Yaesu(sAddress) {
     var serialAddress = sAddress;
