@@ -35,7 +35,7 @@ var LocalStrategy = require('passport-local').Strategy;
 // CONF //////////////////////////////////////////////////////////////
 var HOST = "0.0.0.0" //Listen to every IP address
 var PORT = 8002 //Listening port
-var SERIAL_DEVICE = "/dev/ttyUSB0" // Rotors path
+var SERIAL_ROTORS = "/dev/ttyUSB0" // Rotors path
 var SERIAL_TRANSCEIVER = "/dev/ttyS0" // Transceiver path
 
 // APPs ////////////////////////////////////////////////////////////////
@@ -59,7 +59,8 @@ app.use(passport.session());
 
 //PASSPORTJS AND AUTH/ /////////////////////////////////////////////////
 function log(s) {
-    console.log(s);
+    var l = new Date() + "-> " + s;
+    console.log(l);
     //TODO: Save to a file
 }
 
@@ -147,9 +148,7 @@ passport.deserializeUser(function(id, done) {
 
 
 // ROUTES, GET AND POST ////////////////////////////////////////////////
-<<<<<<< HEAD
 // Radiostation
-=======
 
 app.post('/login', passport.authenticate('login'), function(req, res) {
     log("Logged: " + req.user.USER_NAME);
@@ -165,12 +164,11 @@ app.get('/logout', function(req, res) {
     })
 });
 
->>>>>>> master
+var radioStation = new Kenwood(SERIAL_TRANSCEIVER);
+
 app.get('/radiostation', function(req, res) {
 
-    var k = new Kenwood(SERIAL_TRANSCEIVER);
-
-    k.getData(function(data){
+    radioStation.getData(function(data) {
         res.json(data)
     })
 
@@ -181,29 +179,32 @@ app.post('/radiostation', function(req, res) {
 
     var k = new Kenwood(SERIAL_TRANSCEIVER);
 
-    k.configure(req.body,function(data){
+    k.configure(req.body, function(data) {
         res.json(data);
     })
 });
 
 app.get('/rotors', function(req, res) {
     //Generate a response with elevation and azimuth information
-    var y = new Yaesu(SERIAL_DEVICE);
 
+    log("Asking for rotors: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+
+
+    var y = new Yaesu(SERIAL_ROTORS);
     y.getData(function(data) {
         res.json(data);
     })
 
 });
 
-app.post('/rotors',isAuthenticated, function(req, res) {
+app.post('/rotors', isAuthenticated, function(req, res) {
     //Set the elevation and azimuth information available on the HTTP request
 
     var elevation = leftPad(parseInt(req.body.ele), 3, 0);
     var azimuth = leftPad(parseInt(req.body.azi), 3, 0);
-    var y = new Yaesu(SERIAL_DEVICE);
+    var y = new Yaesu(SERIAL_ROTORS);
 
-    y.move(azimuth, elevation, function(data){
+    y.move(azimuth, elevation, function(data) {
         res.json(data);
     })
 
