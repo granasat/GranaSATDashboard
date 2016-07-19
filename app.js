@@ -12,9 +12,11 @@ var leftPad = require('left-pad');
 var crypto = require('crypto');
 var path = require('path');
 
-//config
-var configFile = require('./config.js')
-var config = new configFile()
+//Log
+var log = require('./log/logger.js').Logger;
+
+//Config
+var config = require('./config.js').config
 
 //Rotors and transceivers
 var Yaesu = require('./rotors/yaesu.js');
@@ -203,4 +205,4 @@ app.get('/', function(req, res, next) {
 });
 
 app.listen(config.web_port, config.web_host)
-log
+log("Web server listening: " + config.web_host + ":" + config.web_port)
