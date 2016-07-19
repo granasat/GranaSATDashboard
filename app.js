@@ -156,7 +156,7 @@ app.post('/login', passport.authenticate('login'), function(req, res) {
 });
 
 app.get('/logout', function(req, res) {
-    Logger("Logging out " + req.user.USER_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+    log("Logging out " + req.user.USER_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
     req.logout();
     res.json({
         status: "Done"
