@@ -1,109 +1,107 @@
 "use strict"
 var SerialPort = require("serialport");
+var log = require('../log/logger.js').Logger;
+var logAPRS = require('../log/logger.js').APRSLogger;
+var Promise = require('bluebird');
+var leftPad = require('left-pad');
+
 
 module.exports = function Kenwood(sAddress) {
-    var serialAddress = sAddress;
-    var FREQ_MIN = 1;
-    var FREQ_MAX = 10;
-    var MSG_MIN;
-    var MSG_MAX;
+    var s = new SerialPort(sAddress);
+    var APRSBuffer = ""
 
-    var stationData = {
-        freq: -1,
-        mode: -1
-    }
 
-    var s = new SerialPort(serialAddress);
     s.on('open', function() {
-            console.log("Serial port opened");
-        })
-        // var auxiliarFunction = function(data,cb) {}
-
-    s.on('data', function(data) {
-        buffer += data
-            // auxiliarFunction(data)
-        console.log("KENWOOD: " + new Buffer(data).toString('hex') + "[" + data.replace(/[^a-zA-Z0-9]/g, "") + "]");
+        log("Kenwood TS-2000 serial port opened");
+        s.write(Buffer("03", "hex"))
+        s.write("TC 0;reset\n");
     })
 
-    function getData(callback) {
-        if (s.isOpen()) {
-            setRADIOMode(function() {
-                s.write("FA;FB,FC;", function() {
-                    callback({
-                        data: buffer
-                    })
-                })
-            })
-        } else {
-            callback({
-                status: "Error"
-            })
+    function saveAll(data) {
+        //TODO: Save APRS and data to the database
+        //TODO: Save all to log
+        APRSBuffer += data;
+        if (APRSBuffer.replace(/[\r]/g, "").split("\n") > 1) {
+            var aux = APRSBuffer.replace(/[\r]/g, "").split("\n");
+            APRSBuffer = aux.pop();
+            logAPRS(aux.join("\n"))
+            log("APRS data saved")
         }
+        // console.log("KENWOOD: " + data.toString().replace(/[\r]/g, "/r"));
     }
 
-    function writeData(command, callback) {
-        console.log(command)
-        callback({
-            command: command
-        })
-    }
+    function readFreq(p) {
+        var serialBuffer = "";
+        return function(data) {
+            serialBuffer += data;
 
-    function setCMDMode(cb) {
-        var cntrC = buffer("03", hex).toString()
-        s.write("TC 0;" + buffer("03", hex).toString(), function() {
-            cb();
-        })
-    }
+            if (serialBuffer.substring(serialBuffer.length - 5, serialBuffer.length) == "TC 0;" && serialBuffer.length > 5) {
+                var re = /F([ABC])([0-9]+);/g
+                var m = null
+                var freq = {};
+                do {
+                    m = re.exec(serialBuffer);
+                    if (m) {
+                        freq["VFO" + m[1]] = parseInt(m[2])
+                    }
+                } while (m);
 
-    function setKISSMode(cb) {
-        setCMDMode(function() {
-            s.write("TC 0;" + buffer("03", hex).toString(), function() {
-                cb();
-            })
-        })
-    }
-
-    function setRADIOMode(cb) {
-        s.write("TC 1;", function() {
-            cb();
-        })
-    }
-
-    function configure(body, callback) {
-        if (body.freq) {
-            if (parseInt(body.freq) > FREQ_MIN && parseInt(body.freq) < FREQ_MAX) {
-                //write("set frequency")
-
-                var command = "cambia la freq a " + body.freq
-
-                writeData(command, function(data) {
-                    callback({
-                        status: "OK, FREQ: " + body.freq + " | " + command,
-                    })
-                })
-
-            } else {
-                callback({
-                    status: "ERROR, FREQ out of range [" + FREQ_MIN + "," + FREQ_MAX + "]",
-                })
+                p.resolve(freq);
             }
-        }
 
-        if (body.mode && (body.mode == "FM" || body.mode == "AM")) {
-            //write("set mode")
         }
+    }
 
-        if (body.msg && (body.msg.length < MSG_MAX || body.msg.length > MSG_MIN)) {
-            //write("send message") ???
+    s.on('data', saveAll);
+
+    function getFrequency(cb) {
+        var p = new Promise.defer();
+
+        var f = readFreq(p)
+        s.on('data', f);
+
+        s.write(Buffer("03", "hex"));
+        s.write("TC 0;echo off\n");
+        s.write("TC 1;FA;FB;FC;TC 0;");
+
+        setTimeout(function() {
+            p.resolve({
+                error: "timeout"
+            });
+        }, 1000);
+
+        p.promise.then(function(data) {
+            s.removeListener('data', f);
+            cb(data)
+        });
+    }
+
+    function setFrequency(freq, cb) {
+
+        s.write(Buffer("03", "hex"))
+        s.write("TC 0;echo off\nTC 1;")
+
+        if (freq.VFOA) {
+            var VFOA = leftPad(parseInt(freq.VFOA), 11, 0);
+            s.write("FA" + VFOA + ";");
         }
+        if (freq.VFOB) {
+            var VFOB = leftPad(parseInt(freq.VFOB), 11, 0);
+            s.write("FB" + VFOB + ";");
+        }
+        if (freq.VFOC) {
+            var VFOC = leftPad(parseInt(freq.VFOC), 11, 0);
+            s.write("FC" + VFOC + ";");
+        }
+        s.write("TC 0;");
+        cb({
+            status: "Done"
+        });
 
-        callback({
-            status: 0
-        })
     }
 
     return {
-        getData: getData,
-        configure: configure
+        getFrequency: getFrequency,
+        setFrequency: setFrequency,
     }
 }

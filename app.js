@@ -92,7 +92,7 @@ passport.use("login", new LocalStrategy({
     passwordField: 'password',
     passReqToCallback: true,
 }, function(req, username, password, done) {
-    log("Trying to login: " + username + " at " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+    log("Trying to login: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
     database.query('select * from USERS where USER_NAME = ?', username, function(err, rows) {
         if (err) {
             log(err);
@@ -102,11 +102,14 @@ passport.use("login", new LocalStrategy({
             var user = rows[0];
             var hash = hashPassword(password, user.USER_PASSWORD.split(":")[0]);
             if (hash == user.USER_PASSWORD.split(":")[1]) {
+                log("Logged " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
                 done(null, user);
             } else {
+                log("Non valid password for " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
                 return done(null, false);
             }
         } else {
+            log("Non valid username: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
             return done(null, false);
         }
     });
@@ -148,47 +151,45 @@ passport.deserializeUser(function(id, done) {
 // Radiostation
 
 app.post('/login', passport.authenticate('login'), function(req, res) {
-    log("Logged: " + req.user.USER_NAME);
     res.json({
         status: "Done"
     })
 });
 
 app.get('/logout', function(req, res) {
+    Logger("Logging out " + req.user.USER_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
     req.logout();
     res.json({
         status: "Done"
     })
 });
 
-var radioStation = new Kenwood(SERIAL_TRANSCEIVER);
+var radioStation = new Kenwood(config.serial_transceiver);
 
-app.get('/radiostation', function(req, res) {
+app.get('/radiostation/freq', function(req, res) {
 
-    radioStation.getData(function(data) {
-        res.json(data)
+    // log("Asking for radio freq: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+
+    radioStation.getFrequency(function(freq) {
+        res.json(freq);
     })
 
 });
 
-app.post('/radiostation', function(req, res) {
-    //Set radio information (mode, frequecy...) available on the HTTP request
+app.post('/radiostation/freq', isAuthenticated, function(req, res) {
+    log("Moving radio freq: " + req.user.USER_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
-    var k = new Kenwood(SERIAL_TRANSCEIVER);
-
-    k.configure(req.body, function(data) {
+    radioStation.setFrequency(req.body, function(data) {
         res.json(data);
     })
 });
 
 app.get('/rotors', function(req, res) {
-    //Generate a response with elevation and azimuth information
+
+    // log("Asking for rotors: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+
     var y = new Yaesu(config.serial_rotors);
 
-    log("Asking for rotors: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
-
-
-    var y = new Yaesu(SERIAL_ROTORS);
     y.getData(function(data) {
         res.json(data);
     })
@@ -197,6 +198,8 @@ app.get('/rotors', function(req, res) {
 
 app.post('/rotors', isAuthenticated, function(req, res) {
     //Set the elevation and azimuth information available on the HTTP request
+
+    log("Moving rotors: " + req.user.USER_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
     var elevation = leftPad(parseInt(req.body.ele), 3, 0);
     var azimuth = leftPad(parseInt(req.body.azi), 3, 0);

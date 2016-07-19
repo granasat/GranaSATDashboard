@@ -7,13 +7,10 @@ var fs = require('fs')
 exports.Logger = function(msg, type) {
 
     var d = dateFormat(new Date(), "dd/mm/yyyy HH:MM:ss");
-    var s = d + " -> " + msg;
+    var s = d + " -> " + msg + "\n";
 
-    fs.writeFile(config.log_file, s, function(err) {
-        if (err) {
-            console.log(d.grey + " Error: ".red + "Log file not working".red.bold);
-
-        }
+    fs.appendFile(config.log_file, s, function (err) {
+      if (err) throw err;
     });
 
     if (type == "warn") {
@@ -23,4 +20,15 @@ exports.Logger = function(msg, type) {
     } else {
         console.log(d.grey + " Info: ".green + msg.green);
     }
+}
+
+exports.APRSLogger = function(msg) {
+
+    var d = dateFormat(new Date(), "dd/mm/yyyy HH:MM:ss");
+    var s = d + " -> " + msg + "\n";
+
+    fs.appendFile(config.aprs_log_file, s, function (err) {
+      if (err) throw err;
+    });
+
 }
