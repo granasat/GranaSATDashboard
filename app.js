@@ -190,11 +190,9 @@ app.get('/rotors', function(req, res) {
 app.post('/rotors', isAuthenticated, function(req, res) {
     //Set the elevation and azimuth information available on the HTTP request
 
-    var elevation = leftPad(parseInt(req.body.ele), 3, 0);
-    var azimuth = leftPad(parseInt(req.body.azi), 3, 0);
     var y = new Yaesu(config.serial_rotors);
 
-    y.move(azimuth, elevation, function(data) {
+    y.move(req.body, function(data) {
         res.json(data);
     })
 

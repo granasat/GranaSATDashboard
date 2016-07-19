@@ -22,13 +22,14 @@ module.exports = function Yaesu(sAddress) {
                 })
             })
         })
-
     }
 
-    function move(azimuth, elevation, callback) {
+    function move(data, callback) {
+        var elevation = leftPad(parseInt(data.ele), 3, 0);
+        var azimuth = leftPad(parseInt(data.azi), 3, 0);
+
         if (elevation != "" && azimuth != "") {
 
-            var SerialPort = require("serialport");
             var s = new SerialPort(serialAddress);
             s.on("open", function() {
                 s.write(new Buffer("W" + azimuth + " " + elevation + "\n", "utf8"), function() {
@@ -47,7 +48,6 @@ module.exports = function Yaesu(sAddress) {
     }
 
     function stopRotor(callback) {
-        var SerialPort = require("serialport");
         var s = new SerialPort(serialAddress);
         s.on("open", function() {
             s.write(new Buffer("S\n", "utf8"), function() {
