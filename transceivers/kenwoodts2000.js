@@ -14,12 +14,13 @@ module.exports = function Kenwood(sAddress) {
     s.on('open', function() {
         log("Kenwood TS-2000 serial port opened");
         s.write(Buffer("03", "hex"))
-        s.write("TC 0;reset\n");
+        s.write("TC 0;reset\necho off\n");
     })
 
     function saveAll(data) {
         //TODO: Save APRS and data to the database
         //TODO: Save all to log
+        console.log(data);
         APRSBuffer += data;
         if (APRSBuffer.replace(/[\r]/g, "").split("\n") > 1) {
             var aux = APRSBuffer.replace(/[\r]/g, "").split("\n");
@@ -60,8 +61,6 @@ module.exports = function Kenwood(sAddress) {
         var f = readFreq(p)
         s.on('data', f);
 
-        s.write(Buffer("03", "hex"));
-        s.write("TC 0;echo off\n");
         s.write("TC 1;FA;FB;FC;TC 0;");
 
         setTimeout(function() {
@@ -79,7 +78,7 @@ module.exports = function Kenwood(sAddress) {
     function setFrequency(freq, cb) {
 
         s.write(Buffer("03", "hex"))
-        s.write("TC 0;echo off\nTC 1;")
+        s.write("TC 1;")
 
         if (freq.VFOA) {
             var VFOA = leftPad(parseInt(freq.VFOA), 11, 0);
