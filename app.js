@@ -29,6 +29,9 @@ var database = mysql.createConnection({
     password: config.database_password,
     database: 'dashboard'
 });
+//Form data checking
+app.use(express.bodyParser());
+app.use(expressValidator());
 
 //Auth stuff
 var passport = require('passport');
