@@ -1,7 +1,7 @@
 "use strict"
 var SerialPort = require("serialport");
-var log = require('../log/logger.js').Logger;
-var logAPRS = require('../log/logger.js').APRSLogger;
+var log = require('../utils/logger.js').Logger;
+var logAPRS = require('../utils/logger.js').APRSLogger;
 var Promise = require('bluebird');
 var leftPad = require('left-pad');
 
@@ -20,7 +20,7 @@ module.exports = function Kenwood(sAddress) {
     function saveAll(data) {
         //TODO: Save APRS and data to the database
         //TODO: Save all to log
-        console.log(data);
+        console.log("APRS raw:" + data.toString());
         APRSBuffer += data;
         if (APRSBuffer.replace(/[\r]/g, "").split("\n") > 1) {
             var aux = APRSBuffer.replace(/[\r]/g, "").split("\n");
