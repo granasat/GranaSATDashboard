@@ -12,7 +12,7 @@ var crypto = require('crypto');
 var path = require('path');
 
 //Log
-var log = require('./log/logger.js').Logger;
+var log = require('./utils/logger.js').Logger;
 
 //Config
 var config = require('./config.js').config

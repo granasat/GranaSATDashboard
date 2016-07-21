@@ -1,7 +1,7 @@
 "use strict"
 var SerialPort = require("serialport");
-var log = require('../log/logger.js').Logger;
-var logAPRS = require('../log/logger.js').APRSLogger;
+var log = require('../utils/logger.js').Logger;
+var logAPRS = require('../utils/logger.js').APRSLogger;
 var Promise = require('bluebird');
 var leftPad = require('left-pad');
 
