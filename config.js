@@ -18,6 +18,6 @@ exports.config = {
     aprsfi_apikey: "90046.jYiAu5Cp1P7svY",
     serial_rotors: "/dev/ttyUSB0",
     serial_transceiver: "/dev/ttyS0",
-    log_file: "log/log.txt",
-    aprs_log_file: "log/aprs.txt"
+    log_file: "utils/log.txt",
+    aprs_log_file: "utils/aprs.txt"
 }

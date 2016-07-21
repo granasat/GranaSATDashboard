@@ -1,10 +1,14 @@
 "use strict"
 
-//Config
-var config = require('./config.js').config
+//Utils
+var config = require('../config.js').config
+var crypto = require('crypto');
 
-//Declare Express-Validator
-var expressValidator = require('express-validator'); 
+
+//Log
+var log = require('../utils/logger.js').Logger;
+
+
 
 //PASSPORTJS AND AUTH
 function hashPassword(password, salt) {
@@ -32,13 +36,18 @@ var database = mysql.createConnection({
     database: 'dashboard'
 });
 
-module.exports = function DashboardDB(req) {
+module.exports = function DashboardDB() {
+    var loginConfig = {
+        usernameField: 'username',
+        passwordField: 'password',
+        passReqToCallback: true,
+    }
 
     function login(req, username, password, done) {
         log("Trying to login: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
         database.query('select * from USERS where USER_NAME = ?', username, function(err, rows) {
             if (err) {
-                log(err);
+                log(err.toString(), "error");
                 return done(null, false);
             }
             if (rows.length != 0) {
@@ -58,31 +67,50 @@ module.exports = function DashboardDB(req) {
         });
     };
 
-    function reg_user(req,done) {
-        passReqToCallback: true;
-        
-        //app.use(express.bodyParser());
-        //app.use(expressValidator([options]));
-        
+    function signup(req, res) {
         req.checkBody('username', 'Name is required').notEmpty().isAlpha().len(6, 20);
         req.checkBody('organization', 'Organization is required').notEmpty().isAlpha();
         req.checkBody('email', 'A valid email is required').notEmpty().isEmail();
         req.checkBody('password', 'A valid password is required').notEmpty().len(6, 8);
         req.checkBody('usertype', 'A valid type is required').notEmpty().isInt();
-        
-        var post = {
-            username: req.body.username,
-            organization: req.body.organization,
-            mail: req.body.mail,
-            password: hashPassword(req.body.password,createSalt()),
-            usertype: req.body.usertype
-        };
-        
-        database.query('INSERT INTO USERS(USER_NAME,USER_ORGANIZATION,USER_MAIL,USER_PASSWORD,USER_TYPE) VALUES ?', post, function(err) {
+
+        var salt = createSalt();
+
+        var post = [
+            [
+                req.body.username,
+                req.body.organization,
+                req.body.mail,
+                salt + ":" + hashPassword(req.body.password, salt),
+                req.body.usertype
+            ]
+        ];
+
+        database.query('INSERT INTO USERS (USER_NAME,USER_ORGANIZATION,USER_MAIL,USER_PASSWORD,USER_TYPE) VALUES ?', [post], function(err) {
             if (err) {
-                log(err);
-                return done(null, false);
+                log(err.toString(), "error");
+                res.json({
+                    error: "Database error"
+                })
+            } else {
+                res.json({
+                    status: "Done"
+                })
             }
         });
     };
+
+    function deserializeUser(id, done) {
+        database.query('select * from USERS where USER_ID = ?', id, function(err, rows) {
+            if (rows.length == 0) return done(null, false);
+            return done(null, rows[0]);
+        });
+    }
+
+    return {
+        loginConfig: loginConfig,
+        login: login,
+        signup: signup,
+        deserializeUser: deserializeUser
+    }
 };

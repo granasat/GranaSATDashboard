@@ -128,6 +128,23 @@ var f = {
                 con.log("Error")
             }
         });
+    },
+    "signup": function(c) {
+        $.post("signup", {
+            username: c[1],
+            organization: c[2],
+            mail: c[3],
+            password: c[4],
+            usertype: c[5]
+        }, function(data) {
+            if (data.status == "Done") {
+                con.log("User created: " + c[1])
+            } else if (data.status == "No auth") {
+                con.log("Please, log in.")
+            } else {
+                con.log(res.error)
+            }
+        });
     }
 }
 
