@@ -45,6 +45,7 @@ var f = {
         s += "</br>turnCurrentStatus on/off"
         s += "</br>login [username] [password]"
         s += "</br>setRotors [azimuth] [elevation]"
+        s += "</br>signup [username] [organization] [mail] [password] [usertype]"
         s += "</br>logout"
         con.logHTML(s)
     },
@@ -80,6 +81,21 @@ var f = {
         }, function(data) {
             if (data.status == "Done") {
                 con.log("Starting movement as " + user)
+            } else if (data.status == "No auth") {
+                con.log("Please, log in.")
+            } else {
+                con.log("Error")
+            }
+        });
+    }
+    ,
+    "reposeRotors": function(c) {
+        $.post("rotors", {
+            ele: 0,
+            azi: 155
+        }, function(data) {
+            if (data.status == "Done") {
+                con.log("Starting repose mode as:" + user)
             } else if (data.status == "No auth") {
                 con.log("Please, log in.")
             } else {

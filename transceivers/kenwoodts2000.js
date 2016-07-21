@@ -20,7 +20,7 @@ module.exports = function Kenwood(sAddress) {
     function saveAll(data) {
         //TODO: Save APRS and data to the database
         //TODO: Save all to log
-        console.log("APRS raw:" + data.toString());
+        // console.log("APRS raw:" + data.toString());
         APRSBuffer += data;
         if (APRSBuffer.replace(/[\r]/g, "").split("\n") > 1) {
             var aux = APRSBuffer.replace(/[\r]/g, "").split("\n");
