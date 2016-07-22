@@ -170,7 +170,7 @@ module.exports = function DashboardDB() {
         }
     };
     
-    function deleteUser(req, res) {
+    function delUser(req, res) {
         req.checkBody('user_id', 'User ID').notEmpty().isInt();
 
         database.query('DELETE FROM USERS WHERE USER_ID = ?', req.body.user_id, function(err) {
@@ -198,8 +198,6 @@ module.exports = function DashboardDB() {
         req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
         req.checkBody('tle', 'TLE is required').notEmpty();
 
-        var salt = createSalt();
-
         var post = [
             [
                 req.body.satname,
@@ -209,7 +207,35 @@ module.exports = function DashboardDB() {
             ]
         ];
 
-        database.query('INSERT INTO SATELLITES (SAT_NAME,SAT_TEL,SAT_RX_FREQ,SAT_TX_FREQ) VALUES ?', [post], function(err) {
+        database.query('INSERT INTO SATELLITES (SAT_NAME,SAT_TLE,SAT_RX_FREQ,SAT_TX_FREQ) VALUES ?', [post], function(err) {
+            if (err) {
+                log(err.toString(), "error");
+                res.json({
+                    error: "Database error"
+                })
+            } else {
+                res.json({
+                    status: "Done"
+                })
+            }
+        });
+    }; 
+    
+    function modSatellite(req, res) {
+        req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
+        req.checkBody('tle', 'TLE is required').notEmpty();
+
+        var post = [
+            [
+                req.body.satname,
+                req.body.tle,
+                req.body.rx_freq,
+                req.body.tx_freq,
+                req.body.sat_id
+            ]
+        ];
+
+        database.query('UPDATE USERS SET SAT_NAME = ?, SAT_TLE = ?, SAT_RX_FREQ = ?, SAT_TX_FREQ = ? WHERE SAT_ID = ?', [post], function(err) {
             if (err) {
                 log(err.toString(), "error");
                 res.json({
@@ -223,6 +249,115 @@ module.exports = function DashboardDB() {
         });
     }; 
 
+    function updateTLE(req, res) {
+        req.checkBody('tle', 'TLE is required').notEmpty();
+
+        var post = [
+            [
+                req.body.tle,
+                req.body.sat_id
+            ]
+        ];
+
+        database.query('UPDATE USERS SET SAT_TLE = ? WHERE SAT_ID = ?', [post], function(err) {
+            if (err) {
+                log(err.toString(), "error");
+                res.json({
+                    error: "Database error"
+                })
+            } else {
+                res.json({
+                    status: "Done"
+                })
+            }
+        });
+    }; 
+    
+    function delSatellite(req, res) {
+        req.checkBody('sat_id', 'Satellite ID').notEmpty().isInt();
+    
+        database.query('DELETE FROM SATELLITES WHERE SAT_ID = ?', req.body.sat_id, function(err) {
+            if (err) {
+                log(err.toString(), "error");
+                res.json({
+                    error: "Database error"
+                })
+            } else {
+                res.json({
+                    status: "Done"
+                })
+            }
+        });
+    };
+
+    function addAntenna(req, res) {
+        req.checkBody('antname', 'Antenna name is required').notEmpty().isAlpha();
+        req.checkBody('antfreq', 'Antenna frequency is required').notEmpty();
+
+        var post = [
+            [
+                req.body.antname,
+                req.body.antfreq
+            ]
+        ];
+
+        database.query('INSERT INTO ANTENNAS (ANT_NAME,ANT_FREQ) VALUES ?', [post], function(err) {
+            if (err) {
+                log(err.toString(), "error");
+                res.json({
+                    error: "Database error"
+                })
+            } else {
+                res.json({
+                    status: "Done"
+                })
+            }
+        });
+    }; 
+    
+    function modAntenna(req, res) {
+        req.checkBody('antname', 'Antenna name is required').notEmpty().isAlpha();
+        req.checkBody('antfreq', 'Antenna frequency is required').notEmpty();
+        
+        var post = [
+            [
+                req.body.antname,
+                req.body.antfreq,
+                req.body.ant_id
+            ]
+        ];
+
+        database.query('UPDATE ANTENNAS SET ANT_NAME = ?, ANT_FREQ = ? WHERE ANT_ID = ?', [post], function(err) {
+            if (err) {
+                log(err.toString(), "error");
+                res.json({
+                    error: "Database error"
+                })
+            } else {
+                res.json({
+                    status: "Done"
+                })
+            }
+        });
+    };
+
+    function delAntenna(req, res) {
+        req.checkBody('ant_id', 'Antenna ID').notEmpty().isInt();
+    
+        database.query('DELETE FROM ANTENNAS WHERE ANT_ID = ?', req.body.ant_id, function(err) {
+            if (err) {
+                log(err.toString(), "error");
+                res.json({
+                    error: "Database error"
+                })
+            } else {
+                res.json({
+                    status: "Done"
+                })
+            }
+        });
+    };
+
     return {
         loginConfig: loginConfig,
         login: login,
@@ -230,6 +365,12 @@ module.exports = function DashboardDB() {
         modUser: modUser,
         deleteUser: deleteUser,
         deserializeUser: deserializeUser,
-        addSatellite: addSatellite
+        addSatellite: addSatellite,
+        modSatellite: modSatellite,
+        updateTLE: updateTLE,
+        delSatellite: delSatellite,
+        addAntenna: addAntenna,
+        modAntenna: modAntenna,
+        delAntenna: delAntenna
     }
 };
