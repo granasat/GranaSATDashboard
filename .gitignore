@@ -1,10 +1,11 @@
 copytoproduction.sh
-
 config.js
+utils/log.txt
+bower_components/
 
 # Logs
 logs
-*.log
+utils/*.log
 npm-debug.log*
 
 # Runtime data
@@ -34,7 +35,8 @@ build/Release
 # Dependency directories
 node_modules
 jspm_packages
-bower_components
+/bower_components
+bower_components/**
 
 # Optional npm cache directory
 .npm
