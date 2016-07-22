@@ -6,7 +6,7 @@ var con = new SimpleConsole({
 });
 
 var user = "";
-var turnCurrentStatus = true;
+var turnCurrentStatus = false;
 
 document.body.appendChild(con.element);
 

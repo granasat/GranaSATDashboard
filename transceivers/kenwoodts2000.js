@@ -46,7 +46,6 @@ module.exports = function Kenwood(sAddress) {
                         freq["VFO" + m[1]] = parseInt(m[2])
                     }
                 } while (m);
-
                 p.resolve(freq);
             }
 
