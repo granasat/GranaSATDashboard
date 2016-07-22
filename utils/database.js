@@ -301,7 +301,7 @@ module.exports = function DashboardDB() {
             ]
         ];
 
-        database.query('INSERT INTO ANTENNAS (ANT_NAME,ANT_FREQ) VALUES ?', [post], function(err) {
+        database.query('INSERT INTO ANTENNAS (ANT_NAME, ANT_FREQ) VALUES ?', [post], function(err) {
             if (err) {
                 log(err.toString(), "error");
                 res.json({
@@ -358,6 +358,57 @@ module.exports = function DashboardDB() {
         });
     };
 
+    function addTransceiver(req, res) {
+        req.checkBody('traname', 'Transceiver name is required').notEmpty().isAlpha();
+        req.checkBody('traport', 'Transceiver port is required').notEmpty();
+
+        var post = [
+            [
+                req.body.trasname,
+                req.body.traport
+            ]
+        ];
+
+        database.query('INSERT INTO TRANSCEIVERS (TRA_NAME, TRA_PORT) VALUES ?', [post], function(err) {
+            if (err) {
+                log(err.toString(), "error");
+                res.json({
+                    error: "Database error"
+                })
+            } else {
+                res.json({
+                    status: "Done"
+                })
+            }
+        });
+    };
+    
+    function modTransceiver(req, res) {
+        req.checkBody('traname', 'Transceiver name is required').notEmpty().isAlpha();
+        req.checkBody('traport', 'Transceiver port is required').notEmpty();
+        
+        var post = [
+            [
+                req.body.trasname,
+                req.body.traport,
+                req.body.tra_id
+            ]
+        ];
+
+        database.query('UPDATE ANTENNAS SET TRA_NAME = ?, TRA_PORT = ? WHERE TRA_ID = ?', [post], function(err) {
+            if (err) {
+                log(err.toString(), "error");
+                res.json({
+                    error: "Database error"
+                })
+            } else {
+                res.json({
+                    status: "Done"
+                })
+            }
+        });
+    };
+    
     return {
         loginConfig: loginConfig,
         login: login,
@@ -371,6 +422,9 @@ module.exports = function DashboardDB() {
         delSatellite: delSatellite,
         addAntenna: addAntenna,
         modAntenna: modAntenna,
-        delAntenna: delAntenna
+        delAntenna: delAntenna,
+        addTransceiver: addTransceiver,
+        modTransceiver: modTransceiver,
+        delTransceiver: delTransceiver
     }
 };
