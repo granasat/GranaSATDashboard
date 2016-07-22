@@ -1,0 +1,24 @@
+{
+  "name": "granasatdashboard",
+  "description": "GranaSAT Dashboard",
+  "main": "app.js",
+  "authors": [
+    "Pablo Garrido <pablogs9@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/granasat/GranaSatDashboard",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.7",
+    "bootstrap": "^3.3.6",
+    "angular-bootstrap": "^2.0.0",
+    "SegmentDisplay": "http://www.3quarks.com/downloads/SegmentDisplay.zip"
+  }
+}
