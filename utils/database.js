@@ -52,12 +52,23 @@ module.exports = function DashboardDB() {
             }
             if (rows.length != 0) {
                 var user = rows[0];
-                var hash = hashPassword(password, user.USER_PASSWORD.split(":")[0]);
-                if (hash == user.USER_PASSWORD.split(":")[1]) {
-                    log("Logged " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
-                    done(null, user);
-                } else {
-                    log("Non valid password for " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
+                if (user.USR_BLOCKED == false) {
+                    var hash = hashPassword(password, user.USER_PASSWORD.split(":")[0]);
+                    if (hash == user.USER_PASSWORD.split(":")[1]) {
+                        log("Logged " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+                        database.query('UPDATE USERS SET USR_LAST_VST = NOW() WHERE USER_NAME = ?', username, function(err, rows) {
+                            if (err) {
+                                log(err.toString(), "error");
+                                return done(null, false);
+                            }
+                            done(null, user);
+                        });
+                    } else {
+                        log("Non valid password for " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
+                        return done(null, false);
+                    }
+                }else{
+                    log("Blocked user: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
                     return done(null, false);
                 }
             } else {
