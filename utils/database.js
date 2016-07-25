@@ -44,7 +44,7 @@ module.exports = function DashboardDB() {
     }
     function login(req, username, password, done) {
         log("Trying to login: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
-        database.query('select * from USERS where USER_NAME = ?', username, function(err, rows) {
+        database.query('select * from USERS where USR_NAME = ?', username, function(err, rows) {
             if (err) {
                 log(err.toString(), "error");
                 return done(null, false);
@@ -52,10 +52,10 @@ module.exports = function DashboardDB() {
             if (rows.length != 0) {
                 var user = rows[0];
                 if (user.USR_BLOCKED == false) {
-                    var hash = hashPassword(password, user.USER_PASSWORD.split(":")[0]);
-                    if (hash == user.USER_PASSWORD.split(":")[1]) {
+                    var hash = hashPassword(password, user.USR_PASSWORD.split(":")[0]);
+                    if (hash == user.USR_PASSWORD.split(":")[1]) {
                         log("Logged " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
-                        database.query('UPDATE USERS SET USR_LAST_VST = NOW() WHERE USER_NAME = ?', username, function(err, rows) {
+                        database.query('UPDATE USERS SET USR_LAST_VST = NOW() WHERE USR_NAME = ?', username, function(err, rows) {
                             if (err) {
                                 log(err.toString(), "error");
                                 return done(null, false);
@@ -97,7 +97,7 @@ module.exports = function DashboardDB() {
             ]
         ];
 
-        database.query('INSERT INTO USERS (USER_NAME,USER_ORGANIZATION,USER_MAIL,USER_PASSWORD,USER_TYPE) VALUES ?', [post], function(err) {
+        database.query('INSERT INTO USERS (USR_NAME,USR_ORGANIZATION,USR_MAIL,USR_PASSWORD,USR_TYPE) VALUES ?', [post], function(err) {
             if (err) {
                 log(err.toString(), "error");
                 res.json({
@@ -130,7 +130,7 @@ module.exports = function DashboardDB() {
                 ]
             ];
 
-            database.query('UPDATE USERS SET USER_NAME = ?, USER_ORGANIZATION = ?, USER_MAIL = ?, USER_TYPE = ? WHERE USER_ID = ?', [post], function(err) {
+            database.query('UPDATE USERS SET USR_NAME = ?, USR_ORGANIZATION = ?, USR_MAIL = ?, USR_TYPE = ? WHERE USR_ID = ?', [post], function(err) {
                 if (err) {
                     log(err.toString(), "error");
                     res.json({
@@ -165,7 +165,7 @@ module.exports = function DashboardDB() {
                 ]
             ];
 
-            database.query('UPDATE USERS SET USER_NAME = ?, USER_ORGANIZATION = ?, USER_MAIL = ?, USER_PASSWORD = ?, USER_TYPE = ? WHERE USER_ID = ?', [post], function(err) {
+            database.query('UPDATE USERS SET USR_NAME = ?, USR_ORGANIZATION = ?, USR_MAIL = ?, USR_PASSWORD = ?, USR_TYPE = ? WHERE USR_ID = ?', [post], function(err) {
                 if (err) {
                     log(err.toString(), "error");
                     res.json({
@@ -183,7 +183,7 @@ module.exports = function DashboardDB() {
     function delUser(req, res) {
         req.checkBody('user_id', 'User ID').notEmpty().isInt();
 
-        database.query('DELETE FROM USERS WHERE USER_ID = ?', req.body.user_id, function(err) {
+        database.query('DELETE FROM USERS WHERE USR_ID = ?', req.body.user_id, function(err) {
             if (err) {
                 log(err.toString(), "error");
                 res.json({
@@ -198,7 +198,7 @@ module.exports = function DashboardDB() {
     };
 
     function deserializeUser(id, done) {
-        database.query('select * from USERS where USER_ID = ?', id, function(err, rows) {
+        database.query('select * from USERS where USR_ID = ?', id, function(err, rows) {
             if (rows.length == 0) return done(null, false);
             return done(null, rows[0]);
         });
@@ -211,22 +211,32 @@ module.exports = function DashboardDB() {
         var post = [
             [
                 req.body.satname,
-                req.body.tle,
+                req.body.description,
                 req.body.rx_freq,
-                req.body.tx_freq
+                req.body.tx_freq,
+                req.body.status
             ]
         ];
 
-        database.query('INSERT INTO SATELLITES (SAT_NAME,SAT_TLE,SAT_RX_FREQ,SAT_TX_FREQ) VALUES ?', [post], function(err) {
+        database.query('INSERT INTO REMOTE_TRANSCEIVERS (RMT_NAME,RMT_TLE,RMT_RX_FREQ,RMT_TX_FREQ,RMT_STATUS) VALUES ?', [post], function(err) {
             if (err) {
                 log(err.toString(), "error");
                 res.json({
                     error: "Database error"
                 })
             } else {
-                res.json({
-                    status: "Done"
-                })
+                database.query('INSERT INTO SATELLITES (SAT_ID,SAT_TLE) VALUES (LAST_INSERT_ID(),?)', req.body.tle, function(err) {
+                    if (err) {
+                        log(err.toString(), "error");
+                        res.json({
+                            error: "Database error"
+                        })
+                    } else {
+                        res.json({
+                            status: "Done"
+                        });
+                    }
+                });
             }
         });
     }; 
