@@ -27,11 +27,11 @@ var db = new require("./utils/database.js")()
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
-
-
 // APPs ////////////////////////////////////////////////////////////////
 var app = express();
-app.use(express.static('static'));
+app.use(express.static(__dirname + '/static'));
+app.use('/bower_components', express.static(__dirname + '/bower_components'));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
@@ -81,6 +81,7 @@ app.post('/login', passport.authenticate('login'), function(req, res) {
     })
 });
 
+
 app.get('/logout', function(req, res) {
     log("Logging out " + req.user.USER_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
     req.logout();
@@ -90,7 +91,7 @@ app.get('/logout', function(req, res) {
 });
 
 // Radiostation
-var radioStation = new Kenwood(config.serial_transceiver);
+// var radioStation = new Kenwood(config.serial_transceiver)
 
 app.get('/radiostation/freq', function(req, res) {
 
@@ -111,7 +112,6 @@ app.post('/radiostation/freq', isAuthenticated, function(req, res) {
 });
 
 app.get('/rotors', function(req, res) {
-
     // log("Asking for rotors: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
     var y = new Yaesu(config.serial_rotors);

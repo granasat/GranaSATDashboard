@@ -30,5 +30,9 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "serialport": "^4.0.1"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-wiredep": "^3.0.1"
   }
 }

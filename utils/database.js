@@ -42,7 +42,6 @@ module.exports = function DashboardDB() {
         passwordField: 'password',
         passReqToCallback: true,
     }
-
     function login(req, username, password, done) {
         log("Trying to login: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
         database.query('select * from USERS where USER_NAME = ?', username, function(err, rows) {
