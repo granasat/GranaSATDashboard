@@ -2,7 +2,13 @@ app.directive('granasatTerminal', function($http, $document) {
     function link(scope, element, attrs) {
         var con = new SimpleConsole({
             handleCommand: function(cmd) {
-                f[cmd.split(" ")[0]](cmd.split(" "));
+                try {
+                    f[cmd.split(" ")[0]](cmd.split(" "));
+                } catch (e) {
+                    con.log("Unknown command")
+                } finally {
+                    window.scrollTo(0,document.body.scrollHeight);
+                }
             },
             placeholder: "",
             storageID: "GranaSAT console",

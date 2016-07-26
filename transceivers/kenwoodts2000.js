@@ -17,6 +17,10 @@ module.exports = function Kenwood(sAddress) {
         s.write("TC 0;reset\necho off\n");
     })
 
+    s.on('error', function() {
+        log("Unable to open Kenwood TS-2000 serial port");
+    })
+
     function saveAll(data) {
         //TODO: Save APRS and data to the database
         //TODO: Save all to log
