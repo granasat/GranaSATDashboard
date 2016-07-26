@@ -91,7 +91,8 @@ app.get('/logout', function(req, res) {
 });
 
 // Radiostation
-// var radioStation = new Kenwood(config.serial_transceiver)
+var radioStation = new Kenwood(config.serial_transceiver)
+
 
 app.get('/radiostation/freq', function(req, res) {
 
