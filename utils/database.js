@@ -131,7 +131,7 @@ module.exports = function DashboardDB() {
                 ]
             ];
 
-            database.query('UPDATE USERS SET USR_NAME = ?, USER_ORGANIZATION = ?, USER_MAIL = ?, USER_TYPE = ? WHERE USER_ID = ?', [post], function(err) {
+            database.query('UPDATE USERS SET USR_NAME = ?, USR_ORGANIZATION = ?, USR_MAIL = ?, USR_TYPE = ? WHERE USR_ID = ?', [post], function(err) {
                 if (err) {
                     log(err.toString(), "error");
                     res.json({
@@ -166,7 +166,7 @@ module.exports = function DashboardDB() {
                 ]
             ];
 
-            database.query('UPDATE USERS SET USR_NAME = ?, USER_ORGANIZATION = ?, USER_MAIL = ?, USER_PASSWORD = ?, USER_TYPE = ? WHERE USER_ID = ?', [post], function(err) {
+            database.query('UPDATE USERS SET USR_NAME = ?, USR_ORGANIZATION = ?, USR_MAIL = ?, USR_PASSWORD = ?, USR_TYPE = ? WHERE USR_ID = ?', [post], function(err) {
                 if (err) {
                     log(err.toString(), "error");
                     res.json({
@@ -184,7 +184,7 @@ module.exports = function DashboardDB() {
     function delUser(req, res) {
         req.checkBody('user_id', 'User ID').notEmpty().isInt();
 
-        database.query('DELETE FROM USERS WHERE USER_ID = ?', req.body.user_id, function(err) {
+        database.query('DELETE FROM USERS WHERE USR_ID = ?', req.body.user_id, function(err) {
             if (err) {
                 log(err.toString(), "error");
                 res.json({
@@ -196,10 +196,10 @@ module.exports = function DashboardDB() {
                 })
             }
         });
-    };
+    }
 
     function deserializeUser(id, done) {
-        database.query('select * from USERS where USR_ID = ?', id, function(err, rows) {
+        database.query('SELECT * FROM USERS WHERE USR_ID = ?', id, function(err, rows) {
             if (rows.length == 0) return done(null, false);
             return done(null, rows[0]);
         });
@@ -212,25 +212,35 @@ module.exports = function DashboardDB() {
         var post = [
             [
                 req.body.satname,
-                req.body.tle,
+                req.body.description,
                 req.body.rx_freq,
-                req.body.tx_freq
+                req.body.tx_freq,
+                req.body.status
             ]
         ];
 
-        database.query('INSERT INTO SATELLITES (SAT_NAME,SAT_TLE,SAT_RX_FREQ,SAT_TX_FREQ) VALUES ?', [post], function(err) {
-            if (err) {
+        database.query('INSERT INTO REMOTE_TRANSCEIVERS (RMT_NAME,RMT_DESC,RMT_RX_FREQ,RMT_TX_FREQ,RMT_STATUS) VALUES ?', [post], function(err) {
+            if (!err) {
+                database.query('INSERT INTO SATELLITES (SAT_ID,SAT_TLE) VALUES (LAST_INSERT_ID(),?)', req.body.tle, function(err) {
+                    if (err) {
+                        log(err.toString(), "error");
+                        res.json({
+                            error: "Database error"
+                        })
+                    } else {
+                        res.json({
+                            status: "Done"
+                        })
+                    }
+                });
+            } else {
                 log(err.toString(), "error");
                 res.json({
                     error: "Database error"
                 })
-            } else {
-                res.json({
-                    status: "Done"
-                })
             }
         });
-    };
+    }
 
     function modSatellite(req, res) {
         req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
@@ -239,26 +249,36 @@ module.exports = function DashboardDB() {
         var post = [
             [
                 req.body.satname,
-                req.body.tle,
+                req.body.description,
                 req.body.rx_freq,
                 req.body.tx_freq,
+                req.body.status,
                 req.body.sat_id
             ]
         ];
 
-        database.query('UPDATE USERS SET SAT_NAME = ?, SAT_TLE = ?, SAT_RX_FREQ = ?, SAT_TX_FREQ = ? WHERE SAT_ID = ?', [post], function(err) {
-            if (err) {
+        database.query('UPDATE REMOTE_TRANSCEIVERS SET RMT_NAME = ?,RMT_DESC = ?,RMT_RX_FREQ = ?,RMT_TX_FREQ = ?,RMT_STATUS = ? WHERE RMT_ID = ?', [post], function(err) {
+            if (!err) {
+                database.query('UPDATE SATELLITES SET SAT_TLE = ? WHERE SAT_ID = ?', req.body.tle,req.body.sat_id, function(err) {
+                    if (err) {
+                        log(err.toString(), "error");
+                        res.json({
+                            error: "Database error"
+                        })
+                    } else {
+                        res.json({
+                            status: "Done"
+                        })
+                    }
+                });
+            } else {
                 log(err.toString(), "error");
                 res.json({
                     error: "Database error"
                 })
-            } else {
-                res.json({
-                    status: "Done"
-                })
             }
         });
-    };
+    }
 
     function updateTLE(req, res) {
         req.checkBody('tle', 'TLE is required').notEmpty();
@@ -270,7 +290,7 @@ module.exports = function DashboardDB() {
             ]
         ];
 
-        database.query('UPDATE USERS SET SAT_TLE = ? WHERE SAT_ID = ?', [post], function(err) {
+        database.query('UPDATE SATELLITES SET SAT_TLE = ? WHERE SAT_ID = ?', [post], function(err) {
             if (err) {
                 log(err.toString(), "error");
                 res.json({
@@ -284,10 +304,10 @@ module.exports = function DashboardDB() {
         });
     };
 
-    function delSatellite(req, res) {
-        req.checkBody('sat_id', 'Satellite ID').notEmpty().isInt();
+    function delRemTransceiver(req, res) {
+        req.checkBody('rmt_id', 'Remote Transceiver ID').notEmpty().isInt();
 
-        database.query('DELETE FROM SATELLITES WHERE SAT_ID = ?', req.body.sat_id, function(err) {
+        database.query('DELETE FROM REMOTE_TRANSCEIVERS WHERE RMT_ID = ?', req.body.sat_id, function(err) {
             if (err) {
                 log(err.toString(), "error");
                 res.json({
@@ -430,7 +450,7 @@ module.exports = function DashboardDB() {
         addSatellite: addSatellite,
         modSatellite: modSatellite,
         updateTLE: updateTLE,
-        delSatellite: delSatellite,
+        delRemTransceiver: delRemTransceiver,
         addAntenna: addAntenna,
         modAntenna: modAntenna,
         delAntenna: delAntenna,
