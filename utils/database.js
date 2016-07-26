@@ -131,11 +131,7 @@ module.exports = function DashboardDB() {
                 ]
             ];
 
-<<<<<<< HEAD
             database.query('UPDATE USERS SET USR_NAME = ?, USR_ORGANIZATION = ?, USR_MAIL = ?, USR_TYPE = ? WHERE USR_ID = ?', [post], function(err) {
-=======
-            database.query('UPDATE USERS SET USR_NAME = ?, USER_ORGANIZATION = ?, USER_MAIL = ?, USER_TYPE = ? WHERE USER_ID = ?', [post], function(err) {
->>>>>>> refs/remotes/origin/master
                 if (err) {
                     log(err.toString(), "error");
                     res.json({
@@ -170,11 +166,7 @@ module.exports = function DashboardDB() {
                 ]
             ];
 
-<<<<<<< HEAD
             database.query('UPDATE USERS SET USR_NAME = ?, USR_ORGANIZATION = ?, USR_MAIL = ?, USR_PASSWORD = ?, USR_TYPE = ? WHERE USR_ID = ?', [post], function(err) {
-=======
-            database.query('UPDATE USERS SET USR_NAME = ?, USER_ORGANIZATION = ?, USER_MAIL = ?, USER_PASSWORD = ?, USER_TYPE = ? WHERE USER_ID = ?', [post], function(err) {
->>>>>>> refs/remotes/origin/master
                 if (err) {
                     log(err.toString(), "error");
                     res.json({
