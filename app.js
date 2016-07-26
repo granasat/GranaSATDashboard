@@ -65,7 +65,7 @@ passport.use("login", new LocalStrategy(db.loginConfig, db.login));
 
 
 passport.serializeUser(function(user, done) {
-    return done(null, user.USER_ID);
+    return done(null, user.USR_ID);
 });
 
 passport.deserializeUser(db.deserializeUser);
@@ -83,7 +83,7 @@ app.post('/login', passport.authenticate('login'), function(req, res) {
 
 
 app.get('/logout', function(req, res) {
-    log("Logging out " + req.user.USER_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+    log("Logging out " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
     req.logout();
     res.json({
         status: "Done"
@@ -105,7 +105,7 @@ app.get('/radiostation/freq', function(req, res) {
 });
 
 app.post('/radiostation/freq', isAuthenticated, function(req, res) {
-    log("Moving radio freq: " + req.user.USER_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+    log("Moving radio freq: " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
     radioStation.setFrequency(req.body, function(data) {
         res.json(data);

@@ -42,9 +42,10 @@ module.exports = function DashboardDB() {
         passwordField: 'password',
         passReqToCallback: true,
     }
+
     function login(req, username, password, done) {
         log("Trying to login: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
-        database.query('select * from USERS where USER_NAME = ?', username, function(err, rows) {
+        database.query('select * from USERS where USR_NAME = ?', username, function(err, rows) {
             if (err) {
                 log(err.toString(), "error");
                 return done(null, false);
@@ -52,10 +53,10 @@ module.exports = function DashboardDB() {
             if (rows.length != 0) {
                 var user = rows[0];
                 if (user.USR_BLOCKED == false) {
-                    var hash = hashPassword(password, user.USER_PASSWORD.split(":")[0]);
-                    if (hash == user.USER_PASSWORD.split(":")[1]) {
+                    var hash = hashPassword(password, user.USR_PASSWORD.split(":")[0]);
+                    if (hash == user.USR_PASSWORD.split(":")[1]) {
                         log("Logged " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
-                        database.query('UPDATE USERS SET USR_LAST_VST = NOW() WHERE USER_NAME = ?', username, function(err, rows) {
+                        database.query('UPDATE USERS SET USR_LAST_VST = NOW() WHERE USR_NAME = ?', username, function(err, rows) {
                             if (err) {
                                 log(err.toString(), "error");
                                 return done(null, false);
@@ -66,7 +67,7 @@ module.exports = function DashboardDB() {
                         log("Non valid password for " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
                         return done(null, false);
                     }
-                }else{
+                } else {
                     log("Blocked user: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
                     return done(null, false);
                 }
@@ -97,7 +98,7 @@ module.exports = function DashboardDB() {
             ]
         ];
 
-        database.query('INSERT INTO USERS (USER_NAME,USER_ORGANIZATION,USER_MAIL,USER_PASSWORD,USER_TYPE) VALUES ?', [post], function(err) {
+        database.query('INSERT INTO USERS (USR_NAME,USR_ORGANIZATION,USR_MAIL,USR_PASSWORD,USR_TYPE) VALUES ?', [post], function(err) {
             if (err) {
                 log(err.toString(), "error");
                 res.json({
@@ -110,14 +111,14 @@ module.exports = function DashboardDB() {
             }
         });
     };
-    
+
     function modUser(req, res) {
-        
-        if(req.body.password == null) { //No modify password.
-            
+
+        if (req.body.password == null) { //No modify password.
+
             req.checkBody('username', 'Name is required').notEmpty().isAlpha().len(6, 20);
             req.checkBody('organization', 'Organization is required').notEmpty().isAlpha();
-            req.checkBody('email', 'A valid email is required').notEmpty().isEmail();            
+            req.checkBody('email', 'A valid email is required').notEmpty().isEmail();
             req.checkBody('usertype', 'A valid type is required').notEmpty().isInt();
 
             var post = [
@@ -130,7 +131,7 @@ module.exports = function DashboardDB() {
                 ]
             ];
 
-            database.query('UPDATE USERS SET USER_NAME = ?, USER_ORGANIZATION = ?, USER_MAIL = ?, USER_TYPE = ? WHERE USER_ID = ?', [post], function(err) {
+            database.query('UPDATE USERS SET USR_NAME = ?, USER_ORGANIZATION = ?, USER_MAIL = ?, USER_TYPE = ? WHERE USER_ID = ?', [post], function(err) {
                 if (err) {
                     log(err.toString(), "error");
                     res.json({
@@ -142,9 +143,9 @@ module.exports = function DashboardDB() {
                     })
                 }
             });
-        
+
         } else {
-        
+
             req.checkBody('username', 'Name is required').notEmpty().isAlpha().len(6, 20);
             req.checkBody('organization', 'Organization is required').notEmpty().isAlpha();
             req.checkBody('email', 'A valid email is required').notEmpty().isEmail();
@@ -165,7 +166,7 @@ module.exports = function DashboardDB() {
                 ]
             ];
 
-            database.query('UPDATE USERS SET USER_NAME = ?, USER_ORGANIZATION = ?, USER_MAIL = ?, USER_PASSWORD = ?, USER_TYPE = ? WHERE USER_ID = ?', [post], function(err) {
+            database.query('UPDATE USERS SET USR_NAME = ?, USER_ORGANIZATION = ?, USER_MAIL = ?, USER_PASSWORD = ?, USER_TYPE = ? WHERE USER_ID = ?', [post], function(err) {
                 if (err) {
                     log(err.toString(), "error");
                     res.json({
@@ -179,7 +180,7 @@ module.exports = function DashboardDB() {
             });
         }
     };
-    
+
     function delUser(req, res) {
         req.checkBody('user_id', 'User ID').notEmpty().isInt();
 
@@ -198,12 +199,12 @@ module.exports = function DashboardDB() {
     };
 
     function deserializeUser(id, done) {
-        database.query('select * from USERS where USER_ID = ?', id, function(err, rows) {
+        database.query('select * from USERS where USR_ID = ?', id, function(err, rows) {
             if (rows.length == 0) return done(null, false);
             return done(null, rows[0]);
         });
     }
-    
+
     function addSatellite(req, res) {
         req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
         req.checkBody('tle', 'TLE is required').notEmpty();
@@ -229,8 +230,8 @@ module.exports = function DashboardDB() {
                 })
             }
         });
-    }; 
-    
+    };
+
     function modSatellite(req, res) {
         req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
         req.checkBody('tle', 'TLE is required').notEmpty();
@@ -257,7 +258,7 @@ module.exports = function DashboardDB() {
                 })
             }
         });
-    }; 
+    };
 
     function updateTLE(req, res) {
         req.checkBody('tle', 'TLE is required').notEmpty();
@@ -281,11 +282,11 @@ module.exports = function DashboardDB() {
                 })
             }
         });
-    }; 
-    
+    };
+
     function delSatellite(req, res) {
         req.checkBody('sat_id', 'Satellite ID').notEmpty().isInt();
-    
+
         database.query('DELETE FROM SATELLITES WHERE SAT_ID = ?', req.body.sat_id, function(err) {
             if (err) {
                 log(err.toString(), "error");
@@ -323,12 +324,12 @@ module.exports = function DashboardDB() {
                 })
             }
         });
-    }; 
-    
+    };
+
     function modAntenna(req, res) {
         req.checkBody('antname', 'Antenna name is required').notEmpty().isAlpha();
         req.checkBody('antfreq', 'Antenna frequency is required').notEmpty();
-        
+
         var post = [
             [
                 req.body.antname,
@@ -353,7 +354,7 @@ module.exports = function DashboardDB() {
 
     function delAntenna(req, res) {
         req.checkBody('ant_id', 'Antenna ID').notEmpty().isInt();
-    
+
         database.query('DELETE FROM ANTENNAS WHERE ANT_ID = ?', req.body.ant_id, function(err) {
             if (err) {
                 log(err.toString(), "error");
@@ -392,11 +393,11 @@ module.exports = function DashboardDB() {
             }
         });
     };
-    
+
     function modTransceiver(req, res) {
         req.checkBody('traname', 'Transceiver name is required').notEmpty().isAlpha();
         req.checkBody('traport', 'Transceiver port is required').notEmpty();
-        
+
         var post = [
             [
                 req.body.trasname,
@@ -418,13 +419,13 @@ module.exports = function DashboardDB() {
             }
         });
     };
-    
+
     return {
         loginConfig: loginConfig,
         login: login,
         signup: signup,
         modUser: modUser,
-        deleteUser: deleteUser,
+        delUser: delUser,
         deserializeUser: deserializeUser,
         addSatellite: addSatellite,
         modSatellite: modSatellite,
@@ -434,7 +435,6 @@ module.exports = function DashboardDB() {
         modAntenna: modAntenna,
         delAntenna: delAntenna,
         addTransceiver: addTransceiver,
-        modTransceiver: modTransceiver,
-        delTransceiver: delTransceiver
+        modTransceiver: modTransceiver
     }
 };
