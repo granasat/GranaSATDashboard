@@ -66,12 +66,12 @@ app.directive('granasatTerminal', function($http, $document) {
             },
             "setRotors": function(c) {
                 scope.setRotors({
-                    ele: c[1],
-                    azi: c[2]
+                    azi: c[1],
+                    ele: c[2]
                 }).then(function(res) {
                     var data = res.data
                     if (data.status == "Done") {
-                        con.log("Starting movement as " + scope.user)
+                        con.log("Setting azimuth to " + c[1] + "º and elevation: " + c[2] + "º as " + scope.user)
                     } else if (data.status == "No auth") {
                         con.log("Please, log in.")
                     } else {

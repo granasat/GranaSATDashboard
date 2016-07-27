@@ -3,6 +3,7 @@ app.controller('appController', function($scope, $http) {
     $scope.selectedTab = 2
     $scope.logged = true
     $scope.user = ""
+    $scope.videoShow = false;
 
     $scope.login = function(username, password) {
         return $http({

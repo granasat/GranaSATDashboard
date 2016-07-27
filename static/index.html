@@ -6,7 +6,7 @@
     <link rel="icon" href="images/favicon.ico" />
 
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css" />
-
+    <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css" />
 
     <!-- bower:js -->
     <script src="../bower_components/angular/angular.js"></script>
@@ -22,8 +22,14 @@
     <link rel="stylesheet" href="directives/granaSATterminal/simple-console.css">
 
     <script src="mainController.js"></script>
+
+
     <script src="directives/granaSATterminal/terminalDirective.js"></script>
     <script src="directives/radioKenwoodTS2000/radioKenwoodTS2000.js"></script>
+    <script src="directives/rotorsYaesu/rotorsYaesu.js"></script>
+    <script src="directives/webcamVideo/webcamVideo.js"></script>
+
+
 
 
 </head>
@@ -49,8 +55,9 @@
                     <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a>Management</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">GitHub</a></li>
-                    <li><a href="#">WebPage</a></li>
+                    <li><a ng-click="videoShow=!videoShow"><i class="fa fa-video-camera" aria-hidden="true"></i></a></li>
+                    <li><a href="granasat.github.com">GitHub</a></li>
+                    <li><a href="www.granasat.ugr.es">WebPage</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
                         <ul class="dropdown-menu">
@@ -69,6 +76,10 @@
     <div class="container">
         <granasat-Terminal ng-show="selectedTab == 3"> </granasat-Terminal>
         <radio-kenwoodts2000 ng-show="selectedTab == 2"> </radio-kenwoodts2000>
+        <rotors-yaesu ng-show="selectedTab == 1"> </rotors-yaesu>
+        <webcam-video ng-show="videoShow == true"> </webcam-video>
+
+
     </div>
 
 </body>
