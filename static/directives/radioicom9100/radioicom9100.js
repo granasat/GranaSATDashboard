@@ -1,8 +1,8 @@
-app.directive('radioKenwoodts2000', function($http, $document) {
+app.directive('radioIcom9100', function($http, $document) {
     function link(scope, element, attrs) {
 
         var freqDisplays = {};
-        ["A", "B", "C"].forEach(function(e) {
+        ["A"].forEach(function(e) {
             freqDisplays["VFO" + e] = new SegmentDisplay("VFO" + e);
             var display = freqDisplays["VFO" + e];
             display.pattern = "####: ########### ##";
@@ -22,29 +22,21 @@ app.directive('radioKenwoodts2000', function($http, $document) {
         })
 
         setInterval(function() {
-            if (scope.selectedTab == 2) {
+            if (scope.selectedTab == 2  || scope.selectedTab == 0) {
                 scope.getRadio().then(function(res) {
                     var data = res.data
                     if (!data.error) {
                         freqDisplays["VFOA"].setValue('VF0A: ' + padLeft(data.VFOA, 11, " ") + ' Hz');
-                        freqDisplays["VFOB"].setValue('VF0B: ' + padLeft(data.VFOB, 11, " ") + ' Hz');
-                        freqDisplays["VFOC"].setValue('VF0C: ' + padLeft(data.VFOC, 11, " ") + ' Hz');
                     }
                 });
             }
         }, 1000);
 
-        setInterval(function() {
-            if (scope.selectedTab == 2) {
-                scope.getRotors().then(function(res) {
-                    scope.rotors = res.data
-                });
-            }
-        }, 1000);
+
 
     }
     return {
         link: link,
-        templateUrl: 'directives/radioKenwoodTS2000/radioKenwoodTS2000.html',
+        templateUrl: 'directives/radioicom9100/radioicom9100.html',
     };
 });

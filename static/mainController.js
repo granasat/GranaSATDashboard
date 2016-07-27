@@ -1,7 +1,7 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('appController', function($scope, $http) {
-    $scope.selectedTab = 2
-    $scope.logged = true
+    $scope.selectedTab = 0
+    $scope.logged = false
     $scope.user = ""
     $scope.videoShow = false;
 
@@ -26,7 +26,7 @@ app.controller('appController', function($scope, $http) {
     $scope.getRotors = function(){
         return $http({
             method: 'GET',
-            url: "rotors",
+            url: "rotors/position",
         })
     }
 
@@ -40,7 +40,7 @@ app.controller('appController', function($scope, $http) {
     $scope.setRotors = function(pos){
         return $http({
             method: 'POST',
-            url: "rotors",
+            url: "rotors/position",
             data: pos,
         })
     }

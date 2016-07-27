@@ -16,7 +16,7 @@ exports.Logger = function(msg, type) {
     if (type == "warn") {
         console.log(d.grey + " Warn: ".yellow + msg.yellow.italic);
     } else if (type == "error") {
-        console.log(d.grey + " Error: ".red + msg.red.bold);
+        console.log(d.grey + " Error: ".red + msg.red);
     } else {
         console.log(d.grey + " Info: ".green + msg.green);
     }

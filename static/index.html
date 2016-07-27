@@ -26,6 +26,7 @@
 
     <script src="directives/granaSATterminal/terminalDirective.js"></script>
     <script src="directives/radioKenwoodTS2000/radioKenwoodTS2000.js"></script>
+    <script src="directives/radioicom9100/radioicom9100.js"></script>
     <script src="directives/rotorsYaesu/rotorsYaesu.js"></script>
     <script src="directives/webcamVideo/webcamVideo.js"></script>
 
@@ -74,12 +75,40 @@
     </nav>
 
     <div class="container">
-        <granasat-Terminal ng-show="selectedTab == 3"> </granasat-Terminal>
-        <radio-kenwoodts2000 ng-show="selectedTab == 2"> </radio-kenwoodts2000>
+        <!-- <radio-kenwoodts2000 ng-show="selectedTab == 2"> </radio-kenwoodts2000> -->
         <rotors-yaesu ng-show="selectedTab == 1"> </rotors-yaesu>
-        <webcam-video ng-show="videoShow == true"> </webcam-video>
+        <radio-icom9100 ng-show="selectedTab == 2"> </radio-icom9100>
+        <granasat-Terminal ng-show="selectedTab == 3"> </granasat-Terminal>
+        <webcam-video ng-show="videoShow == true && selectedTab != 0"> </webcam-video>
 
-
+        <div ng-show="selectedTab == 1">
+            <div class='page-header'>
+                <h1>Welcome to GranaSAT Ground Station</h1>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img class="img-responsive" src="images/icom9100.jpg">
+                            </div>
+                            <div class="col-md-6">
+                                <h2>RadioStation <small>ICOM 9100</small></h2>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                Antenna image
+                            </div>
+                            <div class="col-md-6">
+                                <h2>Rotors <small>Yaeso</small></h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <img class="img-responsive" style="-webkit-user-select: none" src="http://granasat.ugr.es:9091/">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </body>

@@ -68,7 +68,7 @@ module.exports = function Kenwood(sAddress) {
 
         setTimeout(function() {
             p.resolve({
-                error: "timeout"
+                error: "Timeout"
             });
         }, 1000);
 
@@ -84,15 +84,15 @@ module.exports = function Kenwood(sAddress) {
         s.write("TC 1;")
 
         if (freq.VFOA) {
-            var VFOA = leftPad(parseInt(freq.VFOA), 11, 0);
+            var VFOA = leftPad(Math.round(freq.VFOA), 11, 0);
             s.write("FA" + VFOA + ";");
         }
         if (freq.VFOB) {
-            var VFOB = leftPad(parseInt(freq.VFOB), 11, 0);
+            var VFOB = leftPad(Math.round(freq.VFOB), 11, 0);
             s.write("FB" + VFOB + ";");
         }
         if (freq.VFOC) {
-            var VFOC = leftPad(parseInt(freq.VFOC), 11, 0);
+            var VFOC = leftPad(Math.round(freq.VFOC), 11, 0);
             s.write("FC" + VFOC + ";");
         }
         s.write("TC 0;");

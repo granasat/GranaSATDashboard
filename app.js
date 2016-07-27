@@ -8,10 +8,11 @@ var cookieParser = require('cookie-parser');
 var expressValidator = require('express-validator');
 var proxy = require('express-http-proxy');
 
-
-
 //Commons
 var path = require('path');
+var sys = require('sys')
+var exec = require('child_process').exec;
+var dateFormat = require('dateformat');
 
 //Log
 var log = require('./utils/logger.js').Logger;
@@ -19,9 +20,12 @@ var log = require('./utils/logger.js').Logger;
 //Config
 var config = require('./config.js').config
 
-//Rotors and transceivers
+//Rotors, transceivers and propagator
 var Yaesu = require('./rotors/yaesu.js');
 var Kenwood = require('./transceivers/kenwoodts2000.js');
+var Icom9100 = require('./transceivers/icom9100.js');
+var Propagator = require('./propagator/propagator.js');
+
 
 //Database stuff
 var db = new require("./utils/database.js")()
@@ -93,8 +97,62 @@ app.get('/logout', function(req, res) {
     })
 });
 
-// Radiostation
-var radioStation = new Kenwood(config.serial_transceiver)
+var rotors = new Yaesu(config.serial_rotors);
+// var radioStation = new Kenwood(config.serial_transceiver_keenwoodts2000)
+var radioStation = new Icom9100(config.serial_transceiver_icom9100)
+var propagator = new Propagator("XW-2D", -3.6095, 37.179640, 672);
+
+propagator.getPasses(new Date(),new Date(new Date().getTime() + (1000*60*60*24*7)))
+
+
+//Propagator
+setTimeout(function() {
+    log("Starting pass")
+    var passName = "pass_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
+    var duration = 10
+    var freq = 145855000
+    var command = "arecord -f cd -d " + duration.toString() + " " + passName + ".wav"
+
+    exec(command, function(error, stdout, stderr) {
+        if (error) {
+            console.log(error)
+        }
+    })
+
+    var passInterval = setInterval(function() {
+        var p = propagator.getStatusNow()
+
+        if (!p.error) {
+            //Move antennas
+            rotors.move(p, function(data) {
+                if (!data.error) {
+                    log("Moving to AZ: " + p.azi + " EL: " + p.ele);
+                }
+            })
+
+            //Set freq
+            radioStation.setFrequency({
+                VFOA: freq * p.dopplerFactor
+            }, function(data) {
+                if (!data.error) {
+                    log("Setting freq to " + freq * p.dopplerFactor + " [" + freq + "]");
+                }
+            })
+        }else {
+            log(p.error,"error")
+        }
+
+
+    }, config.auto_pass_refresh_rate)
+
+
+    setTimeout(function() {
+        clearInterval(passInterval);
+        log("Ending pass")
+    }, duration * 1000 /*Pass duration*/ )
+
+
+}, 0 /*Time to pass start*/ )
 
 
 app.get('/radiostation/freq', function(req, res) {
@@ -115,23 +173,19 @@ app.post('/radiostation/freq', isAuthenticated, function(req, res) {
     })
 });
 
-app.get('/rotors', function(req, res) {
+app.get('/rotors/position', function(req, res) {
     // log("Asking for rotors: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
-    var y = new Yaesu(config.serial_rotors);
-
-    y.getData(function(data) {
+    rotors.getData(function(data) {
         res.json(data);
     })
 
 });
 
-app.post('/rotors', isAuthenticated, function(req, res) {
+app.post('/rotors/position', isAuthenticated, function(req, res) {
     //Set the elevation and azimuth information available on the HTTP request
 
-    var y = new Yaesu(config.serial_rotors);
-
-    y.move(req.body, function(data) {
+    rotors.move(req.body, function(data) {
         res.json(data);
     })
 
