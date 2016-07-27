@@ -124,7 +124,7 @@ setTimeout(function() {
 
         if (!p.error) {
             //Move antennas
-            rotors.move(p, function(data) {
+            rotors.setPosition(p, function(data) {
                 if (!data.error) {
                     log("Moving to AZ: " + p.azi + " EL: " + p.ele);
                 }
@@ -176,7 +176,7 @@ app.post('/radiostation/freq', isAuthenticated, function(req, res) {
 app.get('/rotors/position', function(req, res) {
     // log("Asking for rotors: " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
-    rotors.getData(function(data) {
+    rotors.getPosition(function(data) {
         res.json(data);
     })
 
@@ -185,7 +185,7 @@ app.get('/rotors/position', function(req, res) {
 app.post('/rotors/position', isAuthenticated, function(req, res) {
     //Set the elevation and azimuth information available on the HTTP request
 
-    rotors.move(req.body, function(data) {
+    rotors.setPosition(req.body, function(data) {
         res.json(data);
     })
 

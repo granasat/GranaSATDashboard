@@ -34,7 +34,7 @@ module.exports = function Yaesu(sAddress) {
         }
     }
 
-    function getData(cb) {
+    function getPosition(cb) {
         var p = new Promise.defer();
 
         var f = readPosition(p)
@@ -54,7 +54,7 @@ module.exports = function Yaesu(sAddress) {
         });
     }
 
-    function move(data, cb) {
+    function setPosition(data, cb) {
         if (data.ele < 0) {
             data.ele = 0
         }
@@ -92,8 +92,8 @@ module.exports = function Yaesu(sAddress) {
     }
 
     return {
-        getData: getData,
-        move: move,
+        getPosition: getPosition,
+        setPosition: setPosition,
         stopRotor: stopRotor
     }
 }
