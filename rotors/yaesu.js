@@ -1,6 +1,7 @@
 "use strict"
 var SerialPort = require("serialport");
 var leftPad = require('left-pad');
+var Promise = require('bluebird');
 var log = require('../utils/logger.js').Logger;
 
 
@@ -18,28 +19,39 @@ module.exports = function Yaesu(sAddress) {
         log("Unable to open Yaesu Rotors serial port");
     })
 
-    function getData(cb) {
-        s.write(new Buffer("C2\n", "utf8"), function() {
-            var answer = ""
-            var f = function(data) {
-                answer += data
-                if (answer.substring(answer.length - 2, answer.length) == "\r\n") {
-                    cb({
-                        status: "Done",
-                        azi: parseInt(answer.split('+')[1]),
-                        ele: parseInt(answer.split('+')[2])
-                    })
-                    s.removeListener('data', f);
-                }
-            }
-            setTimeout(function() {
-                s.removeListener('data', f);
-                cb({
-                    error: "Timeout",
+
+    function readPosition(p) {
+        var serialBuffer = new Buffer("");
+        return function(data) {
+            serialBuffer += data
+            if (serialBuffer.substring(serialBuffer.length - 2, serialBuffer.length) == "\r\n") {
+                p.resolve({
+                    status: "Done",
+                    azi: parseInt(serialBuffer.split('+')[1]),
+                    ele: parseInt(serialBuffer.split('+')[2])
                 })
-            }, 1000);
-            s.on("data", f)
-        })
+            }
+        }
+    }
+
+    function getData(cb) {
+        var p = new Promise.defer();
+
+        var f = readPosition(p)
+        s.on('data', f);
+
+        s.write(new Buffer("C2\n", "utf8"))
+
+        setTimeout(function() {
+            p.resolve({
+                error: "Timeout"
+            });
+        }, 1000);
+
+        p.promise.then(function(data) {
+            s.removeListener('data', f);
+            cb(data)
+        });
     }
 
     function move(data, cb) {

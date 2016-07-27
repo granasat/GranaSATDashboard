@@ -54,7 +54,7 @@ module.exports = function Icom9100(sAddress) {
         var f = readFreq(p)
         s.on('data', f);
 
-        s.write(Buffer("FEFE7CE003FD", "hex"))
+        s.write(new Buffer("FEFE7CE003FD", "hex"))
 
         setTimeout(function() {
             p.resolve({

@@ -80,7 +80,7 @@ module.exports = function Kenwood(sAddress) {
 
     function setFrequency(freq, cb) {
 
-        s.write(Buffer("03", "hex"))
+        s.write(new Buffer("03", "hex"))
         s.write("TC 1;")
 
         if (freq.VFOA) {
