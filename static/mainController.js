@@ -4,17 +4,13 @@ app.controller('appController', function($scope, $http, $uibModal) {
     $scope.logged = false
     $scope.user = ""
     $scope.videoShow = false;
+    $scope.mobileEnabled = false;
 
     setInterval(function() {
         $scope.UTCTime = new Date().toUTCString();
         $scope.localTime = new Date().toString();
         if ($scope.satellitePasses) {
             $scope.satellitePasses.forEach(function(e) {
-                e.remainTime = new Date(e.startDate).getTime() - new Date($scope.UTCTime).getTime()
-            })
-        }
-        if ($scope.scheduledPasses) {
-            $scope.scheduledPasses.forEach(function(e) {
                 e.remainTime = new Date(e.startDate).getTime() - new Date($scope.UTCTime).getTime()
             })
         }
@@ -111,6 +107,13 @@ app.controller('appController', function($scope, $http, $uibModal) {
         return $http({
             method: 'GET',
             url: "/satellites/scheduled",
+        })
+    }
+
+    $scope.getSatellites = function() {
+        return $http({
+            method: 'GET',
+            url: "/satellites",
         })
     }
 });

@@ -193,6 +193,12 @@ app.post('/rotors/position', isAuthenticated, function(req, res) {
 });
 var scheduledPasses = []
 
+app.get('/satellites', isAuthenticated, function(req, res) {
+    db.getSatellites(function(satelliteData){
+        res.json(satelliteData)
+    })
+});
+
 app.get('/satellites/scheduled', function(req, res) {
     res.json(scheduledPasses.map(function(e) {
         return e.info
@@ -202,7 +208,7 @@ app.get('/satellites/scheduled', function(req, res) {
 app.get('/satellites/passes', isAuthenticated, function(req, res) {
     var sat = req.query.satellite;
     log("Calculating passes for: " + sat)
-    new Propagator(sat, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt).then(function(p) {
+    new Propagator(sat, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt,db).then(function(p) {
         var now = new Date()
         var nextWeek = new Date(now.getTime() + (1000 * 60 * 60 * 24 * config.propagator_calculator_days));
         res.json(p.getPasses(now, nextWeek))
@@ -213,7 +219,7 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
     var data = req.body;
     var pass = data.pass
     var freq = 137900000
-    var passName = data.satellite.replace(/[^a-zA-Z0-9]/g,"") + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
+    var passName = data.satellite.replace(/[^a-zA-Z0-9]/g, "") + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
 
     log("SCHEDULING pass for: " + data.satellite + " at " + pass.startDate +
         "\n\t Duration: " + pass.duration / 1000 + " s" +

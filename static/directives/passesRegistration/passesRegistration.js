@@ -4,19 +4,26 @@ app.directive('passesRegistration', function($http, $document) {
 
         scope.$watch("logged", function(newValue, oldValue) {
             if (newValue == true) {
-                $http({
-                    method: 'GET',
-                    url: "tle/noaa.txt",
-                }).then(function(res) {
-                    var data = res.data.toString().replace(/(\s)*\r/g, "").split("\n")
-                    data = data.filter(function(e) {
-                        return !(e[0] == "1" || e[0] == "2") && e != ""
-                    })
-                    scope.availableSatellites = data
+                scope.getSatellites().then(function(res){
+                    scope.availableSatellites = res.data
                     scope.satelliteSelected = scope.availableSatellites[0]
-                    scope.$watch("satelliteSelected", function() {})
+                    // scope.$watch("satelliteSelected", function() {})
                     scope.getPasses(scope.satelliteSelected)
-                });
+                })
+
+                // $http({
+                //     method: 'GET',
+                //     url: "tle/noaa.txt",
+                // }).then(function(res) {
+                //     var data = res.data.toString().replace(/(\s)*\r/g, "").split("\n")
+                //     data = data.filter(function(e) {
+                //         return !(e[0] == "1" || e[0] == "2") && e != ""
+                //     })
+                //     scope.availableSatellites = data
+                //     scope.satelliteSelected = scope.availableSatellites[0]
+                //     scope.$watch("satelliteSelected", function() {})
+                //     scope.getPasses(scope.satelliteSelected)
+                // });
             }
         });
 
@@ -27,7 +34,7 @@ app.directive('passesRegistration', function($http, $document) {
                 method: 'GET',
                 url: "satellites/passes",
                 params: {
-                    satellite: scope.satelliteSelected
+                    satellite: scope.satelliteSelected.RMT_NAME
                 }
             }).then(function(res) {
                 scope.satellitePasses = res.data
@@ -42,14 +49,16 @@ app.directive('passesRegistration', function($http, $document) {
                     satellite: scope.satelliteSelected,
                     pass: pass
                 }
-
             }).then(function(res) {
-                console.log(res);
+                // console.log(res);
             });
         }
 
         setInterval(function() {
             scope.getScheduledPasses().then(function(res) {
+                res.data.forEach(function(e) {
+                    e.remainTime = new Date(e.startDate).getTime() - new Date(scope.UTCTime).getTime()
+                })
                 scope.scheduledPasses = res.data
             });
         }, 1000);

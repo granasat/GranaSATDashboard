@@ -259,7 +259,7 @@ module.exports = function DashboardDB() {
 
         database.query('UPDATE REMOTE_TRANSCEIVERS SET RMT_NAME = ?,RMT_DESC = ?,RMT_RX_FREQ = ?,RMT_TX_FREQ = ?,RMT_STATUS = ? WHERE RMT_ID = ?', [post], function(err) {
             if (!err) {
-                database.query('UPDATE SATELLITES SET SAT_TLE = ? WHERE SAT_ID = ?', req.body.tle,req.body.sat_id, function(err) {
+                database.query('UPDATE SATELLITES SET SAT_TLE = ? WHERE SAT_ID = ?', req.body.tle, req.body.sat_id, function(err) {
                     if (err) {
                         log(err.toString(), "error");
                         res.json({
@@ -426,19 +426,20 @@ module.exports = function DashboardDB() {
         });
     };
 
-    function getSatellites() {
-
+    function getSatellites(cb) {
         database.query('SELECT T1.*,T2.SAT_TLE,T2.SAT_TLE_URL FROM REMOTE_TRANSCEIVERS AS T1, SATELLITES AS T2 WHERE RMT_ID = SAT_ID', function(err, rows, fields) {
-                if (err) {
-                    log(err.toString(), "error");
-                    return {
-                            error: "Database error"
-                    };
-
-                }else{
-                  return rows;
+            if (err) {
+                log(err.toString(), "error");
+                cb({
+                    error: "Database error"
                 });
-        };
+
+            } else {
+                cb(rows);
+            };
+        });
+
+    }
 
     function addTransceiver(req, res) {
         req.checkBody('traname', 'Transceiver name is required').notEmpty().isAlpha();
@@ -509,5 +510,5 @@ module.exports = function DashboardDB() {
         getSatellites: getSatellites,
         addTransceiver: addTransceiver,
         modTransceiver: modTransceiver
-    }
-};
+    };
+}

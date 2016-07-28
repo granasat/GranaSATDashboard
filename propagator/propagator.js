@@ -6,7 +6,7 @@ var Promise = require('bluebird');
 var config = require('../config.js').config
 
 
-module.exports = function Propagator(satelliteName, stationLng, stationLat, stationAlt) {
+module.exports = function Propagator(satelliteName, stationLng, stationLat, stationAlt, db) {
     var p = new Promise.defer();
 
     var observerGd = {
@@ -18,6 +18,11 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
     var tle = null;
 
     var getTLE = function(cb) {
+
+        db.getSatellites(function(satelliteData){
+            res.json(satelliteData)
+        })
+
         // cb("1 40907U 15049J   16209.49649285  .00001020  00000-0  60086-4 0  9991\n2 40907  97.4503 215.5702 0013313 255.1280 104.8477 15.13750769 47103")
         // http.get({
         //     host: 'www.celestrak.com',

@@ -12,7 +12,7 @@
     <!-- Some custom styles -->
     <style type="text/css">
         html {
-            position: fixed;
+            position: relative;
             min-height: 100%;
         }
 
@@ -22,7 +22,7 @@
         }
 
         .footer {
-            position: absolute;
+            position: fixed;
             bottom: 0;
             width: 100%;
             /* Set the fixed height of the footer here */
@@ -76,6 +76,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li ng-show="scheduledPasses.length > 0"><a><span class="label label-danger">{{scheduledPasses.length}} {{scheduledPasses.length > 1 ? "passes" : "pass"}}</a></li>
                     <li ng-show="selectedTab != 0"><a ng-click="videoShow=!videoShow"><i class="fa fa-video-camera" aria-hidden="true"></i></a></li>
+                    <li ng-show="logged"><a ng-click="mobileEnabled=!mobileEnabled"><i class="fa fa-compass" aria-hidden="true"></i></a></li>
                     <li><a href="https://github.com/granasat">GitHub</a></li>
                     <li><a href="http://granasat.ugr.es">WebPage</a></li>
                     <li class="dropdown">
@@ -133,7 +134,6 @@
                                     <thead>
                                         <tr>
                                             <th>Start Date</th>
-                                            <th>End Date</th>
                                             <th>Duration</th>
                                             <th>Max Elevation</th>
                                             <th>Remain time</th>
@@ -142,7 +142,6 @@
                                     <tbody>
                                         <tr ng-repeat="pass in scheduledPasses">
                                             <td>{{pass.startDateUTC}}</td>
-                                            <td>{{pass.endDateUTC}}</td>
                                             <td>{{pass.duration/1000}} s</td>
                                             <td>{{pass.maxElevation}}º</td>
                                             <td>{{pass.remainTime | millSecondsToTimeString}}</td>
@@ -188,8 +187,8 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()">Login</button>
-            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+            <button class="btn btn-success" type="button" ng-click="ok()">Login</button>
+            <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>
 
