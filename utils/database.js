@@ -221,7 +221,7 @@ module.exports = function DashboardDB() {
 
         database.query('INSERT INTO REMOTE_TRANSCEIVERS (RMT_NAME,RMT_DESC,RMT_RX_FREQ,RMT_TX_FREQ,RMT_STATUS) VALUES ?', [post], function(err) {
             if (!err) {
-                database.query('INSERT INTO SATELLITES (SAT_ID,SAT_TLE) VALUES (LAST_INSERT_ID(),?)', req.body.tle, function(err) {
+                database.query('INSERT INTO SATELLITES (SAT_ID,SAT_TLE1,SAT_TLE2) VALUES (LAST_INSERT_ID(),?)', req.body.tle1, req.body.tle2, function(err) {
                     if (err) {
                         log(err.toString(), "error");
                         res.json({
@@ -259,7 +259,7 @@ module.exports = function DashboardDB() {
 
         database.query('UPDATE REMOTE_TRANSCEIVERS SET RMT_NAME = ?,RMT_DESC = ?,RMT_RX_FREQ = ?,RMT_TX_FREQ = ?,RMT_STATUS = ? WHERE RMT_ID = ?', [post], function(err) {
             if (!err) {
-                database.query('UPDATE SATELLITES SET SAT_TLE = ? WHERE SAT_ID = ?', req.body.tle, req.body.sat_id, function(err) {
+                database.query('UPDATE SATELLITES SET SAT_TLE1 = ?, SAT_TLE2 = ? WHERE SAT_ID = ?', req.body.tle1, req.body.tle2, req.body.sat_id, function(err) {
                     if (err) {
                         log(err.toString(), "error");
                         res.json({
@@ -444,7 +444,7 @@ module.exports = function DashboardDB() {
     }
 
     function getSatelliteTLE(sat,cb) {
-        database.query('SELECT SAT_TLE FROM SATELLITES WHERE SAT_ID = (SELECT RMT_ID FROM REMOTE_TRANSCEIVERS WHERE RMT_NAME = ?)',sat, function(err, rows, fields) {
+        database.query('SELECT SAT_TLE1, SAT_TLE2 FROM SATELLITES WHERE SAT_ID = (SELECT RMT_ID FROM REMOTE_TRANSCEIVERS WHERE RMT_NAME = ?)',sat, function(err, rows, fields) {
             if (err || rows.length != 1) {
                 log(err, "error");
                 cb({
