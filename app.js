@@ -89,7 +89,7 @@ app.post('/login', passport.authenticate('login'), function(req, res) {
 });
 
 
-app.get('/logout', function(req, res) {
+app.get('/logout', isAuthenticated, function(req, res) {
     log("Logging out " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
     req.logout();
     res.json({
@@ -100,60 +100,6 @@ app.get('/logout', function(req, res) {
 var rotors = new Yaesu(config.serial_rotors);
 // var radioStation = new Kenwood(config.serial_transceiver_keenwoodts2000)
 var radioStation = new Icom9100(config.serial_transceiver_icom9100)
-
-
-//
-// var propagator = new Propagator("XW-2D", config.ground_station_lng, config.ground_station_lat, config.ground_station_alt);
-//
-// //Propagator
-// setTimeout(function() {
-//     log("Starting pass")
-//     var passName = "pass_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
-//     var duration = 10
-//     var freq = 145855000
-//     var command = "arecord -f cd -d " + duration.toString() + " " + passName + ".wav"
-//
-//     exec(command, function(error, stdout, stderr) {
-//         if (error) {
-//             console.log(error)
-//         }
-//     })
-//
-//     var passInterval = setInterval(function() {
-//         var p = propagator.getStatusNow()
-//
-//         if (!p.error) {
-//             //Move antennas
-//             rotors.setPosition(p, function(data) {
-//                 if (!data.error) {
-//                     log("Moving to AZ: " + p.azi + " EL: " + p.ele);
-//                 }
-//             })
-//
-//             //Set freq
-//             radioStation.setFrequency({
-//                 VFOA: freq * p.dopplerFactor
-//             }, function(data) {
-//                 if (!data.error) {
-//                     log("Setting freq to " + freq * p.dopplerFactor + " [" + freq + "]");
-//                 }
-//             })
-//         }else {
-//             log(p.error,"error")
-//         }
-//
-//
-//     }, config.auto_pass_refresh_rate)
-//
-//
-//     setTimeout(function() {
-//         clearInterval(passInterval);
-//         log("Ending pass")
-//     }, duration * 1000 /*Pass duration*/ )
-//
-//
-// }, 0 /*Time to pass start*/ )
-//
 
 app.get('/radiostation/freq', function(req, res) {
 
@@ -191,10 +137,12 @@ app.post('/rotors/position', isAuthenticated, function(req, res) {
     })
 
 });
+
+// SATELLITE STUFF
 var scheduledPasses = []
 
 app.get('/satellites', isAuthenticated, function(req, res) {
-    db.getSatellites(function(satelliteData){
+    db.getSatellites(function(satelliteData) {
         res.json(satelliteData)
     })
 });
@@ -207,35 +155,35 @@ app.get('/satellites/scheduled', function(req, res) {
 
 app.get('/satellites/passes', isAuthenticated, function(req, res) {
     var sat = req.query.satellite;
-    log("Calculating passes for: " + sat)
-    new Propagator(sat, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt,db).then(function(p) {
+    log("Calculating passes for: " + sat + " for next " + config.propagator_calculator_days + " days as " + req.user.USR_NAME)
+    new Propagator(sat, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function(p) {
         var now = new Date()
-        var nextWeek = new Date(now.getTime() + (1000 * 60 * 60 * 24 * config.propagator_calculator_days));
-        res.json(p.getPasses(now, nextWeek))
+        var next = new Date(now.getTime() + (1000 * 60 * 60 * 24 * config.propagator_calculator_days));
+        res.json(p.getPasses(now, next))
     });
 });
 
 app.post('/satellites/passes', isAuthenticated, function(req, res) {
     var data = req.body;
     var pass = data.pass
-    var freq = 137900000
+    var freq = 1371000000
     var passName = data.satellite.replace(/[^a-zA-Z0-9]/g, "") + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
 
-    log("SCHEDULING pass for: " + data.satellite + " at " + pass.startDate +
+    log("SCHEDULING pass for: " + data.satellite +
+        "\n\t Date: " + pass.startDateUTC +
         "\n\t Duration: " + pass.duration / 1000 + " s" +
         "\n\t Frequency: " + freq + " Hz" +
-        "\n\t File: " + passName + ".wav")
+        "\n\t File: " + passName + ".wav");
 
-    new Propagator(data.satellite, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt).then(function(propagator) {
-        scheduledPasses.push({
+    new Propagator(data.satellite, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function(propagator) {
+        var passScheduled = {
             info: pass,
             id: setTimeout(function() {
-                var passName = data.satellite + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
-                log("STARTING pass for: " + data.satellite + " at " + pass.startDate +
+                log("STARTING pass for: " + data.satellite +
+                    "\n\t Date: " + pass.startDateUTC +
                     "\n\t Duration: " + pass.duration / 1000 + " s" +
                     "\n\t Frequency: " + freq + " Hz" +
                     "\n\t File: " + passName + ".wav");
-
 
                 exec("arecord -f cd -d " + (pass.duration / 1000) + " " + passName + ".wav")
 
@@ -267,16 +215,20 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
 
 
                 setTimeout(function() {
-                    clearInterval(passInterval);
-                    log("ENDING pass for: " + data.satellite + " at " + pass.startDate +
+                    clearInterval(passScheduled.id);
+                    log("ENDING pass for: " + data.satellite +
+                        "\n\t Date: " + pass.startDateUTC +
                         "\n\t Duration: " + pass.duration / 1000 + " s" +
                         "\n\t Frequency: " + freq + " Hz" +
                         "\n\t File: " + passName + ".wav");
                 }, pass.duration /*Pass duration*/ )
 
 
-            }, new Date(pass.startDate) - new Date() /*Time to pass start*/ )
-        })
+            }, new Date(pass.startDateUTC) - new Date() /*Time to pass start*/ )
+        }
+
+        //Saving to the list
+        scheduledPasses.push(passScheduled)
     });
 
     res.json({

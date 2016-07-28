@@ -5,7 +5,6 @@ var log = require('../utils/logger.js').Logger;
 var Promise = require('bluebird');
 var config = require('../config.js').config
 
-
 module.exports = function Propagator(satelliteName, stationLng, stationLat, stationAlt, db) {
     var p = new Promise.defer();
 
@@ -15,40 +14,26 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
         height: stationAlt / 1000
     };
 
-    var tle = null;
+    var tle = ["",""];
 
-    var getTLE = function(cb) {
+    var getTLE = function() {
 
-        db.getSatellites(function(satelliteData){
-            res.json(satelliteData)
-        })
+        db.getSatelliteTLE(satelliteName, function(data) {
+            // log("DB answer TLE for: " + satelliteName)
+            console.log(data);
 
-        // cb("1 40907U 15049J   16209.49649285  .00001020  00000-0  60086-4 0  9991\n2 40907  97.4503 215.5702 0013313 255.1280 104.8477 15.13750769 47103")
-        // http.get({
-        //     host: 'www.celestrak.com',
-        //     path: '/NORAD/elements/amateur.txt'
-        // }, function(res) {
-        //     var bodyChunks = [];
-        //     res.on('data', function(chunk) {
-        //         bodyChunks.push(chunk);
-        //     }).on('end', function() {
-        //         var data = bodyChunks.toString().replace(/(\s)*\r/g, "").split("\n")
-        //         var i = data.indexOf(name)
-        //         cb(data[i + 1] + "\n" + data[i + 2]);
-        //     })
-        // })
-        var fs = require("fs")
-        var path = require("path");
-        fs.readFile(__dirname + '/../static/tle/noaa.txt', 'utf8', function(err, d) {
-            var data = d.toString().replace(/(\s)*\r/g, "").split("\n")
-            var i = data.indexOf(satelliteName)
-            tle = data[i + 1] + "\n" + data[i + 2]
-            log("TLE Available for " + satelliteName + ": " + data[i + 1] + " " + data[i + 2])
-            p.resolve({
-                getStatusNow: getStatusNow,
-                getPasses: getPasses,
-                getStatus: getStatus
-            })
+            if (!data.error) {
+                tle[0] = data.SAT_TLE1
+                tle[1] = data.SAT_TLE2
+                console.log(tle);
+                p.resolve({
+                    getStatusNow: getStatusNow,
+                    getPasses: getPasses,
+                    getStatus: getStatus
+                })
+            } else {
+                log("TLE retrievement error", "error")
+            }
         })
     }
 
@@ -58,8 +43,8 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
                 error: "No TLE available",
             }
         } else {
-            var tleLine1 = tle.split("\n")[0],
-                tleLine2 = tle.split("\n")[1];
+            var tleLine1 = tle[0],
+                tleLine2 = tle[1];
 
             var satrec = satellite.twoline2satrec(tleLine1, tleLine2);
 
@@ -72,6 +57,9 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
                 atDate.getUTCMinutes(),
                 atDate.getUTCSeconds()
             );
+
+            console.log("PROPAGATE:");
+            console.log(positionAndVelocity);
 
             var positionEci = positionAndVelocity.position,
                 velocityEci = positionAndVelocity.velocity;
@@ -121,8 +109,6 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
                 passes.push({
                     startDateUTC: new Date(raise).toUTCString(),
                     endDateUTC: new Date(i).toUTCString(),
-                    startDate: new Date(raise).toString(),
-                    endDate: new Date(i).toString(),
                     duration: i - raise,
                     maxElevation: maxElevation.toFixed(2)
                 })

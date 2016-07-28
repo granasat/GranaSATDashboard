@@ -8,27 +8,12 @@ app.directive('passesRegistration', function($http, $document) {
                     scope.availableSatellites = res.data
                     scope.satelliteSelected = scope.availableSatellites[0]
                     // scope.$watch("satelliteSelected", function() {})
-                    scope.getPasses(scope.satelliteSelected)
+                    scope.getPasses()
                 })
-
-                // $http({
-                //     method: 'GET',
-                //     url: "tle/noaa.txt",
-                // }).then(function(res) {
-                //     var data = res.data.toString().replace(/(\s)*\r/g, "").split("\n")
-                //     data = data.filter(function(e) {
-                //         return !(e[0] == "1" || e[0] == "2") && e != ""
-                //     })
-                //     scope.availableSatellites = data
-                //     scope.satelliteSelected = scope.availableSatellites[0]
-                //     scope.$watch("satelliteSelected", function() {})
-                //     scope.getPasses(scope.satelliteSelected)
-                // });
             }
         });
 
-        scope.getPasses = function(satellite) {
-            scope.satelliteSelected = satellite
+        scope.getPasses = function() {
             scope.satellitePasses = []
             $http({
                 method: 'GET',
@@ -46,7 +31,7 @@ app.directive('passesRegistration', function($http, $document) {
                 method: 'POST',
                 url: "satellites/passes",
                 data: {
-                    satellite: scope.satelliteSelected,
+                    satellite: scope.satelliteSelected.RMT_NAME,
                     pass: pass
                 }
             }).then(function(res) {
@@ -57,7 +42,7 @@ app.directive('passesRegistration', function($http, $document) {
         setInterval(function() {
             scope.getScheduledPasses().then(function(res) {
                 res.data.forEach(function(e) {
-                    e.remainTime = new Date(e.startDate).getTime() - new Date(scope.UTCTime).getTime()
+                    e.remainTime = new Date(e.startDateUTC) - new Date()
                 })
                 scope.scheduledPasses = res.data
             });

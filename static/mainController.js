@@ -11,7 +11,7 @@ app.controller('appController', function($scope, $http, $uibModal) {
         $scope.localTime = new Date().toString();
         if ($scope.satellitePasses) {
             $scope.satellitePasses.forEach(function(e) {
-                e.remainTime = new Date(e.startDate).getTime() - new Date($scope.UTCTime).getTime()
+                e.remainTime = new Date(e.startDateUTC).getTime() - new Date($scope.UTCTime).getTime()
             })
         }
     }, 1000)

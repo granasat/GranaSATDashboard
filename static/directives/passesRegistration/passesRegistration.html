@@ -8,7 +8,7 @@
         <h4>Available Satellites</h4>
 
         <ul>
-            <li ng-repeat="s in availableSatellites"><a ng-click="getPasses(s)">{{s.RMT_NAME}}</a></li>
+            <li ng-repeat="s in availableSatellites"><a ng-click="satelliteSelected = s">{{s.RMT_NAME}}</a></li>
         </ul>
     </div>
     <div ng-show="satelliteSelected != ''" class="col-md-10">

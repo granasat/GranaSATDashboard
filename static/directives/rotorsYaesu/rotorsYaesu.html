@@ -1,11 +1,17 @@
-<div class='page-header'>
+<div class='page-header clearfix'>
     <div class="row">
         <div class='col-md-2 hidden-sm hidden-xs'>
             <img class="img-responsive" src="images/yaesu.png">
         </div>
 
         <div class='col-md-10 col-sm-12 col-xs-12'>
-            <h1>Yaesu 5500 <small>Rotors</small></h1>
+
+            <h1>
+                <h1>Yaesu 5500 <small>Rotors</small></h1>
+            <a class="btn btn-default pull-right" ng-click="mobileEnabled=!mobileEnabled">
+                <i class="fa fa-compass"></i>
+            </a>
+            </h1>
 
         </div>
     </div>
@@ -14,4 +20,5 @@
 <div class="page-body">
     Elevation: <b>{{yaesuPosition.ele}}º</b>
     <br> Azimuth: <b>{{yaesuPosition.azi}}º</b>
+
 </div>
