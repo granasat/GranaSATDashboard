@@ -426,6 +426,20 @@ module.exports = function DashboardDB() {
         });
     };
 
+    function getSatellites() {
+
+        database.query('SELECT T1.*,T2.SAT_TLE,T2.SAT_TLE_URL FROM REMOTE_TRANSCEIVERS AS T1, SATELLITES AS T2 WHERE RMT_ID = SAT_ID', function(err, rows, fields) {
+                if (err) {
+                    log(err.toString(), "error");
+                    return {
+                            error: "Database error"
+                    };
+
+                }else{
+                  return rows;
+                });
+        };
+
     function addTransceiver(req, res) {
         req.checkBody('traname', 'Transceiver name is required').notEmpty().isAlpha();
         req.checkBody('traport', 'Transceiver port is required').notEmpty();
@@ -492,6 +506,7 @@ module.exports = function DashboardDB() {
         addAntenna: addAntenna,
         modAntenna: modAntenna,
         delAntenna: delAntenna,
+        getSatellites: getSatellites,
         addTransceiver: addTransceiver,
         modTransceiver: modTransceiver
     }
