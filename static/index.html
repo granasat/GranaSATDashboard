@@ -7,6 +7,29 @@
 
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="directives/granaSATterminal/simple-console.css">
+
+    <!-- Some custom styles -->
+    <style type="text/css">
+        html {
+            position: fixed;
+            min-height: 100%;
+        }
+
+        body {
+            /* Margin bottom by footer height */
+            margin-bottom: 60px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            /* Set the fixed height of the footer here */
+            height: 40px;
+            background-color: #f5f5f5;
+        }
+    </style>
 
     <!-- bower:js -->
     <script src="../bower_components/angular/angular.js"></script>
@@ -16,21 +39,15 @@
     <!-- endbower -->
 
     <script src="../bower_components/SegmentDisplay/segment-display.js"></script>
-
-
     <script src="directives/granaSATterminal/simple-console-nolog.js"></script>
-    <link rel="stylesheet" href="directives/granaSATterminal/simple-console.css">
 
     <script src="mainController.js"></script>
-
-
     <script src="directives/granaSATterminal/terminalDirective.js"></script>
     <script src="directives/radioKenwoodTS2000/radioKenwoodTS2000.js"></script>
     <script src="directives/radioicom9100/radioicom9100.js"></script>
     <script src="directives/rotorsYaesu/rotorsYaesu.js"></script>
     <script src="directives/webcamVideo/webcamVideo.js"></script>
-
-
+    <script src="directives/passesRegistration/passesRegistration.js"></script>
 
 
 </head>
@@ -53,20 +70,22 @@
                     <li ng-click="selectedTab = 1" ng-class="{'active': selectedTab == 1}"><a>Rotors</a></li>
                     <li ng-click="selectedTab = 2" ng-class="{'active': selectedTab == 2}"><a>Antennas</a></li>
                     <li ng-click="selectedTab = 3" ng-class="{'active': selectedTab == 3}"><a>Terminal</a></li>
-                    <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a>Management</a></li>
+                    <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a>Passes</span></a></li>
+                    <li ng-click="selectedTab = 5" ng-class="{'active': selectedTab == 5}"><a>Management</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a ng-click="videoShow=!videoShow"><i class="fa fa-video-camera" aria-hidden="true"></i></a></li>
-                    <li><a href="granasat.github.com">GitHub</a></li>
-                    <li><a href="www.granasat.ugr.es">WebPage</a></li>
+                    <li ng-show="scheduledPasses.length > 0"><a><span class="label label-danger">{{scheduledPasses.length}} {{scheduledPasses.length > 1 ? "passes" : "pass"}}</a></li>
+                    <li ng-show="selectedTab != 0"><a ng-click="videoShow=!videoShow"><i class="fa fa-video-camera" aria-hidden="true"></i></a></li>
+                    <li><a href="https://github.com/granasat">GitHub</a></li>
+                    <li><a href="http://granasat.ugr.es">WebPage</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="#">...</a></li>
                             <li><a href="#">Configuration</a></li>
                             <li role="separator" class="divider"></li>
-                            <li ng-click="logged=true"><a>Login</a></li>
-                            <li ng-click="logged=false"><a>Logout</a></li>
+                            <li ng-click="loginModal()" ng-class="{'disabled': logged}"><a>Login</a></li>
+                            <li ng-click="logout()" ng-class="{'disabled': !logged}"><a>Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -75,31 +94,61 @@
     </nav>
 
     <div class="container">
-        <!-- <radio-kenwoodts2000 ng-show="selectedTab == 2"> </radio-kenwoodts2000> -->
+
         <rotors-yaesu ng-show="selectedTab == 1"> </rotors-yaesu>
+        <!-- <radio-kenwoodts2000 ng-show="selectedTab == 2"> </radio-kenwoodts2000> -->
         <radio-icom9100 ng-show="selectedTab == 2"> </radio-icom9100>
-        <granasat-Terminal ng-show="selectedTab == 3"> </granasat-Terminal>
+        <granasat-terminal ng-show="selectedTab == 3"> </granasat-terminal>
+        <passes-registration ng-show="selectedTab == 4"> </passes-registration>
         <webcam-video ng-show="videoShow == true && selectedTab != 0"> </webcam-video>
 
+        <!-- Main menu -->
         <div ng-show="selectedTab == 0">
             <div class='page-header'>
                 <h1>Welcome to GranaSAT Ground Station</h1>
+            </div>
+            <div class="page-body">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="row">
-                            <div class="col-md-6">
-                                <img class="img-responsive" src="images/icom9100.jpg">
+                            <div class="col-md-4">
+                                <img class="img-responsive" src="images/icom9100.png">
                             </div>
                             <div class="col-md-6">
-                                <h3>RadioStation <small>ICOM 9100</small></h3>
+                                <h3>RadioStation <small>ICOM 9100</small></h3> Main frequency: <b>{{icom9100freq.VFOA/1000000}} MHz</b>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                Antenna image
+                            <div class="col-md-4">
+                                <img class="img-responsive" src="images/yaesu.png">
                             </div>
                             <div class="col-md-6">
-                                <h3>Rotors <small>Yaesu</small></h3>
+                                <h3>Rotors <small>Yaesu</small></h3> Elevation: <b>{{yaesuPosition.ele}}º</b> Azimuth: <b>{{yaesuPosition.azi}}º</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Scheduled passes</h3>
+                                <table class="table table-striped" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Duration</th>
+                                            <th>Max Elevation</th>
+                                            <th>Remain time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="pass in scheduledPasses">
+                                            <td>{{pass.startDateUTC}}</td>
+                                            <td>{{pass.endDateUTC}}</td>
+                                            <td>{{pass.duration/1000}} s</td>
+                                            <td>{{pass.maxElevation}}º</td>
+                                            <td>{{pass.remainTime | millSecondsToTimeString}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -110,6 +159,39 @@
             </div>
         </div>
     </div>
+
+    <footer class="footer">
+        <div class="container row">
+            <div class="col-md-4">
+                <h5><small>UTC time: <b>{{UTCTime}}</b></small></h5>
+            </div>
+            <div class="col-md-4">
+                <h5><small>Local time: <b>{{localTime}}</b></small></h5>
+            </div>
+        </div>
+    </footer>
+
+    <script type="text/ng-template" id="loginModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Login</h3>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input ng-model="username" type="text" class="form-control" id="username" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input ng-model="password" type="password" class="form-control" id="password" placeholder="Password">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">Login</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
 
 </body>
 

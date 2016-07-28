@@ -9,5 +9,11 @@ exports.config = {
     serial_transceiver_icom9100: "/dev/ttyUSB1",
     log_file: "utils/log.txt",
     aprs_log_file: "utils/aprs.txt",
-    auto_pass_refresh_rate: 1000
+    auto_pass_refresh_rate: 1000,
+    ground_station_lat: 37.179640,
+    ground_station_lng: -3.6095,
+    ground_station_alt: 672,
+    propagator_passes_thr: 5,
+    propagator_passes_step: 5,
+    propagator_calculator_days: 3,
 }

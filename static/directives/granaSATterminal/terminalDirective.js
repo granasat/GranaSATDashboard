@@ -133,8 +133,6 @@ app.directive('granasatTerminal', function($http, $document) {
                     var data = res.data
                     if (data.status == "Done") {
                         con.log("Logged out ")
-                        scope.user = "";
-                        scope.logged = false;
                     } else if (data.status == "No auth") {
                         con.log("Please, log in.")
                     } else {

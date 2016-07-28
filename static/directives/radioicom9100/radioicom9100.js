@@ -24,9 +24,9 @@ app.directive('radioIcom9100', function($http, $document) {
         setInterval(function() {
             if (scope.selectedTab == 2  || scope.selectedTab == 0) {
                 scope.getRadio().then(function(res) {
-                    var data = res.data
-                    if (!data.error) {
-                        freqDisplays["VFOA"].setValue('VF0A: ' + padLeft(data.VFOA, 11, " ") + ' Hz');
+                    scope.icom9100freq = res.data
+                    if (!scope.icom9100freq.error) {
+                        freqDisplays["VFOA"].setValue('VF0A: ' + padLeft(scope.icom9100freq.VFOA, 11, " ") + ' Hz');
                     }
                 });
             }
