@@ -304,6 +304,43 @@ module.exports = function DashboardDB() {
         });
     };
 
+    function addStation(req, res) {
+        req.checkBody('estation_name', 'Station name is required').notEmpty().isAlpha();
+        req.checkBody('tle', 'TLE is required').notEmpty();
+
+        var post = [
+            [
+                req.body.satname,
+                req.body.description,
+                req.body.rx_freq,
+                req.body.tx_freq,
+                req.body.status
+            ]
+        ];
+
+        database.query('INSERT INTO REMOTE_TRANSCEIVERS (RMT_NAME,RMT_DESC,RMT_RX_FREQ,RMT_TX_FREQ,RMT_STATUS) VALUES ?', [post], function(err) {
+            if (!err) {
+                database.query('INSERT INTO SATELLITES (SAT_ID,SAT_TLE) VALUES (LAST_INSERT_ID(),?)', req.body.tle, function(err) {
+                    if (err) {
+                        log(err.toString(), "error");
+                        res.json({
+                            error: "Database error"
+                        })
+                    } else {
+                        res.json({
+                            status: "Done"
+                        })
+                    }
+                });
+            } else {
+                log(err.toString(), "error");
+                res.json({
+                    error: "Database error"
+                })
+            }
+        });
+    }
+
     function delRemTransceiver(req, res) {
         req.checkBody('rmt_id', 'Remote Transceiver ID').notEmpty().isInt();
 
@@ -450,6 +487,7 @@ module.exports = function DashboardDB() {
         addSatellite: addSatellite,
         modSatellite: modSatellite,
         updateTLE: updateTLE,
+        addStation: addStation,
         delRemTransceiver: delRemTransceiver,
         addAntenna: addAntenna,
         modAntenna: modAntenna,
