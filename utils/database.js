@@ -441,6 +441,21 @@ module.exports = function DashboardDB() {
 
     }
 
+    function getSatelliteTLE(sat,cb) {
+        database.query('SELECT SAT_TLE FROM SATELLITES WHERE SAT_ID = (SELECT RMT_ID FROM REMOTE_TRANSCEIVERS WHERE RMT_NAME = ?)',sat, function(err, rows, fields) {
+            if (err) {
+                log(err.toString(), "error");
+                cb({
+                    error: "Database error"
+                });
+
+            } else {
+                cb(rows);
+            };
+        });
+
+    }
+
     function addTransceiver(req, res) {
         req.checkBody('traname', 'Transceiver name is required').notEmpty().isAlpha();
         req.checkBody('traport', 'Transceiver port is required').notEmpty();
