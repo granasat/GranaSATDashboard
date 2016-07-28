@@ -444,18 +444,17 @@ module.exports = function DashboardDB() {
     }
 
     function getSatelliteTLE(sat,cb) {
-        database.query('SELECT SAT_TLE1,SAT_TLE2 FROM SATELLITES WHERE SAT_ID = (SELECT RMT_ID FROM REMOTE_TRANSCEIVERS WHERE RMT_NAME = ?)',sat, function(err, rows, fields) {
-            if (err) {
-                log(err.toString(), "error");
+        database.query('SELECT SAT_TLE FROM SATELLITES WHERE SAT_ID = (SELECT RMT_ID FROM REMOTE_TRANSCEIVERS WHERE RMT_NAME = ?)',sat, function(err, rows, fields) {
+            if (err || rows.length != 1) {
+                log(err, "error");
                 cb({
                     error: "Database error"
                 });
 
             } else {
-                cb(rows);
+                cb(rows[0]);
             };
         });
-
     }
 
     function addTransceiver(req, res) {
@@ -526,6 +525,7 @@ module.exports = function DashboardDB() {
         delAntenna: delAntenna,
         getSatellites: getSatellites,
         addTransceiver: addTransceiver,
-        modTransceiver: modTransceiver
+        modTransceiver: modTransceiver,
+        getSatelliteTLE:getSatelliteTLE
     };
 }
