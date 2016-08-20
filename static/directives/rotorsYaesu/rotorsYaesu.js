@@ -3,6 +3,8 @@ app.directive('rotorsYaesu', function($http, $document) {
         var mobileAzi = 0;
         var mobileEle = 0;
 
+        // scope.$watch("UTCTime", function(newValue, oldValue) {})
+
         setInterval(function() {
             if (scope.selectedTab == 4 || scope.selectedTab == 0) {
                 scope.getRotors().then(function(res) {
@@ -20,9 +22,9 @@ app.directive('rotorsYaesu', function($http, $document) {
         }, 1000);
 
         window.addEventListener('deviceorientation', function(event) {
-            var mobileAzi = event.alpha; //azimuth
-            var beta = event.beta; //elevation
-            var gamma = event.gamma;
+            mobileAzi = event.alpha; //azimuth
+            mobileEle = event.beta; //elevation
+            // var gamma = event.gamma;
         });
 
     }

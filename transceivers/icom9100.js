@@ -69,7 +69,21 @@ module.exports = function Icom9100(sAddress) {
     }
 
     function setFrequency(freq, cb) {
+        s.write(Buffer("FEFE7CE000" + freq2cmd(Math.round(freq.VFOA)) + "FD", "hex"), function(err) {
+            if (err) {
+                log("Error writing to ICOM 9100", "error")
+                cb({
+                    error: "Serial Write"
+                });
+            } else {
+                cb({
+                    status: "Done"
+                });
+            }
+        })
+    }
 
+    function setSubChannel(cb) {
         s.write(Buffer("FEFE7CE000" + freq2cmd(Math.round(freq.VFOA)) + "FD", "hex"), function(err) {
             if (err) {
                 log("Error writing to ICOM 9100", "error")

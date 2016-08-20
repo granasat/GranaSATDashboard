@@ -8,7 +8,7 @@
         <h4>Available Satellites</h4>
 
         <ul>
-            <li ng-repeat="s in availableSatellites"><a ng-click="satelliteSelected = s">{{s.RMT_NAME}}</a></li>
+            <li ng-repeat="s in availableSatellites"><a ng-click="getPasses(s)">{{s.RMT_NAME}}</a></li>
         </ul>
     </div>
     <div ng-show="satelliteSelected != ''" class="col-md-10">
@@ -27,9 +27,9 @@
             </thead>
             <tbody>
                 <tr ng-repeat="pass in satellitePasses">
-                    <td>{{pass.startDateUTC}}</td>
-                    <td>{{pass.endDateUTC}}</td>
-                    <td>{{pass.duration/1000}} s</td>
+                    <td>{{ ((localTimeMode) ? (pass.startDateLocal | date:'yyyy-MM-dd HH:mm:ss') : pass.startDateUTC) }}</td>
+                    <td>{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
+                    <td>{{pass.duration | millSecondsToTimeString}}</td>
                     <td>{{pass.maxElevation}}º</td>
                     <td>{{pass.remainTime | millSecondsToTimeString}}</td>
                     <td>
@@ -37,8 +37,14 @@
                             Schedule
                         </button>
                     </td>
-
                 </tr>
+                <tr ng-if="pass.expanded" ng-repeat-end="">
+                    <td colspan="3">{{person.details}}</td>
+                </tr>
+                <!-- <div uib-collapse="pass.collapse">
+                    <div class="well well-lg">Some content</div>
+                </div> -->
+
             </tbody>
         </table>
     </div>

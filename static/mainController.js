@@ -5,15 +5,12 @@ app.controller('appController', function($scope, $http, $uibModal) {
     $scope.user = ""
     $scope.videoShow = false;
     $scope.mobileEnabled = false;
+    $scope.localTimeMode = false;
+
 
     setInterval(function() {
         $scope.UTCTime = new Date().toUTCString();
         $scope.localTime = new Date().toString();
-        if ($scope.satellitePasses) {
-            $scope.satellitePasses.forEach(function(e) {
-                e.remainTime = new Date(e.startDateUTC).getTime() - new Date($scope.UTCTime).getTime()
-            })
-        }
     }, 1000)
 
     $scope.loginModal = function() {

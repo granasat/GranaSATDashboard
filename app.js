@@ -149,7 +149,10 @@ app.get('/satellites', isAuthenticated, function(req, res) {
 
 app.get('/satellites/scheduled', function(req, res) {
     res.json(scheduledPasses.map(function(e) {
-        return e.info
+        return {
+            info: e.info,
+            satellite: e.satellite
+        }
     }))
 });
 
@@ -166,44 +169,47 @@ app.get('/satellites/passes', isAuthenticated, function(req, res) {
 app.post('/satellites/passes', isAuthenticated, function(req, res) {
     var data = req.body;
     var pass = data.pass
-    var freq = 1371000000
-    var passName = data.satellite.replace(/[^a-zA-Z0-9]/g, "") + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
+    var freq = data.satellite.RMT_RX_FREQ
+    var passName = data.satellite.RMT_NAME.replace(/[^a-zA-Z0-9]/g, "") + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
 
-    log("SCHEDULING pass for: " + data.satellite +
+    log("SCHEDULING pass for: " + data.satellite.RMT_NAME +
         "\n\t Date: " + pass.startDateUTC +
         "\n\t Duration: " + pass.duration / 1000 + " s" +
         "\n\t Frequency: " + freq + " Hz" +
         "\n\t File: " + passName + ".wav");
 
-    new Propagator(data.satellite, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function(propagator) {
+    new Propagator(data.satellite.RMT_NAME, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function(propagator) {
         var passScheduled = {
+            satellite: data.satellite.RMT_NAME,
             info: pass,
             id: setTimeout(function() {
-                log("STARTING pass for: " + data.satellite +
+                log("STARTING pass for: " + data.satellite.RMT_NAME +
                     "\n\t Date: " + pass.startDateUTC +
                     "\n\t Duration: " + pass.duration / 1000 + " s" +
                     "\n\t Frequency: " + freq + " Hz" +
                     "\n\t File: " + passName + ".wav");
 
                 exec("arecord -f cd -d " + (pass.duration / 1000) + " " + passName + ".wav")
+                // exec("arecord -f cd -d " + (pass.duration / 1000) + " | sox -t raw -e signed -c 1 -b 16 -r 11025 - " + passName + ".wav")
+
 
                 var passInterval = setInterval(function() {
                     var p = propagator.getStatusNow()
 
                     if (!p.error) {
                         //Move antennas
-                        rotors.setPosition(p, function(data) {
-                            if (!data.error) {
-                                log("DOING pass for: " + data.satellite + ": moving to AZ: " + p.azi + " EL: " + p.ele);
+                        rotors.setPosition(p, function(ans) {
+                            if (!ans.error) {
+                                log("DOING pass for " + data.satellite.RMT_NAME + ": moving to AZ: " + p.azi + " EL: " + p.ele);
                             }
                         })
 
                         //Set freq
                         radioStation.setFrequency({
                             VFOA: freq * p.dopplerFactor
-                        }, function(data) {
-                            if (!data.error) {
-                                log("DOING pass for: " + data.satellite + ": setting freq to " + freq * p.dopplerFactor + " [" + freq + "]");
+                        }, function(ans) {
+                            if (!ans.error) {
+                                log("DOING pass for " + data.satellite.RMT_NAME + ": setting freq to " + freq * p.dopplerFactor + " [" + freq + "]");
                             }
                         })
                     } else {
@@ -215,8 +221,8 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
 
 
                 setTimeout(function() {
-                    clearInterval(passScheduled.id);
-                    log("ENDING pass for: " + data.satellite +
+                    clearInterval(passInterval);
+                    log("ENDING pass for: " + data.satellite.RMT_NAME +
                         "\n\t Date: " + pass.startDateUTC +
                         "\n\t Duration: " + pass.duration / 1000 + " s" +
                         "\n\t Frequency: " + freq + " Hz" +

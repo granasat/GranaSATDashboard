@@ -1,6 +1,9 @@
 app.directive('radioIcom9100', function($http, $document) {
     function link(scope, element, attrs) {
 
+        scope.$watch("UTCTime", function(newValue, oldValue) {})
+
+
         var freqDisplays = {};
         ["A"].forEach(function(e) {
             freqDisplays["VFO" + e] = new SegmentDisplay("VFO" + e);

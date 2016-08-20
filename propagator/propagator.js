@@ -14,18 +14,16 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
         height: stationAlt / 1000
     };
 
-    var tle = ["",""];
+    var tle = ["", ""];
 
     var getTLE = function() {
 
         db.getSatelliteTLE(satelliteName, function(data) {
             // log("DB answer TLE for: " + satelliteName)
-            console.log(data);
 
             if (!data.error) {
                 tle[0] = data.SAT_TLE1
                 tle[1] = data.SAT_TLE2
-                console.log(tle);
                 p.resolve({
                     getStatusNow: getStatusNow,
                     getPasses: getPasses,
@@ -43,8 +41,8 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
                 error: "No TLE available",
             }
         } else {
-            var tleLine1 = tle[0],
-                tleLine2 = tle[1];
+            var tleLine1 = tle[0];
+            var tleLine2 = tle[1];
 
             var satrec = satellite.twoline2satrec(tleLine1, tleLine2);
 
@@ -57,9 +55,6 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
                 atDate.getUTCMinutes(),
                 atDate.getUTCSeconds()
             );
-
-            console.log("PROPAGATE:");
-            console.log(positionAndVelocity);
 
             var positionEci = positionAndVelocity.position,
                 velocityEci = positionAndVelocity.velocity;
@@ -97,6 +92,7 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
         var passes = [];
         var raise = 0;
         var maxElevation = 0;
+        var data = []
 
         for (var i = start.getTime(); i < end.getTime();) {
             var c = getStatus(new Date(i))
@@ -104,13 +100,17 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
                 raise = i;
                 visible = true;
                 maxElevation = 0;
+                data = []
             }
             if (c.ele <= 0 && visible) {
                 passes.push({
                     startDateUTC: new Date(raise).toUTCString(),
                     endDateUTC: new Date(i).toUTCString(),
+                    startDateLocal: new Date(raise).toString(),
+                    endDateLocal: new Date(i).toString(),
                     duration: i - raise,
-                    maxElevation: maxElevation.toFixed(2)
+                    maxElevation: maxElevation.toFixed(2),
+                    data: data
                 })
                 raise = 0;
                 visible = false;
@@ -118,9 +118,12 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
             if (visible && c.ele > maxElevation) {
                 maxElevation = c.ele;
             }
-            if (c.ele > -config.propagator_min_elevation && !visible) {
+            if (visible) {
+                data.push(c)
+            }
+            if (c.ele > -config.propagator_passes_thr && !visible) {
                 i += 1000
-            } else if (c.ele < config.propagator_min_elevation && visible) {
+            } else if (c.ele < config.propagator_passes_thr && visible) {
                 i += 1000
             } else {
                 i += (1000 * 60 * config.propagator_passes_step)

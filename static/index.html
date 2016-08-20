@@ -132,6 +132,7 @@
                                 <table class="table table-striped" style="width:100%">
                                     <thead>
                                         <tr>
+                                            <th>Satellite</th>
                                             <th>Start Date</th>
                                             <th>Duration</th>
                                             <th>Max Elevation</th>
@@ -140,9 +141,10 @@
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="pass in scheduledPasses">
-                                            <td>{{pass.startDateUTC}}</td>
-                                            <td>{{pass.duration/1000}} s</td>
-                                            <td>{{pass.maxElevation}}º</td>
+                                            <td>{{pass.satellite}}</td>
+                                            <td>{{pass.info.startDateUTC}}</td>
+                                            <td>{{pass.info.duration | millSecondsToTimeString}}</td>
+                                            <td>{{pass.info.maxElevation}}º</td>
                                             <td>{{pass.remainTime | millSecondsToTimeString}}</td>
                                         </tr>
                                     </tbody>
@@ -160,6 +162,13 @@
 
     <footer class="footer">
         <div class="container row">
+            <div class="col-md-1">
+                <h5>
+                <button ng-click="localTimeMode=!localTimeMode" type="button" class="btn btn-danger btn-xs">
+                    {{(localTimeMode) ? "Local Time" : "GTM Time"}}
+                </button>
+                </h5>
+            </div>
             <div class="col-md-4">
                 <h5><small>UTC time: <b>{{UTCTime}}</b></small></h5>
             </div>

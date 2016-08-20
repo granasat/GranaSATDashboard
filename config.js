@@ -13,7 +13,7 @@ exports.config = {
     ground_station_lat: 37.179640,
     ground_station_lng: -3.6095,
     ground_station_alt: 672,
-    propagator_passes_thr: 5,
+    propagator_passes_thr: 10,
     propagator_passes_step: 5,
     propagator_calculator_days: 3,
 }
