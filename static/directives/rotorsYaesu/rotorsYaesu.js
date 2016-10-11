@@ -6,7 +6,7 @@ app.directive('rotorsYaesu', function($http, $document) {
         // scope.$watch("UTCTime", function(newValue, oldValue) {})
 
         setInterval(function() {
-            if (scope.selectedTab == 4 || scope.selectedTab == 0) {
+            if (scope.selectedTab == 1 || scope.selectedTab == 0) {
                 scope.getRotors().then(function(res) {
                     scope.yaesuPosition = res.data
                 });
