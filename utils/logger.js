@@ -10,7 +10,9 @@ exports.Logger = function(msg, type) {
     var s = d + " -> " + msg + "\n";
 
     fs.appendFile(config.log_file, s, function (err) {
-      if (err) throw err;
+      if (err){
+          console.log(d.grey + " LOG FILE Error: ".red + err.red);
+      }
     });
 
     if (type == "warn") {
