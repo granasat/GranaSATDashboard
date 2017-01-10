@@ -1,6 +1,5 @@
 "use strict"
 var satellite = require("satellite.js").satellite
-var http = require('http');
 var log = require('../utils/logger.js').Logger;
 var Promise = require('bluebird');
 var config = require('../config.js').config
