@@ -1,0 +1,351 @@
+-- MySQL dump 10.13  Distrib 5.5.53, for debian-linux-gnu (i686)
+--
+-- Host: localhost    Database: dashboard
+-- ------------------------------------------------------
+-- Server version	5.5.53-0ubuntu0.14.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `ANTENNAS`
+--
+
+DROP TABLE IF EXISTS `ANTENNAS`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ANTENNAS` (
+  `ANT_ID` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `ANT_NAME` varchar(45) NOT NULL,
+  `ANT_FREQ` varchar(45) DEFAULT NULL,
+  `ANT_AVAILABLE` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`ANT_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ANTENNAS`
+--
+
+LOCK TABLES `ANTENNAS` WRITE;
+/*!40000 ALTER TABLE `ANTENNAS` DISABLE KEYS */;
+INSERT INTO `ANTENNAS` VALUES (1,'VHF-Torre','145MHz',1);
+/*!40000 ALTER TABLE `ANTENNAS` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ANTENNA_TRANSCEIVER`
+--
+
+DROP TABLE IF EXISTS `ANTENNA_TRANSCEIVER`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ANTENNA_TRANSCEIVER` (
+  `ANT_ID` tinyint(3) unsigned NOT NULL,
+  `TRA_ID` tinyint(3) unsigned NOT NULL,
+  PRIMARY KEY (`ANT_ID`,`TRA_ID`),
+  KEY `TRA_ID` (`TRA_ID`),
+  CONSTRAINT `ANTENNA_TRANSCEIVER_ibfk_1` FOREIGN KEY (`ANT_ID`) REFERENCES `ANTENNAS` (`ANT_ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `ANTENNA_TRANSCEIVER_ibfk_2` FOREIGN KEY (`TRA_ID`) REFERENCES `TRANSCEIVERS` (`TRA_ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ANTENNA_TRANSCEIVER`
+--
+
+LOCK TABLES `ANTENNA_TRANSCEIVER` WRITE;
+/*!40000 ALTER TABLE `ANTENNA_TRANSCEIVER` DISABLE KEYS */;
+INSERT INTO `ANTENNA_TRANSCEIVER` VALUES (1,1);
+/*!40000 ALTER TABLE `ANTENNA_TRANSCEIVER` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `MODES`
+--
+
+DROP TABLE IF EXISTS `MODES`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `MODES` (
+  `MOD_ID` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `TRA_ID` tinyint(3) unsigned NOT NULL,
+  `MOD_DESC` varchar(255) DEFAULT NULL,
+  `MOD_PARAMS` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`MOD_ID`),
+  KEY `TRA_ID` (`TRA_ID`),
+  CONSTRAINT `MODES_ibfk_1` FOREIGN KEY (`TRA_ID`) REFERENCES `TRANSCEIVERS` (`TRA_ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `MODES`
+--
+
+LOCK TABLES `MODES` WRITE;
+/*!40000 ALTER TABLE `MODES` DISABLE KEYS */;
+INSERT INTO `MODES` VALUES (1,1,'NOAA Reception',NULL);
+/*!40000 ALTER TABLE `MODES` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `MSG_RECEIVED`
+--
+
+DROP TABLE IF EXISTS `MSG_RECEIVED`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `MSG_RECEIVED` (
+  `MSG_ID` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `PAS_DATE` datetime NOT NULL,
+  `USR_ID` tinyint(3) unsigned NOT NULL,
+  `RMT_ID` tinyint(3) unsigned NOT NULL,
+  `TRA_ID` tinyint(3) unsigned NOT NULL,
+  `ANT_ID` tinyint(3) unsigned NOT NULL,
+  `MOD_ID` tinyint(3) unsigned NOT NULL,
+  `MSG_FORMAT` varchar(20) DEFAULT NULL,
+  `MSG_CONTENT` varchar(255) DEFAULT NULL,
+  `MSG_TIME` datetime NOT NULL,
+  PRIMARY KEY (`MSG_ID`,`PAS_DATE`,`USR_ID`,`RMT_ID`,`TRA_ID`,`ANT_ID`,`MOD_ID`),
+  KEY `PAS_DATE` (`PAS_DATE`,`USR_ID`,`RMT_ID`,`TRA_ID`,`ANT_ID`,`MOD_ID`),
+  CONSTRAINT `MSG_RECEIVED_ibfk_1` FOREIGN KEY (`PAS_DATE`, `USR_ID`, `RMT_ID`, `TRA_ID`, `ANT_ID`, `MOD_ID`) REFERENCES `RECEPTION_SCHEDULER` (`PAS_DATE`, `USR_ID`, `RMT_ID`, `TRA_ID`, `ANT_ID`, `MOD_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `MSG_RECEIVED`
+--
+
+LOCK TABLES `MSG_RECEIVED` WRITE;
+/*!40000 ALTER TABLE `MSG_RECEIVED` DISABLE KEYS */;
+/*!40000 ALTER TABLE `MSG_RECEIVED` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `RECEPTION_SCHEDULER`
+--
+
+DROP TABLE IF EXISTS `RECEPTION_SCHEDULER`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `RECEPTION_SCHEDULER` (
+  `PAS_DATE` datetime NOT NULL,
+  `USR_ID` tinyint(3) unsigned NOT NULL,
+  `RMT_ID` tinyint(3) unsigned NOT NULL,
+  `TRA_ID` tinyint(3) unsigned NOT NULL,
+  `ANT_ID` tinyint(3) unsigned NOT NULL,
+  `MOD_ID` tinyint(3) unsigned NOT NULL,
+  `DURATION` int(11) DEFAULT NULL,
+  PRIMARY KEY (`PAS_DATE`,`USR_ID`,`RMT_ID`,`TRA_ID`,`ANT_ID`,`MOD_ID`),
+  KEY `USR_ID` (`USR_ID`),
+  KEY `RMT_ID` (`RMT_ID`),
+  KEY `TRA_ID` (`TRA_ID`,`ANT_ID`),
+  KEY `MOD_ID` (`MOD_ID`),
+  CONSTRAINT `RECEPTION_SCHEDULER_ibfk_1` FOREIGN KEY (`USR_ID`) REFERENCES `USERS` (`USR_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `RECEPTION_SCHEDULER_ibfk_2` FOREIGN KEY (`RMT_ID`) REFERENCES `REMOTE_TRANSCEIVERS` (`RMT_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `RECEPTION_SCHEDULER_ibfk_3` FOREIGN KEY (`TRA_ID`, `ANT_ID`) REFERENCES `ANTENNA_TRANSCEIVER` (`TRA_ID`, `ANT_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `RECEPTION_SCHEDULER_ibfk_4` FOREIGN KEY (`MOD_ID`) REFERENCES `MODES` (`MOD_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `RECEPTION_SCHEDULER`
+--
+
+LOCK TABLES `RECEPTION_SCHEDULER` WRITE;
+/*!40000 ALTER TABLE `RECEPTION_SCHEDULER` DISABLE KEYS */;
+/*!40000 ALTER TABLE `RECEPTION_SCHEDULER` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `REMOTE_TRANSCEIVERS`
+--
+
+DROP TABLE IF EXISTS `REMOTE_TRANSCEIVERS`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `REMOTE_TRANSCEIVERS` (
+  `RMT_ID` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `RMT_NAME` varchar(45) NOT NULL,
+  `RMT_DESC` varchar(255) DEFAULT NULL,
+  `RMT_RX_FREQ` float DEFAULT NULL,
+  `RMT_TX_FREQ` float DEFAULT NULL,
+  `RMT_STATUS` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`RMT_ID`),
+  UNIQUE KEY `RMT_NAME` (`RMT_NAME`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `REMOTE_TRANSCEIVERS`
+--
+
+LOCK TABLES `REMOTE_TRANSCEIVERS` WRITE;
+/*!40000 ALTER TABLE `REMOTE_TRANSCEIVERS` DISABLE KEYS */;
+INSERT INTO `REMOTE_TRANSCEIVERS` VALUES (1,'NOAA 19','Weather Satellite',137100000,NULL,'Active'),(2,'NOAA 18','Weather Satellite',137912000,NULL,'Active'),(3,'NOAA 15','Weather Satellite',137620000,NULL,'Active'),(4,'METEOR-M 2','Weather Satellite',137900000,NULL,'Active'),(5,'ISS (ZARYA)','International Space Station',145825000,145825000,'Active'),(6,'E-ST@R-II','CubeSat',437485000,NULL,'Active'),(7,'OUFTI-1','CubeSat',145950000,435045000,'Active'),(8,'FUNCUBE-1 (AO-73)','CubeSat',145935000,435150000,'Active'),(9,'UKUBE-1','CubeSat',145840000,435080000,'Active'),(10,'AO-85','FOX-1A CubeSat',145980000,435170000,'Active');
+/*!40000 ALTER TABLE `REMOTE_TRANSCEIVERS` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `SATELLITES`
+--
+
+DROP TABLE IF EXISTS `SATELLITES`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `SATELLITES` (
+  `SAT_ID` tinyint(3) unsigned NOT NULL,
+  `SAT_TLE1` varchar(80) NOT NULL,
+  `SAT_TLE2` varchar(80) NOT NULL,
+  `SAT_TLE_URL` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`SAT_ID`),
+  CONSTRAINT `SATELLITES_ibfk_1` FOREIGN KEY (`SAT_ID`) REFERENCES `REMOTE_TRANSCEIVERS` (`RMT_ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `SATELLITES`
+--
+
+LOCK TABLES `SATELLITES` WRITE;
+/*!40000 ALTER TABLE `SATELLITES` DISABLE KEYS */;
+INSERT INTO `SATELLITES` VALUES (1,'1 33591U 09005A   17009.55956391  .00000080  00000-0  68477-4 0  9999','2 33591  99.0706 334.3254 0014127   2.4829 357.6410 14.12143093408262','https://celestrak.com/NORAD/elements/weather.txt'),(2,'1 28654U 05018A   17009.57644654 -.00000004  00000-0  22992-4 0  9990','2 28654  99.1926  27.8317 0014758 153.6176 206.5749 14.12321200599872','https://celestrak.com/NORAD/elements/weather.txt'),(3,'1 25338U 98030A   17009.54590061  .00000034  00000-0  33097-4 0  9991','2 25338  98.7842  20.1224 0009840 311.2504  48.7827 14.25772488970391','https://celestrak.com/NORAD/elements/weather.txt'),(4,'1 40069U 14037A   16210.11129877 -.00000002  00000-0  19316-4 0  9997','2 40069  98.7031 264.7243 0006708  71.6592 288.5324 14.20632908106541','https://celestrak.com/NORAD/elements/weather.txt'),(5,'1 25544U 98067A   16210.16613731  .00001069  00000-0  22802-4 0  9992','2 25544  51.6438 213.5659 0002163  84.3385  15.6013 15.54888572 11363','https://celestrak.com/NORAD/elements/amateur.txt'),(6,'1 41459U 16025D   16209.27644374  .00000958  00000-0  58847-4 0  9990','2 41459  98.2069 222.0664 0174845 293.8733  64.4252 15.01275695 13799','https://celestrak.com/NORAD/elements/amateur.txt'),(7,'1 41458U 16025C   16209.54287131  .00001035  00000-0  63016-4 0  9994','2 41458  98.2064 222.3490 0175235 293.0673  65.2157 15.01302303 13837','https://celestrak.com/NORAD/elements/amateur.txt'),(8,'1 39444U 13066AE  16209.69629138  .00000296  00000-0  43770-4 0  9994','2 39444  97.6777 261.4862 0057435 247.8644 111.6466 14.81111878143572','https://celestrak.com/NORAD/elements/amateur.txt'),(9,'1 40074U 14037F   16210.16334853  .00000469  00000-0  64710-4 0  9994','2 40074  98.3368 304.9614 0005247  31.9625 328.1908 14.83127699111144','https://celestrak.com/NORAD/elements/cubesat.txt'),(10,'1 40967U 15058D   16202.34389925  .00000299  00000-0  50754-4 0 01930','2 40967 064.7754 145.2911 0200345 194.9387 164.5739 14.75065226028169','http://www.amsat.org/amsat/ftp/keps/current/nasabare.txt');
+/*!40000 ALTER TABLE `SATELLITES` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `SONDES`
+--
+
+DROP TABLE IF EXISTS `SONDES`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `SONDES` (
+  `SND_ID` tinyint(3) unsigned NOT NULL,
+  `SND_NAME` varchar(10) NOT NULL,
+  `SND_TYPE` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`SND_ID`),
+  UNIQUE KEY `SND_NAME` (`SND_NAME`),
+  CONSTRAINT `SONDES_ibfk_1` FOREIGN KEY (`SND_ID`) REFERENCES `REMOTE_TRANSCEIVERS` (`RMT_ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `SONDES`
+--
+
+LOCK TABLES `SONDES` WRITE;
+/*!40000 ALTER TABLE `SONDES` DISABLE KEYS */;
+/*!40000 ALTER TABLE `SONDES` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `STATIONS`
+--
+
+DROP TABLE IF EXISTS `STATIONS`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `STATIONS` (
+  `STA_ID` tinyint(3) unsigned NOT NULL,
+  `STA_CALLSIGN` varchar(10) NOT NULL,
+  PRIMARY KEY (`STA_ID`),
+  UNIQUE KEY `STA_CALLSIGN` (`STA_CALLSIGN`),
+  CONSTRAINT `STATIONS_ibfk_1` FOREIGN KEY (`STA_ID`) REFERENCES `REMOTE_TRANSCEIVERS` (`RMT_ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `STATIONS`
+--
+
+LOCK TABLES `STATIONS` WRITE;
+/*!40000 ALTER TABLE `STATIONS` DISABLE KEYS */;
+/*!40000 ALTER TABLE `STATIONS` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `TRANSCEIVERS`
+--
+
+DROP TABLE IF EXISTS `TRANSCEIVERS`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `TRANSCEIVERS` (
+  `TRA_ID` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `TRA_NAME` varchar(45) NOT NULL,
+  `TRA_PORT` varchar(20) DEFAULT NULL,
+  `TRA_DEF_PARAMS` varchar(255) DEFAULT NULL,
+  `TRA_AVAILABLE` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`TRA_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `TRANSCEIVERS`
+--
+
+LOCK TABLES `TRANSCEIVERS` WRITE;
+/*!40000 ALTER TABLE `TRANSCEIVERS` DISABLE KEYS */;
+INSERT INTO `TRANSCEIVERS` VALUES (1,'Kenwood TS2000','/dev/ttyS0',NULL,1);
+/*!40000 ALTER TABLE `TRANSCEIVERS` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `USERS`
+--
+
+DROP TABLE IF EXISTS `USERS`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `USERS` (
+  `USR_ID` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `USR_NAME` varchar(50) NOT NULL,
+  `USR_ORGANIZATION` varchar(100) DEFAULT NULL,
+  `USR_MAIL` varchar(45) NOT NULL,
+  `USR_PASSWORD` varchar(255) NOT NULL,
+  `USR_TYPE` int(10) unsigned NOT NULL,
+  `USR_LAST_VST` datetime DEFAULT NULL,
+  `USR_BLOCKED` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`USR_ID`),
+  UNIQUE KEY `USR_NAME` (`USR_NAME`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `USERS`
+--
+
+LOCK TABLES `USERS` WRITE;
+/*!40000 ALTER TABLE `USERS` DISABLE KEYS */;
+INSERT INTO `USERS` VALUES (1,'pablogs9','GranaSAT','pablogs9@gmail.com','FZtrALDLw0j3DqoNstOyUC8Hq0lzOT:561a1ce41fe5d35e8eb1ad08172c34b427903e8e5a14b80d78815465a46247e4',1,'2017-01-13 17:27:45',0);
+/*!40000 ALTER TABLE `USERS` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping events for database 'dashboard'
+--
+
+--
+-- Dumping routines for database 'dashboard'
+--
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2017-01-13 19:03:35
+Scheduled backup for database left disabled.<p>

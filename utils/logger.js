@@ -11,7 +11,7 @@ exports.Logger = function(msg, type) {
 
     fs.appendFile(config.log_file, s, function (err) {
       if (err){
-          console.log(d.grey + " LOG FILE Error: ".red + err.red);
+          console.log(d.grey + " Log file Error: ".red + err.red);
       }
     });
 
