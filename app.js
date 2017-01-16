@@ -29,7 +29,7 @@ var Propagator = require('./propagator/propagator.js');
 
 
 //Database stuff
-var db = new require("./utils/database.js")()
+var db = new require("./utils/test_database.js")()
 
 //Auth stuff
 var passport = require('passport');
@@ -81,7 +81,7 @@ passport.deserializeUser(db.deserializeUser);
 
 // ROUTES, GET AND POST ////////////////////////////////////////////////
 
-app.post('/signup', isAuthenticated, db.signup);
+// app.post('/signup', isAuthenticated, db.signup);
 
 app.post('/login', passport.authenticate('login'), function(req, res) {
     res.json({
@@ -98,6 +98,15 @@ app.get('/logout', isAuthenticated, function(req, res) {
     })
 });
 
+app.get('/groundstation', function(req, res) {
+    res.json({
+        name: config.ground_name,
+        lat: config.ground_station_lat,
+        lng: config.ground_station_lng,
+        alt: config.ground_station_alt,
+    })
+});
+
 var rotors = new Yaesu(config.serial_rotors);
 // var radioStation = new Kenwood(config.serial_transceiver_keenwoodts2000)
 var radioStation = new Icom9100(config.serial_transceiver_icom9100)
@@ -109,7 +118,6 @@ app.get('/radiostation/freq', function(req, res) {
     radioStation.getFrequency(function(freq) {
         res.json(freq);
     })
-
 });
 
 app.post('/radiostation/freq', isAuthenticated, function(req, res) {
@@ -241,7 +249,7 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
 
                 setTimeout(function() {
                     clearInterval(passInterval);
-                    
+
                     log("ENDING pass for: " + data.satellite.RMT_NAME +
                         "\n\t Date: " + pass.startDateUTC +
                         "\n\t Duration: " + pass.duration / 1000 + " s" +
