@@ -20,6 +20,7 @@
     "bootstrap": "^3.3.6",
     "angular-bootstrap": "^2.0.0",
     "SegmentDisplay": "http://www.3quarks.com/downloads/SegmentDisplay.zip",
-    "font-awesome": "^4.6.3"
+    "font-awesome": "^4.6.3",
+    "suncalc": "^1.8.0"
   }
 }
