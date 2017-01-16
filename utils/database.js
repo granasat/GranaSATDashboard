@@ -39,7 +39,10 @@ database.connect(function(err) {
         log('Error connecting to database','error');
 
         // SQLite3 Development Database version
-        
+        var sqlite3 = require('sqlite3').verbose();
+        var db = new sqlite3.Database(__dirname + "/test_dataBase.db");
+
+
     }else {
         // MySQL Production Database
         module.exports = function DashboardDB() {
