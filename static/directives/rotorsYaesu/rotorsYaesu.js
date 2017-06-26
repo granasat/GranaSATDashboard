@@ -3,6 +3,14 @@ app.directive('rotorsYaesu', function($http, $document) {
         var mobileAzi = 0;
         var mobileEle = 0;
 
+        scope.goToOrigin = function() {
+            alert("Moviendo hacia el origen de cordenadas");
+            scope.setRotors({
+                ele: 90,
+                azi: 0
+            })
+        }
+
         // scope.$watch("UTCTime", function(newValue, oldValue) {})
 
         setInterval(function() {
@@ -11,14 +19,17 @@ app.directive('rotorsYaesu', function($http, $document) {
                     scope.yaesuPosition = res.data
                 });
             }
-            if (scope.mobileEnabled) {
-                if (scope.mobileEnabled) {
-                    scope.setRotors({
-                        azi: mobileAzi,
-                        ele: mobileEle
-                    });
-                }
-            }
+            // if (scope.mobileEnabled){
+            //
+            //
+            //
+            //     if (scope.mobileEnabled) {
+            //         scope.setRotors({
+            //             azi: mobileAzi,
+            //             ele: mobileEle
+            //         });
+            //     }
+            // }
         }, 1000);
 
         window.addEventListener('deviceorientation', function(event) {

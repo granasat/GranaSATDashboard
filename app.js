@@ -29,7 +29,9 @@ var Propagator = require('./propagator/propagator.js');
 
 
 //Database stuff
-var db = new require("./utils/test_database.js")()
+// var db = new require("./utils/test_database.js")()
+var db = new require("./utils/database.js")()
+
 
 //Auth stuff
 var passport = require('passport');
