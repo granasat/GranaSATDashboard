@@ -8,7 +8,9 @@ app.controller('appController', function($scope, $http, $uibModal) {
     $scope.localTimeMode = false;
 
 
-    setInterval(function() {
+    setInterval(function() {  $scope.callToAddToProductList = function(currObj){
+        productService.addProduct(currObj);
+    };
         $scope.UTCTime = new Date().toUTCString();
         $scope.localTime = new Date().toString();
     }, 1000)
@@ -36,6 +38,8 @@ app.controller('appController', function($scope, $http, $uibModal) {
             })
         });
     }
+
+
 
     $scope.login = function(username, password) {
         return $http({
@@ -84,12 +88,45 @@ app.controller('appController', function($scope, $http, $uibModal) {
         })
     }
 
+    $scope.setPositionModal = function() {
+        var setPositionModalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'setPositionModal.html',
+            controller: 'setPositionModelController as c',
+            size: "sm",
+            resolve: {
+                items: function() {
+                    return $scope.items;
+                }
+            }
+        });
+
+        setPositionModalInstance.result.then(function(data) {
+            $scope.move({ele: data.azimuth, azi :data.elevation});
+        });
+    }
+
+    /**
+    *   Send the pos to node
+    * @param {Object} pos - Where you want to rotate the antennas.
+    * @param {number} pos.ele - Elevation.
+    * @param {number} pos.azi - Azimuth.
+    */
+    $scope.move = function(pos){
+        console.log(pos);
+        return $http({
+            method: 'POST',
+            url: "rotors/position",
+            data: pos,
+        });
+    }
+
     $scope.setRadio = function(freq) {
         return $http({
             method: 'POST',
             url: "radiostation/freq",
             data: freq,
-        })
+        });
     }
 
     $scope.signup = function(user) {
@@ -127,6 +164,24 @@ app.controller('loginModelController', function($scope, $uibModalInstance, items
     $scope.cancel = function() {
         $uibModalInstance.dismiss('cancel');
     };
+
+});
+
+
+app.controller('setPositionModelController', function($scope, $uibModalInstance, items) {
+
+    $scope.move = function(){
+        $uibModalInstance.close({
+            azimuth: $scope.azimuth,
+            elevation: $scope.elevation
+        });
+    };
+
+    $scope.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
+    };
+
+
 });
 
 app.filter('millSecondsToTimeString', function() {
