@@ -4,7 +4,10 @@ var leftPad = require('left-pad');
 var Promise = require('bluebird');
 var log = require('../utils/logger.js').Logger;
 
-
+/**
+  * Yaesu antenna rotator system
+  * @param {string} sAddress - Port where is connected Yaesu.
+  */
 module.exports = function Yaesu(sAddress) {
     var s = new SerialPort(sAddress);
 
