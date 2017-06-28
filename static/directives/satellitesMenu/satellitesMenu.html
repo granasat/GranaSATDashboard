@@ -18,20 +18,16 @@
             </tr>
             </thead>
             <tbody>
-            <!--
-            <tr ng-repeat="pass in satellitePasses">
-                <td>{{ ((localTimeMode) ? (pass.startDateLocal | date:'yyyy-MM-dd HH:mm:ss') : pass.startDateUTC) }}</td>
-                <td>{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
-                <td>{{pass.duration | millSecondsToTimeString}}</td>
-                <td>{{pass.maxElevation}}º</td>
-                <td>{{pass.remainTime | millSecondsToTimeString}}</td>
-                <td>
-                    <button ng-click="setPass(pass)" type="button" class="btn btn-success btn-xs">
-                        Schedule
-                    </button>
-                </td>
+            <tr ng-repeat="sat in availableSatellites">
+                <td>{{sat.RMT_NAME}}</td>
+                <td>{{sat.RMT_DESC}}</td>
+                <td>{{sat.RMT_RX_FREQ}}</td>
+                <td>{{sat.RMT_TX_FREQ}}</td>
+                <td>{{sat.RMT_STATUS}}</td>
+                <td>{{sat.SAT_TLE1}}</td>
+                <td>{{sat.SAT_TLE2}}</td>
+                <td>{{sat.SAT_TLE_URL}}</td>
             </tr>
-            -->
             </tbody>
         </table>
     </div>
