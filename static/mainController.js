@@ -8,12 +8,10 @@ app.controller('appController', function($scope, $http, $uibModal) {
     $scope.localTimeMode = false;
 
 
-    setInterval(function() {  $scope.callToAddToProductList = function(currObj){
-        productService.addProduct(currObj);
-    };
+    setInterval(function() {
         $scope.UTCTime = new Date().toUTCString();
         $scope.localTime = new Date().toString();
-    }, 1000)
+    }, 1000);
 
     $scope.loginModal = function() {
         var loginModalInstance = $uibModal.open({
@@ -35,9 +33,9 @@ app.controller('appController', function($scope, $http, $uibModal) {
                 }
             }, function(err) {
                 console.log(err);
-            })
+            });
         });
-    }
+    };
 
 
 
@@ -49,44 +47,51 @@ app.controller('appController', function($scope, $http, $uibModal) {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
-        })
-    }
+        });
+    };
 
     $scope.logout = function() {
         return $http({
             method: 'GET',
-            url: "logout",
+            url: "logout"
         }).then(function(res) {
-            var data = res.data
+            var data = res.data;
             if (data.status == "Done") {
                 $scope.user = "";
                 $scope.logged = false;
                 $scope.selectedTab = 0;
             }
         });
-    }
+    };
 
     $scope.getRotors = function() {
         return $http({
             method: 'GET',
-            url: "rotors/position",
-        })
-    }
+            url: "rotors/position"
+        });
+    };
 
     $scope.getRadio = function() {
         return $http({
             method: 'GET',
-            url: "radiostation/freq",
-        })
-    }
+            url: "radiostation/freq"
+        });
+    };
 
+    /**
+     *   Send to server the position to move the rotors
+     * @param {Object} pos - Where you want to rotate the antennas.
+     * @param {number} pos.ele - Elevation.
+     * @param {number} pos.azi - Azimuth.
+     */
     $scope.setRotors = function(pos) {
+        console.log(pos);
         return $http({
             method: 'POST',
             url: "rotors/position",
-            data: pos,
-        })
-    }
+            data: pos
+        });
+    };
 
     $scope.setPositionModal = function() {
         var setPositionModalInstance = $uibModal.open({
@@ -102,54 +107,39 @@ app.controller('appController', function($scope, $http, $uibModal) {
         });
 
         setPositionModalInstance.result.then(function(data) {
-            $scope.move({ele: data.azimuth, azi :data.elevation});
+            $scope.setRotors({ele: data.azimuth, azi :data.elevation});
         });
-    }
-
-    /**
-    *   Send the pos to node
-    * @param {Object} pos - Where you want to rotate the antennas.
-    * @param {number} pos.ele - Elevation.
-    * @param {number} pos.azi - Azimuth.
-    */
-    $scope.move = function(pos){
-        console.log(pos);
-        return $http({
-            method: 'POST',
-            url: "rotors/position",
-            data: pos,
-        });
-    }
+    };
 
     $scope.setRadio = function(freq) {
         return $http({
             method: 'POST',
             url: "radiostation/freq",
-            data: freq,
+            data: freq
         });
-    }
+    };
 
     $scope.signup = function(user) {
         return $http({
             method: 'POST',
             url: "signup",
-            data: user,
-        })
-    }
+            data: user
+        });
+    };
 
     $scope.getScheduledPasses = function() {
         return $http({
             method: 'GET',
-            url: "/satellites/scheduled",
-        })
-    }
+            url: "/satellites/scheduled"
+        });
+    };
 
     $scope.getSatellites = function() {
         return $http({
             method: 'GET',
-            url: "/satellites",
-        })
-    }
+            url: "/satellites"
+        });
+    };
 });
 
 app.controller('loginModelController', function($scope, $uibModalInstance, items) {
@@ -186,14 +176,14 @@ app.controller('setPositionModelController', function($scope, $uibModalInstance,
 
 app.filter('millSecondsToTimeString', function() {
   return function(millseconds) {
-    var days = Math.floor(millseconds/(1000*60*60*24))
-    millseconds -= days*(1000*60*60*24)
+    var days = Math.floor(millseconds/(1000*60*60*24));
+    millseconds -= days*(1000*60*60*24);
 
-    var hours = Math.floor(millseconds/(1000*60*60))
-    millseconds -= hours*(1000*60*60)
+    var hours = Math.floor(millseconds/(1000*60*60));
+    millseconds -= hours*(1000*60*60);
 
-    var minutes = Math.floor(millseconds/(1000*60))
-    millseconds -= minutes*(1000*60)
+    var minutes = Math.floor(millseconds/(1000*60));
+    millseconds -= minutes*(1000*60);
 
     var seconds = Math.floor(millseconds / 1000);
 
