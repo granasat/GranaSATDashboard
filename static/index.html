@@ -50,6 +50,7 @@
     <script src="directives/rotorsYaesu/rotorsYaesu.js"></script>
     <script src="directives/webcamVideo/webcamVideo.js"></script>
     <script src="directives/passesRegistration/passesRegistration.js"></script>
+    <script src="directives/satellitesMenu/satellitesMenu.js"></script>
 
 
 </head>
@@ -74,6 +75,7 @@
                     <li ng-click="selectedTab = 3" ng-class="{'active': selectedTab == 3}"><a>Terminal</a></li>
                     <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a>Passes</span></a></li>
                     <li ng-click="selectedTab = 5" ng-class="{'active': selectedTab == 5}"><a>Management</a></li>
+                    <li ng-click="selectedTab = 6" ng-class="{'active': selectedTab == 6}"><a>Satellites</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li ng-show="scheduledPasses.length > 0"><a><span class="label label-danger">{{scheduledPasses.length}} {{scheduledPasses.length > 1 ? "passes" : "pass"}}</a></li>
@@ -102,6 +104,7 @@
         <radio-icom9100 ng-show="selectedTab == 2"> </radio-icom9100>
         <granasat-terminal ng-show="selectedTab == 3"> </granasat-terminal>
         <passes-registration ng-show="selectedTab == 4"> </passes-registration>
+        <satellites-menu ng-show="selectedTab == 6"> </satellites-menu>
         <webcam-video ng-show="videoShow == true && selectedTab != 0"> </webcam-video>
 
         <!-- Main menu -->
