@@ -1,5 +1,5 @@
 <div class='page-header'>
-    <h1>Satellites</h1>
+    <h1>Satellites<button ng-click="addSatModal()" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></h1>
 </div>
 
 <div class="page-body">
@@ -46,3 +46,52 @@
         </table>
     </div>
 </div>
+
+
+<script type="text/ng-template" id="addSatModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Add Satellite</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label for="sat_name">Name</label>
+                <input ng-model="sat_name" type="text" class="form-control" id="sat_name">
+            </div>
+            <div class="form-group">
+                <label for="sat_desc">Description</label>
+                <textarea ng-model="sat_desc" class="form-control" rows="3" id="sat_desc"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="sat_rx">RX Frequency</label>
+                <input ng-model="sat_rx" type="text" class="form-control" id="sat_rx">
+            </div>
+            <div class="form-group">
+                <label for="sat_tx">TX Frequency</label>
+                <input ng-model="sat_tx" type="text" class="form-control" id="sat_tx">
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <label><input ng-model="sat_status" type="radio" name="status">Active</label>
+                <label><input ng-model="sat_status" type="radio" name="status">Disable</label>
+                <label><input ng-model="sat_status" type="radio" name="status">Unknown</label>
+            </div>
+            <div class="form-group">
+                <label for="sat_tle1">TLE1</label>
+                <input ng-model="sat_tle1" type="text" class="form-control" id="sat_tle1">
+            </div>
+            <div class="form-group">
+                <label for="sat_tle2">TLE2</label>
+                <input ng-model="sat_tle2" type="text" class="form-control" id="sat_tle2">
+            </div>
+            <div class="form-group">
+                <label for="sat_url">URL</label>
+                <input ng-model="sat_url" type="text" class="form-control" id="sat_url">
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" type="button" ng-click="add()">Add</button>
+        <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</script>
