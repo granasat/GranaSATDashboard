@@ -93,24 +93,6 @@ app.controller('appController', function($scope, $http, $uibModal) {
         });
     };
 
-    $scope.setPositionModal = function() {
-        var setPositionModalInstance = $uibModal.open({
-            animation: $scope.animationsEnabled,
-            templateUrl: 'setPositionModal.html',
-            controller: 'setPositionModelController as c',
-            size: "sm",
-            resolve: {
-                items: function() {
-                    return $scope.items;
-                }
-            }
-        });
-
-        setPositionModalInstance.result.then(function(data) {
-            $scope.setRotors({ele: data.azimuth, azi :data.elevation});
-        });
-    };
-
     $scope.setRadio = function(freq) {
         return $http({
             method: 'POST',
@@ -157,22 +139,6 @@ app.controller('loginModelController', function($scope, $uibModalInstance, items
 
 });
 
-
-app.controller('setPositionModelController', function($scope, $uibModalInstance, items) {
-
-    $scope.move = function(){
-        $uibModalInstance.close({
-            azimuth: $scope.azimuth,
-            elevation: $scope.elevation
-        });
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
-    };
-
-
-});
 
 app.filter('millSecondsToTimeString', function() {
   return function(millseconds) {
