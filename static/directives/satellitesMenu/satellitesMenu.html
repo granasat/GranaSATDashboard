@@ -9,24 +9,38 @@
             <tr>
                 <th>Name</th>
                 <th>Description</th>
-                <th>RX Frequency</th>
-                <th>TX Frequency</th>
-                <th>Status</th>
-                <th>TLE1</th>
-                <th>TLE2</th>
-                <th>URL</th>
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="sat in availableSatellites">
+            <tr ng-repeat-start="sat in availableSatellites" ng-click="sat.expanded = !sat.expanded">
                 <td>{{sat.RMT_NAME}}</td>
                 <td>{{sat.RMT_DESC}}</td>
-                <td>{{sat.RMT_RX_FREQ}}</td>
-                <td>{{sat.RMT_TX_FREQ}}</td>
-                <td>{{sat.RMT_STATUS}}</td>
-                <td>{{sat.SAT_TLE1}}</td>
-                <td>{{sat.SAT_TLE2}}</td>
-                <td>{{sat.SAT_TLE_URL}}</td>
+            </tr>
+            <tr ng-repeat-end  ng-show="sat.expanded">
+                <td colspan="6" style="padding: 0" >
+                    <div class="isCollapsed">
+                        <table class="table table-hover">
+                            <thead>
+                            <th>RX Frequency</th>
+                            <th>TX Frequency</th>
+                            <th>Status</th>
+                            <th>TLE1</th>
+                            <th>TLE2</th>
+                            <th>URL</th>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{sat.RMT_RX_FREQ}}</td>
+                                <td>{{sat.RMT_TX_FREQ}}</td>
+                                <td>{{sat.RMT_STATUS}}</td>
+                                <td>{{sat.SAT_TLE1}}</td>
+                                <td>{{sat.SAT_TLE2}}</td>
+                                <td>{{sat.SAT_TLE_URL}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
             </tr>
             </tbody>
         </table>
