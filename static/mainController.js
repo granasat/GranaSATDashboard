@@ -130,7 +130,7 @@ app.controller('appController', function($scope, $http, $uibModal) {
             url: "/satellites",
             data: data
         });
-    }
+    };
 
     $scope.modSatellite = function(data){
         return $http({
@@ -138,7 +138,15 @@ app.controller('appController', function($scope, $http, $uibModal) {
             url: "/modSatellites",
             data: data
         });
-    }
+    };
+
+    $scope.delSat = function(sat_data){
+        return $http({
+            method: 'POST',
+            url: "/delSatellites",
+            data: sat_data
+        });
+    };
 });
 
 app.controller('loginModelController', function($scope, $uibModalInstance, items) {

@@ -200,6 +200,32 @@ module.exports = function DashboardDB() {
         });
     }
 
+    function delSatellite(req, res){
+        db.run('DELETE FROM REMOTE_TRANSCEIVERS WHERE RMT_ID = ?', req.body.RMT_ID, function (result) {
+            if(result == null){
+                db.run('DELETE FROM SATELLITES WHERE SAT_ID = ?', req.body.RMT_ID, function(result){
+                    if(result == null){
+                        res({
+                            status: "Done"
+                        });
+                    }
+                    else{
+                        log(result, "error");
+                        res({
+                            error: "Database error"
+                        });
+                    }
+                });
+            }
+            else{
+                log(result, "error");
+                res({
+                    error : "Database error"
+                })
+            }
+        });
+    }
+
     function getSatelliteTLE(sat, cb) {
         db.all('SELECT SAT_TLE1, SAT_TLE2 FROM SATELLITES WHERE SAT_ID = (SELECT RMT_ID FROM REMOTE_TRANSCEIVERS WHERE RMT_NAME = ?)', sat, function(err, rows, fields) {
             if (err || rows.length != 1) {
@@ -220,6 +246,7 @@ module.exports = function DashboardDB() {
         deserializeUser: deserializeUser,
         getSatellites: getSatellites,
         modSatellite : modSatellite,
+        delSatellite : delSatellite,
         getSatelliteTLE: getSatelliteTLE
     }
 }

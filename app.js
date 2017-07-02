@@ -176,6 +176,15 @@ app.post('/modSatellites', isAuthenticated, function(req, res) {
     });
 });
 
+app.post('/delSatellites', isAuthenticated, function(req, res) {
+    //Set the elevation and azimuth information available on the HTTP request
+    log("Del sat: " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+
+    db.delSatellite(req, function (data) {
+        res.json(data);
+    });
+});
+
 app.get('/satellites/scheduled', function(req, res) {
     res.json(scheduledPasses.map(function(e) {
         return {

@@ -343,22 +343,32 @@ module.exports = function DashboardDB() {
         });
     }
 
-    function delRemTransceiver(req, res) {
+    function delSatellite(req, res) {
         req.checkBody('rmt_id', 'Remote Transceiver ID').notEmpty().isInt();
 
-        database.query('DELETE FROM REMOTE_TRANSCEIVERS WHERE RMT_ID = ?', req.body.sat_id, function(err) {
+        database.query('DELETE FROM REMOTE_TRANSCEIVERS WHERE RMT_ID = ?', req.body.RMT_ID, function(err) {
             if (err) {
                 log(err.toString(), "error");
                 res.json({
                     error: "Database error"
-                })
+                });
             } else {
-                res.json({
-                    status: "Done"
-                })
+                database.query('DELETE FROM SATELLITES WHERE SAT_ID = ?', req.body.RMT_ID, function(err){
+                    if(err){
+                        log(err.toString(), "error");
+                        res.json({
+                            error: "Database error"
+                        });
+                    }
+                    else{
+                        res.json({
+                            status: "Done"
+                        });
+                    }
+                });
             }
         });
-    };
+    }
 
     function addAntenna(req, res) {
         req.checkBody('antname', 'Antenna name is required').notEmpty().isAlpha();
@@ -519,7 +529,7 @@ module.exports = function DashboardDB() {
         modSatellite: modSatellite,
         updateTLE: updateTLE,
         addStation: addStation,
-        delRemTransceiver: delRemTransceiver,
+        delSatellite: delSatellite,
         addAntenna: addAntenna,
         modAntenna: modAntenna,
         delAntenna: delAntenna,
