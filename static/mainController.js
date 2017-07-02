@@ -131,6 +131,14 @@ app.controller('appController', function($scope, $http, $uibModal) {
             data: data
         });
     }
+
+    $scope.modSatellite = function(data){
+        return $http({
+            method: 'POST',
+            url: "/modSatellites",
+            data: data
+        });
+    }
 });
 
 app.controller('loginModelController', function($scope, $uibModalInstance, items) {

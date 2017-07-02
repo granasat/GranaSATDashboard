@@ -141,6 +141,65 @@ module.exports = function DashboardDB() {
         });
     }
 
+
+
+    function modRemoteTransceiversDB(data, cb){
+        db.run('UPDATE REMOTE_TRANSCEIVERS SET RMT_NAME = $name, RMT_DESC = $desc, RMT_RX_FREQ = $rx, RMT_TX_FREQ = $tx, RMT_STATUS = $status WHERE RMT_ID = $id', {
+            $id : data.id,
+            $name : data.satname,
+            $desc : data.description,
+            $rx : data.rx_freq,
+            $tx : data.tx_freq,
+            $status : data.status
+        }, function (result) {
+            cb({
+                result : result
+            })
+        });
+    }
+
+    function modSatelliteDB(data, cb){
+        db.run('UPDATE SATELLITES SET SAT_TLE1 = $tle1, SAT_TLE2 = $tle2, SAT_TLE_URL = $url WHERE SAT_ID = $id', {
+            $id : data.id,
+            $tle1 : data.tle1,
+            $tle2 : data.tle2,
+            $url : data.url
+        }, function (result) {
+            cb({
+                result : result
+            })
+        });
+    }
+
+    function modSatellite(req, res){
+        //req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
+        //req.checkBody('tle', 'TLE is required').notEmpty();
+
+        modSatelliteDB(req.body, function (result) {
+            if (result.result == null) {
+                modRemoteTransceiversDB(req.body, function (result) {
+                    if (result.result == null) {
+                        res({
+                            status: "Done"
+                        });
+                    }
+                    else {
+                        log(result.result, "error");
+                        res({
+                            error: "Database error"
+                        });
+                    }
+                });
+            }
+            else {
+                log(result.result, "error");
+                res({
+                    error: "Database error"
+                });
+            }
+        });
+    }
+
     function getSatelliteTLE(sat, cb) {
         db.all('SELECT SAT_TLE1, SAT_TLE2 FROM SATELLITES WHERE SAT_ID = (SELECT RMT_ID FROM REMOTE_TRANSCEIVERS WHERE RMT_NAME = ?)', sat, function(err, rows, fields) {
             if (err || rows.length != 1) {
@@ -160,7 +219,7 @@ module.exports = function DashboardDB() {
         login: login,
         deserializeUser: deserializeUser,
         getSatellites: getSatellites,
-        addSatellite : addSatellite,
+        modSatellite : modSatellite,
         getSatelliteTLE: getSatelliteTLE
     }
 }

@@ -262,18 +262,18 @@ module.exports = function DashboardDB() {
                 database.query('UPDATE SATELLITES SET SAT_TLE1 = ?, SAT_TLE2 = ? WHERE SAT_ID = ?', req.body.tle1, req.body.tle2, req.body.sat_id, function(err) {
                     if (err) {
                         log(err.toString(), "error");
-                        res.json({
+                        res({
                             error: "Database error"
                         })
                     } else {
-                        res.json({
+                        res({
                             status: "Done"
                         })
                     }
                 });
             } else {
                 log(err.toString(), "error");
-                res.json({
+                res({
                     error: "Database error"
                 })
             }
