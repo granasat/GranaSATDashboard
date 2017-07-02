@@ -26,7 +26,11 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
             });
 
             addSatModalInstance.result.then(function(data) {
-            //TODO
+                //Check if the data is correct
+                if(data.rx < 0 || data.tx < 0)
+                    alert("RX or TX freq not correct");
+                else
+                    scope.addSatellite(data);
             });
         };
     }
@@ -41,14 +45,14 @@ app.controller('addSatModalController', function($scope, $uibModalInstance, item
 
     $scope.add = function(){
         $uibModalInstance.close({
-            sat_name: $scope.sat_name,
-            sat_desc: $scope.sat_desc,
-            sat_rx : $scope.sat_rx,
-            sat_tx : $scope.sat_tx,
-            sat_status : $scope.sat_status,
-            sat_tle1 : $scope.sat_tle1,
-            sat_tle2 : $scope.sat_tle2,
-            sat_url : $scope.sat_url
+            satname: $scope.sat_name,
+            description: $scope.sat_desc,
+            rx_freq : $scope.sat_rx,
+            tx_freq : $scope.sat_tx,
+            status : $scope.sat_status,
+            tle1 : $scope.sat_tle1,
+            tle2 : $scope.sat_tle2,
+            url : $scope.sat_url
         });
     };
 

@@ -224,18 +224,18 @@ module.exports = function DashboardDB() {
                 database.query('INSERT INTO SATELLITES (SAT_ID,SAT_TLE1,SAT_TLE2) VALUES (LAST_INSERT_ID(),?)', req.body.tle1, req.body.tle2, function(err) {
                     if (err) {
                         log(err.toString(), "error");
-                        res.json({
+                        res({
                             error: "Database error"
                         })
                     } else {
-                        res.json({
+                        res({
                             status: "Done"
                         })
                     }
                 });
             } else {
                 log(err.toString(), "error");
-                res.json({
+                res({
                     error: "Database error"
                 })
             }

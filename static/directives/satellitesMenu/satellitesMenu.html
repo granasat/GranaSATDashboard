@@ -1,5 +1,5 @@
 <div class='page-header'>
-    <h1>Satellites<button ng-click="addSatModal()" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></h1>
+    <h1>Satellites <button ng-click="addSatModal()" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></h1>
 </div>
 
 <div class="page-body">
@@ -72,9 +72,9 @@
             </div>
             <div class="form-group">
                 <label>Status</label>
-                <label><input ng-model="sat_status" type="radio" name="status">Active</label>
-                <label><input ng-model="sat_status" type="radio" name="status">Disable</label>
-                <label><input ng-model="sat_status" type="radio" name="status">Unknown</label>
+                <label><input ng-model="sat_status" value="Active" type="radio" name="status">Active</label>
+                <label><input ng-model="sat_status" value="Disable" type="radio" name="status">Disable</label>
+                <label><input ng-model="sat_status" value="Unknown" type="radio" name="status">Unknown</label>
             </div>
             <div class="form-group">
                 <label for="sat_tle1">TLE1</label>

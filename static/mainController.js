@@ -122,6 +122,15 @@ app.controller('appController', function($scope, $http, $uibModal) {
             url: "/satellites"
         });
     };
+
+    $scope.addSatellite = function (data) {
+        console.log(data);
+        return $http({
+            method: 'POST',
+            url: "/satellites",
+            data: data
+        });
+    }
 });
 
 app.controller('loginModelController', function($scope, $uibModalInstance, items) {

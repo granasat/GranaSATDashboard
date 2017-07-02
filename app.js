@@ -158,6 +158,15 @@ app.get('/satellites', isAuthenticated, function(req, res) {
     })
 });
 
+app.post('/satellites', isAuthenticated, function(req, res) {
+    //Set the elevation and azimuth information available on the HTTP request
+    log("Adding sat: " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+
+    db.addSatellite(req, function (data) {
+        res.json(data);
+    });
+});
+
 app.get('/satellites/scheduled', function(req, res) {
     res.json(scheduledPasses.map(function(e) {
         return {

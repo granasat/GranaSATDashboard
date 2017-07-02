@@ -73,6 +73,74 @@ module.exports = function DashboardDB() {
         });
     }
 
+    function addRemoteTransceiversDB(data, cb){
+        db.run('INSERT INTO REMOTE_TRANSCEIVERS VALUES (NULL, $name, $desc, $rx, $tx, $status)', {
+            $name : data.satname,
+            $desc : data.description,
+            $rx : data.rx_freq,
+            $tx : data.tx_freq,
+            $status : data.status
+        }, function (result) {
+            cb({
+                result : result
+            })
+        });
+    }
+
+    function addSatelliteDB(data, cb){
+        db.run('INSERT INTO SATELLITES VALUES (NULL, $tle1, $tle2, $url)', {
+            $tle1 : data.tle1,
+            $tle2 : data.tle2,
+            $url : data.url
+        }, function (result) {
+            cb({
+                result : result
+            })
+        });
+    }
+
+    /**
+     * Add satellite to db
+     *
+     * @param {Object} req
+     * @param {string} req.body.satname
+     * @param {string} req.body.description
+     * @param {number} req.body.rx_freq
+     * @param {number} req.body.tx_freq
+     * @param {string} req.body.status
+     * @param {string} req.body.tle1
+     * @param {string} req.body.tle2
+     * @param {string} req.body.url
+     */
+    function addSatellite(req, res) {
+        //req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
+        //req.checkBody('tle', 'TLE is required').notEmpty();
+
+        addSatelliteDB(req.body, function (result) {
+            if (result.result == null) {
+                addRemoteTransceiversDB(req.body, function (result) {
+                    if (result.result == null) {
+                        res({
+                            status: "Done"
+                        });
+                    }
+                    else {
+                        log(result.result, "error");
+                        res({
+                            error: "Database error"
+                        });
+                    }
+                });
+            }
+            else {
+                log(result.result, "error");
+                res({
+                    error: "Database error"
+                });
+            }
+        });
+    }
+
     function getSatelliteTLE(sat, cb) {
         db.all('SELECT SAT_TLE1, SAT_TLE2 FROM SATELLITES WHERE SAT_ID = (SELECT RMT_ID FROM REMOTE_TRANSCEIVERS WHERE RMT_NAME = ?)', sat, function(err, rows, fields) {
             if (err || rows.length != 1) {
@@ -92,6 +160,7 @@ module.exports = function DashboardDB() {
         login: login,
         deserializeUser: deserializeUser,
         getSatellites: getSatellites,
+        addSatellite : addSatellite,
         getSatelliteTLE: getSatelliteTLE
     }
 }
