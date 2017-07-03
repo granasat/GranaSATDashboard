@@ -59,6 +59,19 @@ module.exports = function DashboardDB() {
         });
     }
 
+    function getUsers(cb){
+        db.get('SELECT USR_ID, USR_NAME, USR_ORGANIZATION, USR_MAIL, USR_TYPE, USR_LAST_VST, USR_BLOCKED FROM USERS', function (err, rows) {
+            if(err){
+                cb({
+                    error: "Database error"
+                })
+            }
+            else{
+                cb(new Array(rows));
+            }
+        });
+    }
+
     function getSatellites(cb) {
         db.all('SELECT T1.*,T2.SAT_TLE1,T2.SAT_TLE2,T2.SAT_TLE_URL FROM REMOTE_TRANSCEIVERS AS T1, SATELLITES AS T2 WHERE RMT_ID = SAT_ID', function(err, rows, fields) {
             if (err) {
@@ -248,6 +261,7 @@ module.exports = function DashboardDB() {
         modSatellite : modSatellite,
         addSatellite : addSatellite,
         delSatellite : delSatellite,
+        getUsers : getUsers,
         getSatelliteTLE: getSatelliteTLE
     }
 }

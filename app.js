@@ -109,6 +109,15 @@ app.get('/groundstation', function(req, res) {
     })
 });
 
+app.get('/getUsers', isAuthenticated, function(req, res){
+    log("Picking up user list from " + + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
+
+    db.getUsers(function (usersData) {
+        res.json(usersData);
+    });
+});
+
+
 var rotors = new Yaesu(config.serial_rotors);
 // var radioStation = new Kenwood(config.serial_transceiver_keenwoodts2000)
 var radioStation = new Icom9100(config.serial_transceiver_icom9100)

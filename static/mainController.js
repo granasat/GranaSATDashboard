@@ -64,6 +64,13 @@ app.controller('appController', function($scope, $http, $uibModal) {
         });
     };
 
+    $scope.getUsers = function () {
+        return $http({
+            method: 'GET',
+            url: "/getUsers"
+        });
+    };
+
     $scope.getRotors = function() {
         return $http({
             method: 'GET',

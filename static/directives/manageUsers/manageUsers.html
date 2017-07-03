@@ -1,0 +1,33 @@
+<div class='page-header'>
+    <h1>Users</h1>
+</div>
+
+
+<div class="page-body">
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Username</th>
+                <th>Organization</th>
+                <th>Mail</th>
+                <th>Type</th>
+                <th>Last visit</th>
+                <th>Blocked</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="user in users">
+                <td>{{user.USR_ID}}</td>
+                <td>{{user.USR_NAME}}</td>
+                <td>{{user.USR_ORGANIZATION}}</td>
+                <td>{{user.USR_MAIL}}</td>
+                <td>{{user.USR_TYPE}}</td>
+                <td>{{user.USR_LAST_VST}}</td>
+                <td>{{user.USR_BLOCKED}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
