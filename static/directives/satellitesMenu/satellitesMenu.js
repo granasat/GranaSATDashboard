@@ -12,6 +12,12 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
             }
         });
 
+        scope.refreshSats = function () {
+            scope.getSatellites().then(function(res) {
+                scope.availableSatellites = res.data;
+            });
+        };
+
         scope.addSatModal = function() {
             scope.items = null;
             var addSatModalInstance = $uibModal.open({
@@ -30,8 +36,13 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
                 //Check if the data is correct
                 if(data.rx < 0 || data.tx < 0)
                     alert("RX or TX freq not correct");
-                else
-                    scope.addSatellite(data);
+                else {
+                    scope.addSatellite(data).then(function (res) {
+                        if (res.data.status == "Done") {
+                            scope.refreshSats();
+                        }
+                    });
+                }
             });
         };
         
@@ -53,8 +64,13 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
                 //Check if the data is correct
                 if(data.rx < 0 || data.tx < 0)
                     alert("RX or TX freq not correct");
-                else
-                    scope.modSatellite(data);
+                else {
+                    scope.modSatellite(data).then(function (res) {
+                        if (res.data.status == "Done") {
+                            scope.refreshSats();
+                        }
+                    });
+                }
             });
         }
     }

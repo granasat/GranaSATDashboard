@@ -246,6 +246,7 @@ module.exports = function DashboardDB() {
         deserializeUser: deserializeUser,
         getSatellites: getSatellites,
         modSatellite : modSatellite,
+        addSatellite : addSatellite,
         delSatellite : delSatellite,
         getSatelliteTLE: getSatelliteTLE
     }

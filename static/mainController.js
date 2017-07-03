@@ -145,6 +145,9 @@ app.controller('appController', function($scope, $http, $uibModal) {
             method: 'POST',
             url: "/delSatellites",
             data: sat_data
+        }).then(function (res) {
+            if(res.data.status == "Done")
+                $scope.refreshSats();
         });
     };
 });
