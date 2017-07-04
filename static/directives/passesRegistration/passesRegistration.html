@@ -26,7 +26,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="pass in satellitePasses">
+                <tr ng-repeat-start="pass in satellitePasses" ng-click="pass.expanded = !pass.expanded">
                     <td>{{ ((localTimeMode) ? (pass.startDateLocal | date:'yyyy-MM-dd HH:mm:ss') : pass.startDateUTC) }}</td>
                     <td>{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
                     <td>{{pass.duration | millSecondsToTimeString}}</td>
@@ -38,8 +38,12 @@
                         </button>
                     </td>
                 </tr>
-                <tr ng-if="pass.expanded" ng-repeat-end="">
-                    <td colspan="3">{{person.details}}</td>
+                <tr ng-repeat-end="" ng-if="pass.expanded">
+                    <td colspan="6" style="padding: 0">
+                        <div class="isCollapsed">
+                            <d3-bars data="d3Data" label="title"></d3-bars>
+                        </div>
+                    </td>
                 </tr>
                 <!-- <div uib-collapse="pass.collapse">
                     <div class="well well-lg">Some content</div>
