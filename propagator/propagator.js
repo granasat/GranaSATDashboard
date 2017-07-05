@@ -91,7 +91,8 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
         var passes = [];
         var raise = 0;
         var maxElevation = 0;
-        var data = []
+        var data = [];
+        var polar = [];
 
         for (var i = start.getTime(); i < end.getTime();) {
             var c = getStatus(new Date(i))
@@ -100,6 +101,7 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
                 visible = true;
                 maxElevation = 0;
                 data = []
+                polar = new Array();
             }
             if (c.ele <= 0 && visible) {
                 passes.push({
@@ -109,10 +111,17 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
                     endDateLocal: new Date(i).toString(),
                     duration: i - raise,
                     maxElevation: maxElevation.toFixed(2),
-                    data: data
-                })
+                    data: data,
+                    polar : polar
+                });
                 raise = 0;
                 visible = false;
+            }
+            if(c.ele >=0 && visible){
+                polar.push({
+                    azi : c.azi,
+                    ele : c.ele
+                });
             }
             if (visible && c.ele > maxElevation) {
                 maxElevation = c.ele;
@@ -120,11 +129,12 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
             if (visible) {
                 data.push(c)
             }
+
             if (c.ele > -config.propagator_passes_thr && !visible) {
                 i += 1000
-            } else if (c.ele < config.propagator_passes_thr && visible) {
+            }else if (/*c.ele < config.propagator_passes_thr && */visible) {
                 i += 1000
-            } else {
+            }else {
                 i += (1000 * 60 * config.propagator_passes_step)
             }
         }

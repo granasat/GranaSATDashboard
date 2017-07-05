@@ -4,8 +4,13 @@
 app.directive('d3Bars', ['d3', function(d3) {
     return {restrict: 'EA',
         link: function(scope, element, attrs) {
-                var data = d3.range(0, 2 * Math.PI, .01).map(function(t) {
-                    return [t, Math.sin(2 * t) * Math.cos(2 * t)];
+
+                var conv = (2*Math.PI)/360;
+
+                var data = new Array();
+
+                scope.satellitePasses[scope.selectedItem].polar.forEach(function (elem) {
+                    data.push([elem.azi * conv, Math.cos(elem.ele * conv)/2]);
                 });
 
                 var width = 960,
