@@ -8,7 +8,9 @@ app.directive('d3Bars', ['d3', function(d3) {
 
         var data = new Array();
 
-        scope.satellitePasses[scope.selectedItem].polar.forEach(function (elem) {
+        console.log(scope.satellitePasses[scope.selectedItem]);
+
+        scope.satellitePasses[scope.selectedItem].data.forEach(function (elem) {
             data.push([-(elem.azi * conv + subpi), -0.5 + (elem.ele/180)]);
         });
 
