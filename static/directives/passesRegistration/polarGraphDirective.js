@@ -8,14 +8,12 @@ app.directive('d3Bars', ['d3', function(d3) {
 
         var data = new Array();
 
-        console.log(scope.satellitePasses[scope.selectedItem]);
-
         scope.satellitePasses[scope.selectedItem].data.forEach(function (elem) {
             data.push([-(elem.azi * conv + subpi), -0.5 + (elem.ele/180)]);
         });
 
-        var width = 960,
-            height = 500,
+        var width = 470,
+            height = 300,
             radius = Math.min(width, height) / 2 - 30;
 
         var r = d3.scale.linear()
