@@ -6,11 +6,12 @@ app.directive('d3Bars', ['d3', function(d3) {
         link: function(scope, element, attrs) {
 
                 var conv = (2*Math.PI)/360;
+                var subpi = Math.PI/2;
 
                 var data = new Array();
 
                 scope.satellitePasses[scope.selectedItem].polar.forEach(function (elem) {
-                    data.push([elem.azi * conv, Math.cos(elem.ele * conv)/2]);
+                    data.push([elem.azi * conv, ((-((elem.ele)*conv/subpi) + 1)/2)]);
                 });
 
                 var width = 960,
