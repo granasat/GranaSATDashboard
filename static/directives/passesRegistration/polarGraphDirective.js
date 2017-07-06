@@ -9,7 +9,7 @@ app.directive('d3Bars', ['d3', function(d3) {
         var data = new Array();
 
         scope.satellitePasses[scope.selectedItem].polar.forEach(function (elem) {
-            data.push([elem.azi * conv, ((-((elem.ele) * conv / subpi) + 1) / 2)]);
+            data.push([-(elem.azi * conv + subpi), -0.5 + (elem.ele/180)]);
         });
 
         var width = 960,
@@ -68,15 +68,10 @@ app.directive('d3Bars', ['d3', function(d3) {
         ga.append("text")
             .attr("x", radius + 6)
             .attr("dy", ".35em")
-            .style("text-anchor", function (d) {
-                return d < 270 && d > 90 ? "end" : null;
-            })
-            .attr("transform", function (d) {
-                return d < 270 && d > 90 ? "rotate(180 " + (radius + 6) + ",0)" : null;
-            })
-            .text(function (d) {
-                return d + "°";
-            });
+            //.style("text-anchor", function(d) { return d < 270 && d > 90 ? "end" : null; })
+            .attr("transform", function(d) { return d == 90 || d == 270 ? "rotate(90 " + (radius + 6) + ",0)" : null; })
+            .text(function(d) { return (d == 0)? 'E':(d == 90)? 'N':(d == 180)? 'O':(d == '270')? 'S': null;});
+
 
         svg.append("path")
             .datum(data)
