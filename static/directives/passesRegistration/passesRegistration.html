@@ -27,7 +27,7 @@
             </thead>
             <tbody>
                 <tr ng-repeat-start="pass in satellitePasses" ng-click="pass.expanded = !pass.expanded; selectedItem =$index">
-                    <td>{{ ((localTimeMode) ? (pass.startDateLocal | date:'yyyy-MM-dd HH:mm:ss') : pass.startDateUTC) }}</td>
+                    <td>{{(localTimeMode) ? pass.startDateLocal : pass.startDateUTC.toUTCString()}}</td>
                     <td>{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
                     <td>{{pass.duration | millSecondsToTimeString}}</td>
                     <td>{{pass.maxElevation}}º</td>
