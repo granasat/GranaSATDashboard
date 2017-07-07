@@ -73,7 +73,7 @@ module.exports = function DashboardDB() {
     }
 
     function getSatellites(cb) {
-        db.all('SELECT T1.*,T2.SAT_TLE1,T2.SAT_TLE2,T2.SAT_TLE_URL FROM REMOTE_TRANSCEIVERS AS T1, SATELLITES AS T2 WHERE RMT_ID = SAT_ID', function(err, rows, fields) {
+        db.all('SELECT T1.*,T2.SAT_TLE1,T2.SAT_TLE2,T2.SAT_TLE_URL,T2.SAT_TLE_DATE FROM REMOTE_TRANSCEIVERS AS T1, SATELLITES AS T2 WHERE RMT_ID = SAT_ID', function(err, rows, fields) {
             if (err) {
                 log(err.toString(), "error");
                 cb({
@@ -101,10 +101,11 @@ module.exports = function DashboardDB() {
     }
 
     function addSatelliteDB(data, cb){
-        db.run('INSERT INTO SATELLITES VALUES (NULL, $tle1, $tle2, $url)', {
+        db.run('INSERT INTO SATELLITES VALUES (NULL, $tle1, $tle2, $url, $date)', {
             $tle1 : data.tle1,
             $tle2 : data.tle2,
-            $url : data.url
+            $url : data.url,
+            $date : (new Date()).toString()
         }, function (result) {
             cb({
                 result : result
@@ -172,11 +173,12 @@ module.exports = function DashboardDB() {
     }
 
     function modSatelliteDB(data, cb){
-        db.run('UPDATE SATELLITES SET SAT_TLE1 = $tle1, SAT_TLE2 = $tle2, SAT_TLE_URL = $url WHERE SAT_ID = $id', {
+        db.run('UPDATE SATELLITES SET SAT_TLE1 = $tle1, SAT_TLE2 = $tle2, SAT_TLE_URL = $url, SAT_TLE_DATE = $date WHERE SAT_ID = $id', {
             $id : data.id,
             $tle1 : data.tle1,
             $tle2 : data.tle2,
-            $url : data.url
+            $url : data.url,
+            $date : (new Date()).toString()
         }, function (result) {
             cb({
                 result : result
@@ -257,11 +259,11 @@ module.exports = function DashboardDB() {
         loginConfig: loginConfig,
         login: login,
         deserializeUser: deserializeUser,
-        getSatellites: getSatellites,
-        modSatellite : modSatellite,
-        addSatellite : addSatellite,
-        delSatellite : delSatellite,
         getUsers : getUsers,
+        getSatellites: getSatellites,
+        addSatellite : addSatellite,
+        modSatellite : modSatellite,
+        delSatellite : delSatellite,
         getSatelliteTLE: getSatelliteTLE
     }
 }

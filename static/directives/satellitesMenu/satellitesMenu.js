@@ -5,17 +5,25 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
     function link(scope, element, attrs) {
         scope.$watch("logged", function(newValue, oldValue) {           //Execute when the user is logged, call for satellites in db
             if (newValue == true) {
-                scope.getSatellites().then(function(res) {
-                    console.log(res.data);
-                    scope.availableSatellites = res.data;
-                });
+                scope.refreshSats();
             }
         });
 
         scope.refreshSats = function () {
             scope.getSatellites().then(function(res) {
                 scope.availableSatellites = res.data;
+
+                //Change the date to a short one (DDMMYYYY)
+                scope.availableSatellites.forEach(function (elem) {
+                    elem.SAT_TLE_DATE = scope.formatDDMMYYYY(new Date(elem.SAT_TLE_DATE))
+                });
             });
+        };
+
+        scope.formatDDMMYYYY = function(date){
+            return date.getDate() +
+                "/" +  (date.getMonth() + 1) +
+                "/" +  date.getFullYear();
         };
 
         scope.addSatModal = function() {
