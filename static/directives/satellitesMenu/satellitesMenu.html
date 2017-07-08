@@ -65,7 +65,7 @@
 
                 <div ng-show="import" style="height:100px; overflow: auto">
                     <table class="table table-hover" cellspacing="0" cellpadding="1" border="1" style="margin-bottom: 0px;">
-                        <tr ng-repeat="importedSat in importedSats">
+                        <tr ng-repeat="importedSat in importedSats | filter:{name:search}">
                             <td>{{importedSat.name}}</td>
                         </tr>
                     </table>
