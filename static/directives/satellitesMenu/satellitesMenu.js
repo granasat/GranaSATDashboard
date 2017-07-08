@@ -41,7 +41,7 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
                 animation: scope.animationsEnabled,
                 templateUrl: 'addSatModal.html',
                 controller: 'addSatModalController as c',
-                size: "sm",
+                size: "lg",
                 resolve: {
                     items: function() {
                         return scope.items;
@@ -71,7 +71,7 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
                 animation: scope.animationsEnabled,
                 templateUrl: 'addSatModal.html',
                 controller: 'addSatModalController as c',
-                size: "sm",
+                size: "lg",
                 resolve: {
                     items: function() {
                         return scope.items;
@@ -119,6 +119,13 @@ app.controller('addSatModalController', function($scope, $uibModalInstance, item
     else{
         $scope.importedSats = items.importedSats;
     }
+
+    $scope.importedSatClick = function(importedSat){
+      $scope.sat_name = importedSat.name;
+      $scope.sat_tle1 = importedSat.tle1;
+      $scope.sat_tle2 = importedSat.tle2;
+    };
+
     $scope.add = function(){
         $uibModalInstance.close({
             id : id,
