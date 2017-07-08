@@ -58,6 +58,20 @@
     </div>
     <div class="modal-body">
         <form>
+            <div class="form-group" ng-show="importSatBox">
+                <label for="sat_name">Import</label>
+                <br>
+                <div style="display:inline-block"><input type="checkbox" id="myCheck" ng-click="import = !import"><input ng-show="import" ng-model="search" type="text" class="form-control" id="sat_search"></div>
+
+                <div ng-show="import" style="height:100px; overflow: auto">
+                    <table class="table table-hover" cellspacing="0" cellpadding="1" border="1" style="margin-bottom: 0px;">
+                        <tr ng-repeat="importedSat in importedSats">
+                            <td>{{importedSat.name}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="sat_name">Name</label>
                 <input ng-model="sat_name" type="text" class="form-control" id="sat_name">

@@ -157,6 +157,13 @@ app.controller('appController', function($scope, $http, $uibModal) {
                 $scope.refreshSats();
         });
     };
+
+    $scope.getSatLibrary = function(){
+        return $http({
+            method: 'GET',
+            url: "/getSatLibrary"
+        });
+    };
 });
 
 app.controller('loginModelController', function($scope, $uibModalInstance, items) {

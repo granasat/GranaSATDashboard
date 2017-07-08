@@ -6,6 +6,7 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
         scope.$watch("logged", function(newValue, oldValue) {           //Execute when the user is logged, call for satellites in db
             if (newValue == true) {
                 scope.refreshSats();
+                scope.importSats();
             }
         });
 
@@ -26,8 +27,16 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
                 "/" +  date.getFullYear();
         };
 
+        scope.importSats = function () {
+            scope.getSatLibrary().then(function (res) {
+                scope.importedSats = res.data;
+            });
+        };
+
         scope.addSatModal = function() {
-            scope.items = null;
+            scope.items = {};
+            scope.items.importSatBox = true;
+            scope.items.importedSats = scope.importedSats;
             var addSatModalInstance = $uibModal.open({
                 animation: scope.animationsEnabled,
                 templateUrl: 'addSatModal.html',
@@ -55,7 +64,9 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
         };
         
         scope.modSatModal = function (sat_data) {
-            scope.items = sat_data;
+            scope.items = {};
+            scope.items.importSatBox = false;     //Not show the box of import
+            scope.items.satdata = sat_data;
             var modSatModalInstance = $uibModal.open({
                 animation: scope.animationsEnabled,
                 templateUrl: 'addSatModal.html',
@@ -91,16 +102,22 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
 
 app.controller('addSatModalController', function($scope, $uibModalInstance, items) {
     var id = 0;
-    if(items != null){
-        id = items.RMT_ID;
-        $scope.sat_name = items.RMT_NAME;
-        $scope.sat_desc = items.RMT_DESC;
-        $scope.sat_rx = items.RMT_RX_FREQ;
-        $scope.sat_tx = items.RMT_TX_FREQ;
-        $scope.sat_status = items.RMT_STATUS;
-        $scope.sat_tle1 = items.SAT_TLE1;
-        $scope.sat_tle2 = items.SAT_TLE2;
-        $scope.sat_url = items.SAT_TLE_URL;
+
+    $scope.importSatBox = items.importSatBox;
+
+    if(items.importSatBox == false){
+        id = items.satdata.RMT_ID;
+        $scope.sat_name = items.satdata.RMT_NAME;
+        $scope.sat_desc = items.satdata.RMT_DESC;
+        $scope.sat_rx = items.satdata.RMT_RX_FREQ;
+        $scope.sat_tx = items.satdata.RMT_TX_FREQ;
+        $scope.sat_status = items.satdata.RMT_STATUS;
+        $scope.sat_tle1 = items.satdata.SAT_TLE1;
+        $scope.sat_tle2 = items.satdata.SAT_TLE2;
+        $scope.sat_url = items.satdata.SAT_TLE_URL;
+    }
+    else{
+        $scope.importedSats = items.importedSats;
     }
     $scope.add = function(){
         $uibModalInstance.close({

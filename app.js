@@ -26,6 +26,8 @@ var Yaesu = require('./rotors/yaesu.js');
 var Kenwood = require('./transceivers/kenwoodts2000.js');
 var Icom9100 = require('./transceivers/icom9100.js');
 var Propagator = require('./propagator/propagator.js');
+var create_and_fill_models = require('./sat_library/getFiles.js');
+
 
 
 //Database stuff
@@ -311,6 +313,13 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
 
 app.get('/', function(req, res, next) {
     res.sendFile(path.join(__dirname + '/static/index.html'));
+});
+
+
+app.get('/getSatLibrary', isAuthenticated, function(req, res) {
+    create_and_fill_models().then(function (data) {
+        res.json(data);
+    })
 });
 
 app.listen(config.web_port, config.web_host);
