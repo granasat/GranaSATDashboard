@@ -191,7 +191,7 @@
         <div class="modal-header">
             <h3 class="modal-title">Login</h3>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" ng-show="!signUp">
             <form>
                 <div class="form-group">
                     <label for="username">Username</label>
@@ -201,10 +201,29 @@
                     <label for="password">Password</label>
                     <input ng-model="password" type="password" class="form-control" id="password" placeholder="Password">
                 </div>
+                <div>
+                    Create a account <a ng-click="signUp = !signUp">here</a>
+                </div>
+            </form>
+        </div>
+        <div class="modal-body" ng-show="signUp">
+            <form>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input ng-model="username" type="text" class="form-control" id="username" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input ng-model="password" type="password" class="form-control" id="password" placeholder="Password">
+                </div><div class="form-group">
+                <label for="password">Repeat password</label>
+                <input ng-model="password" type="password" class="form-control" id="password" placeholder="Password">
+            </div>
             </form>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-success" type="button" ng-click="ok()">Login</button>
+            <button class="btn btn-success" type="button" ng-show="!signUp" ng-click="ok()">Login</button>
+            <button class="btn btn-primary" type="button" ng-show="signUp">Sign up</button>
             <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>
