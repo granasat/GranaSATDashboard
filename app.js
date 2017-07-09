@@ -317,7 +317,7 @@ app.get('/', function(req, res, next) {
 
 
 app.get('/getSatLibrary', isAuthenticated, function(req, res) {
-    create_and_fill_models().then(function (data) {
+    new create_and_fill_models().getSatInfo().then(function (data) {
         res.json(data);
     })
 });

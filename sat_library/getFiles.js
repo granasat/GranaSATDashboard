@@ -24,43 +24,134 @@ var readline = require('readline');
  */
 
 module.exports = function create_and_fill_models(){
+    function getSatInfo() {
+        return new Promise(function(resolve, reject){
+            var all = [];
+            fs.readdirSync("sat_library/satdata").forEach(function (elem) {
+                if(elem.indexOf(".sat") !== -1){
+                    //Now read the name of the satelite inside .sat
+                    var data = {};
 
-    return new Promise(function(resolve, reject){
-        var all = [];
+                    var rl = readline.createInterface({
+                        input: fs.createReadStream("sat_library/satdata/" + elem),
+                        output: process.stdout
+                    });
 
+                    var i = 0;
+                    rl.on('line', function (line) {
+                        if(i == 0)
+                            data.cat = elem.split(".")[0];
+                        else if(i == 1)
+                            data.version = line.split("=")[1];
+                        else if(i == 2)
+                            data.name = line.split("=")[1];
+                        else if(i == 3)
+                            data.nick = line.split("=")[1];
+                        else if(i == 4)
+                            data.tle1 = line.split("=")[1];
+                        else if(i == 5)
+                            data.tle2 = line.split("=")[1];
+                        i++
+                    });
+
+                    all.push(data);
+
+                    rl.on('close', function () {
+                        resolve(all);
+                    });
+                }
+            })
+        });
+    };
+
+    function genCatInfo(cat, group){
+        return new Promise(function(resolve, reject){
+            var data = {};
+
+            data.group = group;     //Add the group to the sat
+
+            var rl = readline.createInterface({
+                input: fs.createReadStream("sat_library/satdata/" + cat + ".sat")
+            });
+
+            var i = 0;
+            rl.on('line', function (line) {
+                if(i == 0)
+                    data.cat = cat;
+                else if(i == 1)
+                    data.version = line.split("=")[1];
+                else if(i == 2)
+                    data.name = line.split("=")[1];
+                else if(i == 3)
+                    data.nick = line.split("=")[1];
+                else if(i == 4)
+                    data.tle1 = line.split("=")[1];
+                else if(i == 5)
+                    data.tle2 = line.split("=")[1];
+                i++
+            });
+
+            rl.on('close', function () {
+                resolve(data);
+            })
+        });
+    };
+
+    var getGroups = new Promise(function(resolve, reject){
+        var groups = [];
+        //Leo los .cat
         fs.readdirSync("sat_library/satdata").forEach(function (elem) {
-            if(elem.indexOf(".sat") !== -1){
-                //Now read the name of the satelite inside .sat
-                var data = {};
-
+            if (elem.indexOf(".cat") !== -1) {
                 var rl = readline.createInterface({
                     input: fs.createReadStream("sat_library/satdata/" + elem),
                     output: process.stdout
                 });
 
-                var i = 0;
+                var data = {};
+                data.cat = [];
+
                 rl.on('line', function (line) {
-                    if(i == 0)
-                        data.cat = elem.split(".")[0];
-                    else if(i == 1)
-                        data.version = line.split("=")[1];
-                    else if(i == 2)
-                        data.name = line.split("=")[1];
-                    else if(i == 3)
-                        data.nick = line.split("=")[1];
-                    else if(i == 4)
-                        data.tle1 = line.split("=")[1];
-                    else if(i == 5)
-                        data.tle2 = line.split("=")[1];
-                    i++
+                    if (isNaN(line)) {
+                        data.group = line;
+                    }
+                    else{
+                        data.cat.push(line);
+                    }
                 });
 
-                all.push(data);
+                groups.push(data);
 
                 rl.on('close', function () {
-                    resolve(all);
+                    resolve(groups);
                 })
             }
-        })
+        });
     });
+
+    /** Get sat info with the group name, first of all we take the .cat files
+     * and for every category name we search it (catname.sat) and generate her
+     * data with the group name.
+     */
+
+    function getSatInfoWithDesc(cb){
+        var all = [];
+
+        getGroups.then(function (groups) {
+            groups.forEach(function (catGroup) {
+                catGroup.cat.forEach(function (cat) {
+                    genCatInfo(cat, catGroup.group).then(function (satInfo) {
+                        all.push(satInfo);
+                    });
+                });
+            });
+        });
+
+        cb(all);
+    }
+
+    //Public methods
+    return {
+        getSatInfo: getSatInfo,
+        getSatInfoWithDesc: getSatInfoWithDesc
+    }
 };
