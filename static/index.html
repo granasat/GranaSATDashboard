@@ -209,21 +209,33 @@
         <div class="modal-body" ng-show="signUp">
             <form>
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input ng-model="username" type="text" class="form-control" id="username" placeholder="Username">
+                    <label for="new_username">Username</label>
+                    <input ng-model="new_username" type="text" class="form-control" id="new_username" placeholder="Username">
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input ng-model="password" type="password" class="form-control" id="password" placeholder="Password">
-                </div><div class="form-group">
-                <label for="password">Repeat password</label>
-                <input ng-model="password" type="password" class="form-control" id="password" placeholder="Password">
-            </div>
+                    <label for="new_password">Password</label>
+                    <input ng-model="new_password" type="password" class="form-control" id="new_password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="new_repetedpassword">Repeat password</label>
+                    <input ng-model="new_repetedpassword" type="password" class="form-control" id="new_repetedpassword" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="new_organization">Organization</label>
+                    <input ng-model="new_organization" type="text" class="form-control" id="new_organization" placeholder="Organization">
+                </div>
+                <div class="form-group">
+                    <label for="new_mail">Mail</label>
+                    <input ng-model="new_mail" type="text" class="form-control" id="new_mail" placeholder="Mail address">
+                </div>
+                <div>
+                    I have <a ng-click="signUp = !signUp">an account.</a>
+                </div>
             </form>
         </div>
         <div class="modal-footer">
             <button class="btn btn-success" type="button" ng-show="!signUp" ng-click="ok()">Login</button>
-            <button class="btn btn-primary" type="button" ng-show="signUp">Sign up</button>
+            <button class="btn btn-primary" type="button" ng-show="signUp" ng-click="signup()">Sign up</button>
             <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>

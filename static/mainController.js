@@ -27,13 +27,24 @@ app.controller('appController', function($scope, $http, $uibModal) {
         });
 
         loginModalInstance.result.then(function(loginData) {
-            $scope.login(loginData.username, loginData.password).then(function(res) {
-                if (res.data.status == "Done") {
-                    $scope.logged = true
-                }
-            }, function(err) {
-                console.log(err);
-            });
+            if(loginData.type == "login"){
+                $scope.login(loginData.username, loginData.password).then(function(res) {
+                    if (res.data.status == "Done") {
+                        $scope.logged = true
+                    }
+                }, function(err) {
+                    console.log(err);
+                });
+            }
+            else if(loginData.type == "signup"){
+                $scope.signup(loginData.new_username, loginData.new_password, loginData.new_organization, loginData.new_mail).then(function(res) {
+                    if (res.data.status == "Done") {
+                        $scope.logged = true
+                    }
+                }, function (err) {
+                    console.log(err);
+                });
+            }
         });
     };
 
@@ -44,6 +55,17 @@ app.controller('appController', function($scope, $http, $uibModal) {
             method: 'POST',
             url: "login",
             data: "username=" + username + "&password=" + password,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+    };
+
+    $scope.signup = function(username, password, org, mail) {
+        return $http({
+            method: 'POST',
+            url: "signup",
+            data: "username=" + username + "&password=" + password + "&org=" + org + "&mail=" + mail,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
@@ -108,14 +130,6 @@ app.controller('appController', function($scope, $http, $uibModal) {
         });
     };
 
-    $scope.signup = function(user) {
-        return $http({
-            method: 'POST',
-            url: "signup",
-            data: user
-        });
-    };
-
     $scope.getScheduledPasses = function() {
         return $http({
             method: 'GET',
@@ -170,6 +184,7 @@ app.controller('loginModelController', function($scope, $uibModalInstance, items
 
     $scope.ok = function() {
         $uibModalInstance.close({
+            type: "login",
             username: $scope.username,
             password: $scope.password
         });
@@ -178,6 +193,25 @@ app.controller('loginModelController', function($scope, $uibModalInstance, items
     $scope.cancel = function() {
         $uibModalInstance.dismiss('cancel');
     };
+
+    $scope.signup = function () {
+        if($scope.new_password == $scope.new_repetedpassword){
+            $uibModalInstance.close({
+                type: "signup",
+                new_username: $scope.new_username,
+                new_password: $scope.new_password,
+                new_repetedpassword : $scope.new_repetedpassword,
+                new_organization : $scope.new_organization,
+                new_mail : $scope.new_mail
+            })
+        }
+        else{
+            $scope.new_password = "";
+            $scope.new_repetedpassword = "";
+            window.alert("Passwords don't match");
+        }
+
+    }
 
 });
 
