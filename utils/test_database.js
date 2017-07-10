@@ -42,12 +42,17 @@ module.exports = function DashboardDB() {
         log("Trying to login: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
 
         db.get('SELECT * FROM USERS WHERE USR_NAME = ?', username, function(err, user) {
-            if (hashPassword(password, user.USR_PASSWORD.split(":")[0]) == user.USR_PASSWORD.split(":")[1]) {
-                log("Logged " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
-                return done(null, user);
-            } else {
-                log("Non valid password for " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
-                return done(null, false);
+            if(user == null){
+                return done(null, false, { message: 'Incorrect username.'});
+            }
+            else{
+                if (hashPassword(password, user.USR_PASSWORD.split(":")[0]) == user.USR_PASSWORD.split(":")[1]) {
+                    log("Logged " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+                    return done(null, user);
+                } else {
+                    log("Non valid password for " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
+                    return done(null, false);
+                }
             }
         })
     }
@@ -84,7 +89,7 @@ module.exports = function DashboardDB() {
                 log(result, "error");
                 console.log(result);
                 res({
-                    error: "Database error"
+                    error: result
                 });
             }
         });
