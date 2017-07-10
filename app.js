@@ -75,7 +75,6 @@ function isAuthenticated(req, res, next) {
 
 passport.use("login", new LocalStrategy(db.loginConfig, db.login));
 
-
 passport.serializeUser(function(user, done) {
     return done(null, user.USR_ID);
 });
@@ -93,6 +92,11 @@ app.post('/login', passport.authenticate('login'), function(req, res) {
     })
 });
 
+app.post('/signup', function(req, res) {
+    db.signup(req.body, function (result) {
+        res.json(result);
+    })
+});
 
 app.get('/logout', isAuthenticated, function(req, res) {
     log("Logging out " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
