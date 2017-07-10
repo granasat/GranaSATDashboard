@@ -66,9 +66,11 @@ module.exports = function DashboardDB() {
         //req.checkBody('password', 'A valid password is required').notEmpty().len(6, 8);
         //req.checkBody('usertype', 'A valid type is required').notEmpty().isInt();
 
+        var salt = createSalt();
+
         db.run('INSERT INTO USERS (USR_NAME,USR_ORGANIZATION,USR_MAIL,USR_PASSWORD,USR_TYPE) VALUES ($username, $org, $mail, $password, $type)', {
             $username : req.username,
-            $password : req.password,
+            $password : salt + ":" + hashPassword(req.password, salt),
             $org : req.org,
             $mail : req.mail,
             $type: 1
