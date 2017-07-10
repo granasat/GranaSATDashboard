@@ -59,6 +59,35 @@ module.exports = function DashboardDB() {
         });
     }
 
+    function signup(req, res) {
+        //req.checkBody('username', 'Name is required').notEmpty().isAlpha().len(6, 20);
+        //req.checkBody('organization', 'Organization is required').notEmpty().isAlpha();
+        //req.checkBody('email', 'A valid email is required').notEmpty().isEmail();
+        //req.checkBody('password', 'A valid password is required').notEmpty().len(6, 8);
+        //req.checkBody('usertype', 'A valid type is required').notEmpty().isInt();
+
+        db.run('INSERT INTO USERS (USR_NAME,USR_ORGANIZATION,USR_MAIL,USR_PASSWORD,USR_TYPE) VALUES ($username, $org, $mail, $password, $type)', {
+            $username : req.username,
+            $password : req.password,
+            $org : req.org,
+            $mail : req.mail,
+            $type: 1
+        }, function (result) {
+            if (result == null) {
+                res({
+                    status: "Done"
+                });
+            }
+            else {
+                log(result, "error");
+                console.log(result);
+                res({
+                    error: "Database error"
+                });
+            }
+        });
+    }
+
     function getUsers(cb){
         db.get('SELECT USR_ID, USR_NAME, USR_ORGANIZATION, USR_MAIL, USR_TYPE, USR_LAST_VST, USR_BLOCKED FROM USERS', function (err, rows) {
             if(err){
@@ -258,6 +287,7 @@ module.exports = function DashboardDB() {
     return {
         loginConfig: loginConfig,
         login: login,
+        signup : signup,
         deserializeUser: deserializeUser,
         getUsers : getUsers,
         getSatellites: getSatellites,
