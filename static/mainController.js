@@ -195,7 +195,31 @@ app.controller('loginModelController', function($scope, $uibModalInstance, items
     };
 
     $scope.signup = function () {
-        if($scope.new_password == $scope.new_repetedpassword){
+        if(!length_validation($scope.new_username, 5, 12)){
+            $scope.new_username = "";
+            window.alert("Username should not be empty / length be between "+ 5 +" to "+ 12);
+        }
+        else if(!password_validation($scope.new_password)){
+            $scope.new_password = "";
+            $scope.new_repetedpassword = "";
+            window.alert("Password must have at least one digit");
+        }
+        else if(!length_validation($scope.new_password, 7, 12)){
+            $scope.new_password = "";
+            $scope.new_repetedpassword = "";
+            window.alert("Password should not be empty / length be between "+ 7 +" to "+ 12);
+        }
+        else if($scope.new_password != $scope.new_repetedpassword){
+            $scope.new_password = "";
+            $scope.new_repetedpassword = "";
+            window.alert("Passwords don't match");
+        }
+        else if(!mail_validation($scope.new_mail)){
+            $scope.new_mail = "";
+
+            window.alert("Invalid mail format");
+        }
+        else{
             $uibModalInstance.close({
                 type: "signup",
                 new_username: $scope.new_username,
@@ -205,14 +229,25 @@ app.controller('loginModelController', function($scope, $uibModalInstance, items
                 new_mail : $scope.new_mail
             })
         }
-        else{
-            $scope.new_password = "";
-            $scope.new_repetedpassword = "";
-            window.alert("Passwords don't match");
-        }
+    };
 
+    function length_validation(input, mx, my){
+        var inputLength = input.length;
+
+        return !(inputLength == 0 || inputLength < mx || inputLength >= my);
     }
 
+    function password_validation(input){
+        var validate = /^.*(?=.*\d)(?=.*[a-zA-Z]).*$/;     //Password must have a digit
+
+        return input.match(validate);
+    }
+
+    function mail_validation(mail){
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+        return mail.match(mailformat);
+    }
 });
 
 
