@@ -23,11 +23,16 @@ app.directive('manageUsers', function($http, $document) {
         };
 
         scope.delUser = function (user) {
-            return $http({
-                method: 'POST',
-                url: "/delUser",
-                data: user
-            });
+            if(user.USR_NAME != scope.user){
+                return $http({
+                    method: 'POST',
+                    url: "/delUser",
+                    data: user
+                });
+            }
+            else{
+                window.alert("Are you sure you want to delete yourself?");
+            }
         };
     }
 
