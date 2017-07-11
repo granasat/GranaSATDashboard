@@ -30,6 +30,7 @@ app.controller('appController', function($scope, $http, $uibModal) {
             if(res.status == "Done"){
                 if(res.type == "signIn"){
                     $scope.logged = true;
+                    $scope.user = res.user;
                 }
                 else{
                     window.alert("Account created successfully");
@@ -153,7 +154,8 @@ app.controller('loginModelController', function($scope, $http, $uibModalInstance
             if (res.data.status == "Done") {
                 $uibModalInstance.close({
                     type: "signIn",
-                    status: "Done"
+                    status: "Done",
+                    user : $scope.username
                 });
             }
         }, function (err) {
