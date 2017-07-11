@@ -96,14 +96,14 @@ module.exports = function DashboardDB() {
     }
 
     function getUsers(cb){
-        db.get('SELECT USR_ID, USR_NAME, USR_ORGANIZATION, USR_MAIL, USR_TYPE, USR_LAST_VST, USR_BLOCKED FROM USERS', function (err, rows) {
+        db.all('SELECT USR_ID, USR_NAME, USR_ORGANIZATION, USR_MAIL, USR_TYPE, USR_LAST_VST, USR_BLOCKED FROM USERS', function (err, rows) {
             if(err){
                 cb({
                     error: "Database error"
                 })
             }
             else{
-                cb(new Array(rows));
+                cb(rows);
             }
         });
     }
