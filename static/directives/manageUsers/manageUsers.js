@@ -7,9 +7,28 @@ app.directive('manageUsers', function($http, $document) {
             if (newValue == true) {
                 scope.getUsers().then(function (res) {
                     scope.users = res.data;
+                    scope.users.forEach(function (elem) {
+                      elem.edit = false;
+                    })
                 });
             }
         });
+
+        scope.modUser = function (user) {
+            return $http({
+                method: 'POST',
+                url: "/modUser",
+                data: user
+            });
+        };
+
+        scope.delUser = function (user) {
+            return $http({
+                method: 'POST',
+                url: "/delUser",
+                data: user
+            });
+        };
     }
 
     return {

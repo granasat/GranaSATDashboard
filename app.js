@@ -116,13 +116,28 @@ app.get('/groundstation', function(req, res) {
 });
 
 app.get('/getUsers', isAuthenticated, function(req, res){
-    log("Picking up user list from " + + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
+    log("Picking up user list from " + req.user.USR_NAME + " " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
 
     db.getUsers(function (usersData) {
         res.json(usersData);
     });
 });
 
+app.post('/modUser', isAuthenticated, function (req, res) {
+   log("Modifying users from: " + req.user.USR_NAME + " " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
+
+   db.modUser(req, function (result) {
+       res.json(result);
+   });
+});
+
+app.post('/delUser', isAuthenticated, function (req, res) {
+    log("Delete user from: " + req.user.USR_NAME + " " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
+
+    db.delUser(req, function (result) {
+        res.json(result);
+    });
+});
 
 var rotors = new Yaesu(config.serial_rotors);
 // var radioStation = new Kenwood(config.serial_transceiver_keenwoodts2000)
