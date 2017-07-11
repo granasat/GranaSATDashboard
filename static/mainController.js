@@ -28,7 +28,12 @@ app.controller('appController', function($scope, $http, $uibModal) {
 
         loginModalInstance.result.then(function(res) {
             if(res.status == "Done"){
-                $scope.logged = true;
+                if(res.type == "signIn"){
+                    $scope.logged = true;
+                }
+                else{
+                    window.alert("Account created successfully");
+                }
             }
         });
     };
@@ -147,6 +152,7 @@ app.controller('loginModelController', function($scope, $http, $uibModalInstance
         $scope.login($scope.username, $scope.password).then(function(res) {
             if (res.data.status == "Done") {
                 $uibModalInstance.close({
+                    type: "signIn",
                     status: "Done"
                 });
             }
@@ -192,6 +198,7 @@ app.controller('loginModelController', function($scope, $http, $uibModalInstance
             $scope.signup($scope.new_username, $scope.new_password, $scope.new_organization, $scope.new_mail).then(function(res) {
                 if (res.data.status == "Done") {
                     $uibModalInstance.close({
+                        type: "signUp",
                         status: "Done"
                     });
                 }
