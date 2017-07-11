@@ -14,6 +14,15 @@ app.directive('manageUsers', function($http, $document) {
             }
         });
 
+        scope.refreshUsers = function(){
+            scope.getUsers().then(function (res) {
+                scope.users = res.data;
+                scope.users.forEach(function (elem) {
+                    elem.edit = false;
+                })
+            });
+        };
+
         scope.modUser = function (user) {
             return $http({
                 method: 'POST',
@@ -28,6 +37,9 @@ app.directive('manageUsers', function($http, $document) {
                     method: 'POST',
                     url: "/delUser",
                     data: user
+                }).then(function (res) {
+                    if(res.data.status == "Done")
+                        scope.refreshUsers();
                 });
             }
             else{
