@@ -73,11 +73,11 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul ng-show="logged" class="nav navbar-nav">
-                    <li ng-click="selectedTab = 1" ng-class="{'active': selectedTab == 1}"><a>Rotors</a></li>
-                    <li ng-click="selectedTab = 2" ng-class="{'active': selectedTab == 2}"><a>Antennas</a></li>
-                    <li ng-click="selectedTab = 3" ng-class="{'active': selectedTab == 3}"><a>Terminal</a></li>
+                    <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 1" ng-class="{'active': selectedTab == 1}"><a>Rotors</a></li>
+                    <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 2" ng-class="{'active': selectedTab == 2}"><a>Antennas</a></li>
+                    <li ng-show="type == 1" ng-click="selectedTab = 3" ng-class="{'active': selectedTab == 3}"><a>Terminal</a></li>
                     <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a>Passes</span></a></li>
-                    <li ng-click="selectedTab = 5" ng-class="{'active': selectedTab == 5}"><a>Management</a></li>
+                    <li ng-show="type == 1" ng-click="selectedTab = 5" ng-class="{'active': selectedTab == 5}"><a>Management</a></li>
                     <li ng-click="selectedTab = 6" ng-class="{'active': selectedTab == 6}"><a>Satellites</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">

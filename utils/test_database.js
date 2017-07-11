@@ -78,7 +78,7 @@ module.exports = function DashboardDB() {
             $password : salt + ":" + hashPassword(req.password, salt),
             $org : req.org,
             $mail : req.mail,
-            $type: 1
+            $type: 3
         }, function (result) {
             if (result == null) {
                 res({

@@ -3,6 +3,7 @@ app.controller('appController', function($scope, $http, $uibModal) {
     $scope.selectedTab = 0
     $scope.logged = false
     $scope.user = ""
+    $scope.type = 3;
     $scope.videoShow = false;
     $scope.mobileEnabled = false;
     $scope.localTimeMode = false;
@@ -31,6 +32,7 @@ app.controller('appController', function($scope, $http, $uibModal) {
                 if(res.type == "signIn"){
                     $scope.logged = true;
                     $scope.user = res.user;
+                    $scope.type = res.userType;
                 }
                 else{
                     window.alert("Account created successfully");
@@ -155,7 +157,8 @@ app.controller('loginModelController', function($scope, $http, $uibModalInstance
                 $uibModalInstance.close({
                     type: "signIn",
                     status: "Done",
-                    user : $scope.username
+                    user : $scope.username,
+                    userType: res.data.type
                 });
             }
         }, function (err) {

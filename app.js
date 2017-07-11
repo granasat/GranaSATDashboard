@@ -63,7 +63,27 @@ app.use(expressValidator());
 
 //PASSPORTJS AND AUTH/ /////////////////////////////////////////////////
 
-function isAuthenticated(req, res, next) {
+function isAdmin(req, res, next){           //Admin is when user.USR_TYPE == 1, can access to everything
+    if (req.isAuthenticated() && req.user.USR_TYPE == 1) {
+        return next();
+    } else {
+        res.json({
+            status: "No auth",
+        })
+    }
+}
+
+function isMember(req, res, next){          //Member is when user.USR_TYPE == 2, can access everything except manage users and terminal
+    if (req.isAuthenticated() && (req.user.USR_TYPE == 2 || req.user.USR_TYPE == 1)) {
+        return next();
+    } else {
+        res.json({
+            status: "No auth",
+        })
+    }
+}
+
+function isAuthenticated(req, res, next) {  //Only authenticated (user.USR_TYPE == 3) can access to passes and satellites administration
     if (req.isAuthenticated()) {
         return next();
     } else {
@@ -88,7 +108,8 @@ passport.deserializeUser(db.deserializeUser);
 
 app.post('/login', passport.authenticate('login'), function(req, res) {
     res.json({
-        status: "Done"
+        status: "Done",
+        type: req.user.USR_TYPE
     })
 });
 
@@ -115,7 +136,7 @@ app.get('/groundstation', function(req, res) {
     })
 });
 
-app.get('/getUsers', isAuthenticated, function(req, res){
+app.get('/getUsers', isAdmin, function(req, res){
     log("Picking up user list from " + req.user.USR_NAME + " " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
 
     db.getUsers(function (usersData) {
@@ -123,7 +144,7 @@ app.get('/getUsers', isAuthenticated, function(req, res){
     });
 });
 
-app.post('/modUser', isAuthenticated, function (req, res) {
+app.post('/modUser', isAdmin, function (req, res) {
    log("Modifying users from: " + req.user.USR_NAME + " " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
 
    db.modUser(req, function (result) {
@@ -131,7 +152,7 @@ app.post('/modUser', isAuthenticated, function (req, res) {
    });
 });
 
-app.post('/delUser', isAuthenticated, function (req, res) {
+app.post('/delUser', isAdmin, function (req, res) {
     log("Delete user from: " + req.user.USR_NAME + " " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
 
     db.delUser(req, function (result) {
@@ -152,7 +173,7 @@ app.get('/radiostation/freq', function(req, res) {
     })
 });
 
-app.post('/radiostation/freq', isAuthenticated, function(req, res) {
+app.post('/radiostation/freq', isMember, function(req, res) {
     log("Moving radio freq: " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
     radioStation.setFrequency(req.body, function(data) {
@@ -169,7 +190,7 @@ app.get('/rotors/position', function(req, res) {
 
 });
 
-app.post('/rotors/position', isAuthenticated, function(req, res) {
+app.post('/rotors/position', isMember, function(req, res) {
     //Set the elevation and azimuth information available on the HTTP request
     log("Moving rotors: " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
