@@ -108,6 +108,48 @@ module.exports = function DashboardDB() {
         });
     }
 
+    function modUser(req, res){
+        if(req.body.password == null){      //No modify password
+            db.run('UPDATE USERS SET USR_NAME = $name, USR_ORGANIZATION = $org, USR_MAIL = $mail, USR_TYPE = $type, USR_BLOCKED = $blocked WHERE USR_ID = $id', {
+                $id : req.body.USR_ID,
+                $name : req.body.USR_NAME,
+                $org : req.body.USR_ORGANIZATION,
+                $mail : req.body.USR_MAIL,
+                $type : req.body.USR_TYPE,
+                $blocked : req.body.USR_BLOCKED
+            }, function (result) {
+                if(result == null){
+                    res({
+                        status : "Done"
+                    });
+                }
+                else {
+                    log(result.result, "error");
+                    res({
+                        error: "Database error"
+                    });
+                }
+            });
+        }
+    }
+
+    function delUser(req, res){
+        db.run('DELETE FROM USERS WHERE USR_ID = ?', req.body.USR_ID, function (result) {
+            if(result == null){
+                res({
+                    status : "Done"
+                });
+            }
+            else{
+                log(result, "error");
+                res({
+                    error: "Database error"
+                });
+            }
+        });
+    }
+
+
     function getSatellites(cb) {
         db.all('SELECT T1.*,T2.SAT_TLE1,T2.SAT_TLE2,T2.SAT_TLE_URL,T2.SAT_TLE_DATE FROM REMOTE_TRANSCEIVERS AS T1, SATELLITES AS T2 WHERE RMT_ID = SAT_ID', function(err, rows, fields) {
             if (err) {
@@ -297,6 +339,8 @@ module.exports = function DashboardDB() {
         signup : signup,
         deserializeUser: deserializeUser,
         getUsers : getUsers,
+        modUser : modUser,
+        delUser : delUser,
         getSatellites: getSatellites,
         addSatellite : addSatellite,
         modSatellite : modSatellite,
