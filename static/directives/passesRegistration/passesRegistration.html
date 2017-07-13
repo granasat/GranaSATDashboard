@@ -26,12 +26,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat-start="pass in satellitePasses" ng-click="pass.expanded = !pass.expanded; selectedItem =$index">
-                    <td>{{(localTimeMode) ? pass.startDateLocal : pass.startDateUTC.toUTCString()}}</td>
-                    <td>{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
-                    <td>{{pass.duration | millSecondsToTimeString}}</td>
-                    <td>{{pass.maxElevation}}º</td>
-                    <td>{{pass.remainTime | millSecondsToTimeString}}</td>
+                <tr ng-repeat-start="pass in satellitePasses">
+                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{(localTimeMode) ? pass.startDateLocal : pass.startDateUTC.toUTCString()}}</td>
+                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
+                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.duration | millSecondsToTimeString}}</td>
+                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.maxElevation}}º</td>
+                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.remainTime | millSecondsToTimeString}}</td>
                     <td>
                         <button ng-click="setPass(pass)" type="button" class="btn btn-success btn-xs">
                             Schedule
