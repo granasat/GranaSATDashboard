@@ -165,7 +165,7 @@ module.exports = function DashboardDB() {
     }
 
     function addRemoteTransceiversDB(data, cb){
-        db.run('INSERT INTO REMOTE_TRANSCEIVERS VALUES (NULL, $name, $desc, $rx, $tx, $status)', {
+        db.run('INSERT INTO REMOTE_TRANSCEIVERS (RMT_NAME,RMT_DESC,RMT_RX_FREQ,RMT_TX_FREQ,RMT_STATUS) VALUES ($name, $desc, $rx, $tx, $status)', {
             $name : data.satname,
             $desc : data.description,
             $rx : data.rx_freq,
@@ -179,7 +179,7 @@ module.exports = function DashboardDB() {
     }
 
     function addSatelliteDB(data, cb){
-        db.run('INSERT INTO SATELLITES VALUES (NULL, $tle1, $tle2, $url, $date)', {
+        db.run('INSERT INTO SATELLITES VALUES (LAST_INSERT_ROWID(), $tle1, $tle2, $url, $date)', {
             $tle1 : data.tle1,
             $tle2 : data.tle2,
             $url : data.url,
@@ -208,9 +208,9 @@ module.exports = function DashboardDB() {
         //req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
         //req.checkBody('tle', 'TLE is required').notEmpty();
 
-        addSatelliteDB(req.body, function (result) {
+        addRemoteTransceiversDB(req.body, function (result) {
             if (result.result == null) {
-                addRemoteTransceiversDB(req.body, function (result) {
+                addSatelliteDB(req.body, function (result) {
                     if (result.result == null) {
                         res({
                             status: "Done"
