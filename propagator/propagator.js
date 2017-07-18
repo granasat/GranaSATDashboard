@@ -105,10 +105,11 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
                 passes.push({
                     startDateUTC: new Date(raise).toUTCString(),
                     endDateUTC: new Date(i).toUTCString(),
-                    startDateLocal: new Date(raise).toString(),
-                    endDateLocal: new Date(i).toString(),
+                    startDateLocal: new Date(raise),
+                    endDateLocal: new Date(i),
                     duration: i - raise,
                     maxElevation: maxElevation.toFixed(2),
+                    id : Math.random() * (10000),
                     data: data
                 });
                 raise = 0;

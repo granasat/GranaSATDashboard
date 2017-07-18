@@ -29,7 +29,6 @@ var Propagator = require('./propagator/propagator.js');
 var create_and_fill_models = require('./sat_library/getFiles.js');
 
 
-
 //Database stuff
 // var db = new require("./utils/test_database.js")()
 var db = new require("./utils/database.js")()
@@ -38,6 +37,12 @@ var db = new require("./utils/database.js")()
 //Auth stuff
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+
+
+//Where passes will be saved
+var passes = [];
+refreshPasses();
+var refreshPassesInterval = setInterval(refreshPasses, config.propagator_calculator_frequency);
 
 // APPs ////////////////////////////////////////////////////////////////
 var app = express();
@@ -211,9 +216,10 @@ app.get('/satellites', isAuthenticated, function(req, res) {
 
 app.post('/satellites', isAuthenticated, function(req, res) {
     //Set the elevation and azimuth information available on the HTTP request
-    log("Adding sat: " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+    log("Adding sat: "  + req.body.satname + " " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
     db.addSatellite(req, function (data) {
+        addSatellite2Passes(req.body.satname);      //Add satellite to passes and calculate the propagator
         res.json(data);
     });
 });
@@ -247,12 +253,9 @@ app.get('/satellites/scheduled', function(req, res) {
 
 app.get('/satellites/passes', isAuthenticated, function(req, res) {
     var sat = req.query.satellite;
-    log("Calculating passes for: " + sat + " for next " + config.propagator_calculator_days + " days as " + req.user.USR_NAME)
-    new Propagator(sat, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function(p) {
-        var now = new Date()
-        var next = new Date(now.getTime() + (1000 * 60 * 60 * 24 * config.propagator_calculator_days));
-        res.json(p.getPasses(now, next))
-    });
+    res.json(passes.find(function (p) {
+        return p.name === sat;
+    }).pass);
 });
 
 app.post('/satellites/passes', isAuthenticated, function(req, res) {
@@ -364,3 +367,102 @@ app.get('/getSatLibrary', isAuthenticated, function(req, res) {
 
 app.listen(config.web_port, config.web_host);
 log("Web server listening: " + config.web_host + ":" + config.web_port);
+
+
+/** Check db and passes, sync the elements. If the user add a satellite to DB
+ *  it must be added to passes. The same when the user delete a satellite.
+ *
+ * @returns {Promise}
+ */
+
+function refreshSatellites(){
+    return new Promise(function (resolve, reject) {
+        db.getSatellites(function (satellites) {
+            satellites.forEach(function (sat) {
+                //Search if the satellite has been added to passes
+                var included = passes.some(function (f) {
+                    return f.name === sat.RMT_NAME;
+                });
+
+                if (!included) {          //Add a new satellite to passes
+                    log("Adding " + sat.RMT_NAME + " to passes", "warn");
+                    passes.push({name: sat.RMT_NAME});
+                }
+            });
+
+            //Delete satellites in passes if they have been deleted from db
+            passes.forEach(function (satellitePasses) {
+                //Search if the satellite is in satellites
+                var included = satellites.some(function (f) {
+                    return f.RMT_NAME === satellitePasses.name;
+                });
+
+                if (!included) {          //Delete satellite from passes
+                    log("Deleting " + satellitePasses.name + " from passes", "warn");
+
+                    passes = passes.filter(function (el) {
+                        return !el.name || el.name !== satellitePasses.name;
+                    });
+                }
+            });
+
+            resolve();
+        });
+    });
+}
+
+
+/**
+ * Calculate passes for the next config.propagator_calculator_days days and added to passes
+ */
+
+function refreshPasses(){
+    refreshSatellites().then(function () {
+        var start = new Date();
+        var end = new Date(start.getTime() + (1000 * 60 * 60 * 24 * config.propagator_calculator_days));
+
+        log("Calculating passes from " + start + " to " + end, "warn");
+        passes.forEach(function (sat) {
+            new Propagator(sat.name, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function (p) {
+                if(sat.pass){           //There is a previous propagator, we have to compare them
+                    var nextPasses = p.getPasses(start, end);
+
+                    nextPasses.forEach(function (elem, index, array) {
+                        var id = sat.pass.find(function (pass) {
+                            return Math.abs(pass.startDateLocal.getTime() - elem.startDateLocal.getTime()) < config.propagator_error;
+                        }).id;
+
+                        if(id){
+                            elem.id = id;
+                        }
+
+                        if(index === array.length){
+                            sat.pass = p.getPasses;
+                        }
+                    });
+                }
+                else{
+                    sat.pass = p.getPasses(start, end);
+                }
+            });
+        });
+    });
+}
+
+/**
+ * Calculate passes for a single satellite and added to passes
+ * @param {String} sat - Satellite's name.
+ */
+function addSatellite2Passes(sat){
+    refreshSatellites().then(function () {
+        var start = new Date();
+        var end = new Date(start.getTime() + (1000 * 60 * 60 * 24 * config.propagator_calculator_days));
+
+        log("Calculating passes of " + sat + " from " + start + " to " + end, "warn");
+        new Propagator(sat, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function (p) {
+            passes.find(function (el) {
+                return el.name === sat;
+            }).pass = p.getPasses(start, end);
+        });
+    });
+}
