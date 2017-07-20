@@ -59,7 +59,7 @@
 </head>
 
 
-<body ng-app="myApp" ng-controller="appController" style="padding-top: 50px;">
+<body ng-app="myApp" ng-controller="appController" style="padding-top: 50px;" ng-init="setupPasses()">
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -151,10 +151,11 @@
                                     <tbody>
                                         <tr ng-repeat="pass in scheduledPasses">
                                             <td>{{pass.satellite}}</td>
-                                            <td>{{pass.info.startDateUTC}}</td>
-                                            <td>{{pass.info.duration | millSecondsToTimeString}}</td>
-                                            <td>{{pass.info.maxElevation}}º</td>
-                                            <td>{{pass.remainTime | millSecondsToTimeString}}</td>
+                                            <td>{{pass.startDateUTC}}</td>
+                                            <td>{{pass.duration | millSecondsToTimeString}}</td>
+                                            <td>{{pass.maxElevation}}º</td>
+                                            <td>{{pass.remainTime | millSecondsToTimeString}}
+                                            </td><td><button ng-if="logged" ng-click="undoSchedule(pass)" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></td>
                                         </tr>
                                     </tbody>
                                 </table>

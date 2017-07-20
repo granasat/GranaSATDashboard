@@ -245,44 +245,51 @@ app.post('/delSatellites', isAuthenticated, function(req, res) {
 app.get('/satellites/scheduled', function(req, res) {
     res.json(scheduledPasses.map(function(e) {
         return {
-            info: e.info,
-            satellite: e.satellite
+            name: e.satellite,
+            id: e.id
         }
     }))
 });
 
-app.get('/satellites/passes', isAuthenticated, function(req, res) {
-    var sat = req.query.satellite;
-    res.json(passes.find(function (p) {
-        return p.name === sat;
-    }).pass);
+app.get('/satellites/passes', function(req, res) {
+    res.json(passes);
 });
 
 app.post('/satellites/passes', isAuthenticated, function(req, res) {
-    var data = req.body;
-    var pass = data.pass
-    var freq = data.satellite.RMT_RX_FREQ
-    var passName = data.satellite.RMT_NAME.replace(/[^a-zA-Z0-9]/g, "") + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
+    db.getSatellites(function (satellites) {
+        var sat = satellites.find(function (f) {        //Get satellite info from DB
+            return f.RMT_NAME === req.body.sat;
+        });
 
-    log("SCHEDULING pass for: " + data.satellite.RMT_NAME +
-        "\n\t Date: " + pass.startDateUTC +
-        "\n\t Duration: " + pass.duration / 1000 + " s" +
-        "\n\t Frequency: " + freq + " Hz" +
-        "\n\t File: " + passName + ".wav");
+        var pass = passes.find(function (satellite) {   //Get passes info from DB
+            return satellite.name === sat.RMT_NAME;
+        }).pass.find(function (pass) {
+            return pass.id === req.body.id;
+        });
 
-    new Propagator(data.satellite.RMT_NAME, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function(propagator) {
-        var passScheduled = {
-            pass_id: passName,
-            satellite: data.satellite.RMT_NAME,
-            info: pass,
-            handler_id: setTimeout(function() {
-                log("STARTING pass for: " + data.satellite.RMT_NAME +
-                    "\n\t Date: " + pass.startDateUTC +
-                    "\n\t Duration: " + pass.duration / 1000 + " s" +
-                    "\n\t Frequency: " + freq + " Hz" +
-                    "\n\t File: " + passName + ".wav");
+        var freq = sat.RMT_RX_FREQ;
 
-                exec("arecord -f cd -d " + (pass.duration / 1000) + " " + passName + ".wav", function(error, stdout, stderr) {
+        var passName = sat.RMT_NAME.replace(/[^a-zA-Z0-9]/g, "") + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
+
+        log("SCHEDULING pass for: " + sat.RMT_NAME +
+            "\n\t Date: " + pass.startDateUTC +
+            "\n\t Duration: " + pass.duration / 1000 + " s" +
+            "\n\t Frequency: " + freq + " Hz" +
+            "\n\t File: " + passName + ".wav");
+
+        new Propagator(sat.RMT_NAME, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function(propagator) {
+            var passScheduled = {
+                id: req.body.id,
+                satellite: sat.RMT_NAME,
+                info: pass,
+                handler_id: setTimeout(function() {
+                    log("STARTING pass for: " + sat.RMT_NAME +
+                        "\n\t Date: " + pass.startDateUTC +
+                        "\n\t Duration: " + pass.duration / 1000 + " s" +
+                        "\n\t Frequency: " + freq + " Hz" +
+                        "\n\t File: " + passName + ".wav");
+
+                    exec("arecord -f cd -d " + (pass.duration / 1000) + " " + passName + ".wav", function(error, stdout, stderr) {
                         if (error) {
                             log(error + stdout + stderr, 'error');
                         } else {
@@ -303,55 +310,63 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
                     // exec("arecord -f cd -d " + (pass.duration / 1000) + " | sox -t raw -e signed -c 1 -b 16 -r 11025 - " + passName + ".wav")
 
 
-                var passInterval = setInterval(function() {
-                    var p = propagator.getStatusNow()
+                    var passInterval = setInterval(function() {
+                        var p = propagator.getStatusNow()
 
-                    if (!p.error) {
-                        //Move antennas
-                        rotors.setPosition(p, function(ans) {
-                            if (!ans.error) {
-                                log("DOING pass for " + data.satellite.RMT_NAME + ": moving to AZ: " + p.azi + " EL: " + p.ele);
-                            }
-                        })
+                        if (!p.error) {
+                            //Move antennas
+                            rotors.setPosition(p, function(ans) {
+                                if (!ans.error) {
+                                    log("DOING pass for " + sat.RMT_NAME + ": moving to AZ: " + p.azi + " EL: " + p.ele);
+                                }
+                            })
 
-                        //Set freq
-                        radioStation.setFrequency({
-                            VFOA: freq * p.dopplerFactor
-                        }, function(ans) {
-                            if (!ans.error) {
-                                log("DOING pass for " + data.satellite.RMT_NAME + ": setting freq to " + freq * p.dopplerFactor + " [" + freq + "]");
-                            }
-                        })
-                    } else {
-                        log(p.error, "error")
-                    }
-
-
-                }, config.auto_pass_refresh_rate)
+                            //Set freq
+                            radioStation.setFrequency({
+                                VFOA: freq * p.dopplerFactor
+                            }, function(ans) {
+                                if (!ans.error) {
+                                    log("DOING pass for " + sat.RMT_NAME + ": setting freq to " + freq * p.dopplerFactor + " [" + freq + "]");
+                                }
+                            })
+                        } else {
+                            log(p.error, "error")
+                        }
 
 
-                setTimeout(function() {
-                    clearInterval(passInterval);
-
-                    log("ENDING pass for: " + data.satellite.RMT_NAME +
-                        "\n\t Date: " + pass.startDateUTC +
-                        "\n\t Duration: " + pass.duration / 1000 + " s" +
-                        "\n\t Frequency: " + freq + " Hz" +
-                        "\n\t File: " + passName + ".wav");
-                }, pass.duration /*Pass duration*/ )
+                    }, config.auto_pass_refresh_rate)
 
 
-            }, new Date(pass.startDateUTC) - new Date() /*Time to pass start*/ )
-        }
+                    setTimeout(function() {
+                        clearInterval(passInterval);
 
-        //Saving to the list
-        scheduledPasses.push(passScheduled)
+                        log("ENDING pass for: " + sat.RMT_NAME +
+                            "\n\t Date: " + pass.startDateUTC +
+                            "\n\t Duration: " + pass.duration / 1000 + " s" +
+                            "\n\t Frequency: " + freq + " Hz" +
+                            "\n\t File: " + passName + ".wav");
+                    }, pass.duration /*Pass duration */)
+
+
+                }, new Date(pass.startDateUTC) - new Date() /*Time to pass start */)};
+            //Saving to the list
+            scheduledPasses.push(passScheduled);
+        });
+    });
+    res.json({
+        status: "Done"
+    })
+
+});
+
+app.post('/satellites/undoSchedule', isAuthenticated, function(req, res) {
+    scheduledPasses = scheduledPasses.filter(function (pass) {
+       return pass.id !== req.body.id;
     });
 
     res.json({
-        status: "OK"
+        status: "Done"
     })
-
 });
 
 app.get('/', function(req, res, next) {
@@ -364,6 +379,7 @@ app.get('/getSatLibrary', isAuthenticated, function(req, res) {
         res.json(data);
     })
 });
+
 
 app.listen(config.web_port, config.web_host);
 log("Web server listening: " + config.web_host + ":" + config.web_port);
@@ -426,18 +442,17 @@ function refreshPasses(){
             new Propagator(sat.name, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function (p) {
                 if(sat.pass){           //There is a previous propagator, we have to compare them
                     var nextPasses = p.getPasses(start, end);
-
                     nextPasses.forEach(function (elem, index, array) {
-                        var id = sat.pass.find(function (pass) {
-                            return Math.abs(pass.startDateLocal.getTime() - elem.startDateLocal.getTime()) < config.propagator_error;
-                        }).id;
+                        var findPass = sat.pass.find(function (pass) {                  //If it is a new pass it can't be found
+                            return Math.abs(pass.endDateLocal.getTime() - elem.endDateLocal.getTime()) < config.propagator_error;
+                        });
 
-                        if(id){
-                            elem.id = id;
+                        if(findPass) {
+                            elem.id = findPass.id;
                         }
 
-                        if(index === array.length){
-                            sat.pass = p.getPasses;
+                        if(index === array.length) {
+                            sat.pass = nextPasses;
                         }
                     });
                 }

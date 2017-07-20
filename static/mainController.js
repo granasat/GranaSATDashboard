@@ -7,12 +7,45 @@ app.controller('appController', function($scope, $http, $uibModal) {
     $scope.videoShow = false;
     $scope.mobileEnabled = false;
     $scope.localTimeMode = false;
+    $scope.scheduledPasses = [];
 
 
     setInterval(function() {
         $scope.UTCTime = new Date().toUTCString();
         $scope.localTime = new Date().toString();
     }, 1000);
+
+    setInterval(function() {
+        //Update remainTime for calculated passes
+        if ($scope.passes) {
+            $scope.passes.forEach(function (sat) {
+                sat.pass.forEach(function (e) {
+                    e.remainTime = new Date(new Date(e.startDateUTC).getTime() - new Date().getTime());
+                })
+            });
+            $scope.$apply();
+        }
+    }, 1000);
+
+    $scope.setupPasses = function () {
+        $scope.getAllPasses().then(function (res) {
+            $scope.passes = res.data;
+
+            //Retrieve scheduled passes
+            $scope.getScheduledPasses().then(function(res) {
+                res.data.forEach(function(scheduledPass) {
+                    var pass = $scope.passes.find(function (sat) {
+                        return sat.name === scheduledPass.name;
+                    }).pass.find(function (pass) {
+                        return pass.id === scheduledPass.id;
+                    });
+
+                    $scope.scheduledPasses.push(pass);
+                    pass.scheduled = true;
+                });
+            });
+        });
+    };
 
     $scope.loginModal = function() {
         var loginModalInstance = $uibModal.open({
@@ -147,6 +180,34 @@ app.controller('appController', function($scope, $http, $uibModal) {
             url: "/getSatLibrary"
         });
     };
+
+    $scope.getAllPasses = function() {
+        return $http({
+            method: 'GET',
+            url: "satellites/passes"
+        });
+    };
+
+    $scope.undoSchedule = function(scheduledPass){
+        return $http({
+            method: 'POST',
+            url: "/satellites/undoSchedule",
+            data: {id : scheduledPass.id}
+        }).then(function (res) {
+            if(res.data.status === "Done"){
+                $scope.scheduledPasses = $scope.scheduledPasses.filter(function (pass){
+                    return pass.id !== scheduledPass.id;
+                });
+
+                //Change schedule attribute of the pass with the same id in passes
+                $scope.passes.find(function (sat) {
+                    return sat.name === scheduledPass.satellite;
+                }).pass.find(function (pass) {
+                    return pass.id === scheduledPass.id;
+                }).scheduled = false;
+            }
+        });
+    }
 });
 
 app.controller('loginModelController', function($scope, $http, $uibModalInstance, items) {

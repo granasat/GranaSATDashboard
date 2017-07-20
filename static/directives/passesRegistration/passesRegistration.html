@@ -27,13 +27,16 @@
             </thead>
             <tbody>
                 <tr ng-repeat-start="pass in satellitePasses">
-                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{(localTimeMode) ? pass.startDateLocal : pass.startDateUTC.toUTCString()}}</td>
+                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{(localTimeMode) ? pass.startDateLocal : pass.startDateUTC}}</td>
                     <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
                     <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.duration | millSecondsToTimeString}}</td>
                     <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.maxElevation}}º</td>
                     <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.remainTime | millSecondsToTimeString}}</td>
                     <td>
-                        <button ng-click="setPass(pass)" type="button" class="btn btn-success btn-xs">
+                        <button ng-show="!pass.scheduled" ng-click="setPass(pass)" type="button" class="btn btn-success btn-xs">
+                            Schedule
+                        </button>
+                        <button ng-show="pass.scheduled" type="button" class="btn btn-danger btn-xs disabled">
                             Schedule
                         </button>
                     </td>
@@ -51,10 +54,6 @@
                         </div>
                     </td>
                 </tr>
-                <!-- <div uib-collapse="pass.collapse">
-                    <div class="well well-lg">Some content</div>
-                </div> -->
-
             </tbody>
         </table>
     </div>
