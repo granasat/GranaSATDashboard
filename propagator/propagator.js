@@ -103,13 +103,14 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
             }
             if (c.ele <= 0 && visible) {
                 passes.push({
-                    startDateUTC: new Date(raise).toUTCString(),
-                    endDateUTC: new Date(i).toUTCString(),
+                    startDateUTC: new Date(raise),
+                    endDateUTC: new Date(i),
                     startDateLocal: new Date(raise),
                     endDateLocal: new Date(i),
                     duration: i - raise,
                     maxElevation: maxElevation.toFixed(2),
                     id : Math.random() * (10000),
+                    satellite : satelliteName,
                     data: data
                 });
                 raise = 0;
