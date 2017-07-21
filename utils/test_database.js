@@ -87,7 +87,6 @@ module.exports = function DashboardDB() {
             }
             else {
                 log(result, "error");
-                console.log(result);
                 res({
                     error: result
                 });

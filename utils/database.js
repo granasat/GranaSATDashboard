@@ -79,33 +79,33 @@ module.exports = function DashboardDB() {
     };
 
     function signup(req, res) {
-        req.checkBody('username', 'Name is required').notEmpty().isAlpha().len(6, 20);
-        req.checkBody('organization', 'Organization is required').notEmpty().isAlpha();
-        req.checkBody('email', 'A valid email is required').notEmpty().isEmail();
-        req.checkBody('password', 'A valid password is required').notEmpty().len(6, 8);
-        req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
-        req.checkBody('usertype', 'A valid type is required').notEmpty().isInt();
+        //req.checkBody('username', 'Name is required').notEmpty().isAlpha().len(6, 20);
+        //req.checkBody('organization', 'Organization is required').notEmpty().isAlpha();
+        //req.checkBody('email', 'A valid email is required').notEmpty().isEmail();
+        //req.checkBody('password', 'A valid password is required').notEmpty().len(6, 8);
+        //req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
+        //req.checkBody('usertype', 'A valid type is required').notEmpty().isInt();
 
         var salt = createSalt();
 
         var post = [
             [
-                req.body.username,
-                req.body.organization,
-                req.body.mail,
-                salt + ":" + hashPassword(req.body.password, salt),
-                req.body.usertype
+                req.username,
+                req.organization,
+                req.mail,
+                salt + ":" + hashPassword(req.password, salt),
+                3
             ]
         ];
 
         database.query('INSERT INTO USERS (USR_NAME,USR_ORGANIZATION,USR_MAIL,USR_PASSWORD,USR_TYPE) VALUES ?', [post], function(err) {
             if (err) {
                 log(err.toString(), "error");
-                res.json({
-                    error: "Database error"
+                res({
+                    error: err
                 })
             } else {
-                res.json({
+                res({
                     status: "Done"
                 })
             }
@@ -122,29 +122,28 @@ module.exports = function DashboardDB() {
             req.checkBody('usertype', 'A valid type is required').notEmpty().isInt();
 
             var post = [
-                [
-                    req.body.username,
-                    req.body.organization,
-                    req.body.mail,
-                    req.body.usertype,
-                    req.body.user_id
-                ]
+                req.body.USR_NAME,
+                req.body.USR_ORGANIZATION,
+                req.body.USR_MAIL,
+                req.body.USR_TYPE,
+                req.body.USR_BLOCKED,
+                req.body.USR_ID
             ];
 
-            database.query('UPDATE USERS SET USR_NAME = ?, USR_ORGANIZATION = ?, USR_MAIL = ?, USR_TYPE = ? WHERE USR_ID = ?', [post], function(err) {
+            database.query('UPDATE USERS SET USR_NAME = ?, USR_ORGANIZATION = ?, USR_MAIL = ?, USR_TYPE = ?, USR_BLOCKED = ? WHERE USR_ID = ?', post, function(err) {
                 if (err) {
                     log(err.toString(), "error");
-                    res.json({
+                    res({
                         error: "Database error"
                     })
                 } else {
-                    res.json({
+                    res({
                         status: "Done"
                     })
                 }
             });
 
-        } else {
+        } /* else {
 
             req.checkBody('username', 'Name is required').notEmpty().isAlpha().len(6, 20);
             req.checkBody('organization', 'Organization is required').notEmpty().isAlpha();
@@ -162,7 +161,7 @@ module.exports = function DashboardDB() {
                     req.body.mail,
                     salt + ":" + hashPassword(req.body.password, salt),
                     req.body.usertype,
-                    req.body.user_id
+                    req.body.id
                 ]
             ];
 
@@ -178,22 +177,36 @@ module.exports = function DashboardDB() {
                     })
                 }
             });
-        }
+        }*/
     };
 
     function delUser(req, res) {
-        req.checkBody('user_id', 'User ID').notEmpty().isInt();
+        req.checkBody('id', 'User ID').notEmpty().isInt();
 
-        database.query('DELETE FROM USERS WHERE USR_ID = ?', req.body.user_id, function(err) {
+        database.query('DELETE FROM USERS WHERE USR_ID = ?', [req.body.USR_ID], function(err) {
             if (err) {
                 log(err.toString(), "error");
-                res.json({
+                res({
                     error: "Database error"
                 })
             } else {
-                res.json({
+                res({
                     status: "Done"
                 })
+            }
+        });
+    }
+
+    function getUsers(cb){
+        database.query('SELECT USR_ID, USR_NAME, USR_ORGANIZATION, USR_MAIL, USR_TYPE, USR_LAST_VST, USR_BLOCKED FROM USERS', function(err, rows) {
+            if(err){
+                log(err.toString(), "error");
+                cb({
+                    error: "Database error"
+                })
+            }
+            else{
+                cb(rows);
             }
         });
     }
@@ -219,9 +232,16 @@ module.exports = function DashboardDB() {
             ]
         ];
 
+        var post2 = [
+            req.body.tle1,
+            req.body.tle2,
+            req.body.url,
+            (new Date()).toString()
+        ];
+
         database.query('INSERT INTO REMOTE_TRANSCEIVERS (RMT_NAME,RMT_DESC,RMT_RX_FREQ,RMT_TX_FREQ,RMT_STATUS) VALUES ?', [post], function(err) {
             if (!err) {
-                database.query('INSERT INTO SATELLITES (SAT_ID,SAT_TLE1,SAT_TLE2,SAT_TLE_DATE) VALUES (LAST_INSERT_ID(),?)', req.body.tle1, req.body.tle2, (new Date()).toString(), function(err) {
+                database.query('INSERT INTO SATELLITES (SAT_ID,SAT_TLE1,SAT_TLE2,SAT_TLE_URL,SAT_TLE_DATE) VALUES (LAST_INSERT_ID(),?)', [post2], function(err) {
                     if (err) {
                         log(err.toString(), "error");
                         res({
@@ -247,19 +267,25 @@ module.exports = function DashboardDB() {
         req.checkBody('tle', 'TLE is required').notEmpty();
 
         var post = [
-            [
-                req.body.satname,
-                req.body.description,
-                req.body.rx_freq,
-                req.body.tx_freq,
-                req.body.status,
-                req.body.sat_id
-            ]
+            req.body.satname,
+            req.body.description,
+            req.body.rx_freq,
+            req.body.tx_freq,
+            req.body.status,
+            req.body.id
         ];
 
-        database.query('UPDATE REMOTE_TRANSCEIVERS SET RMT_NAME = ?,RMT_DESC = ?,RMT_RX_FREQ = ?,RMT_TX_FREQ = ?,RMT_STATUS = ? WHERE RMT_ID = ?', [post], function(err) {
+        var post2 = [
+            req.body.tle1,
+            req.body.tle2,
+            req.body.url,
+            (new Date()).toString(),
+            req.body.id
+        ];
+
+        database.query('UPDATE REMOTE_TRANSCEIVERS SET RMT_NAME = ?,RMT_DESC = ?,RMT_RX_FREQ = ?,RMT_TX_FREQ = ?,RMT_STATUS = ? WHERE RMT_ID = ?', post, function(err) {
             if (!err) {
-                database.query('UPDATE SATELLITES SET SAT_TLE1 = ?, SAT_TLE2 = ?, SAT_TLE_DATE = ? WHERE SAT_ID = ?', req.body.tle1, req.body.tle2, (new Date()).toString(), req.body.sat_id, function(err) {
+                database.query('UPDATE SATELLITES SET SAT_TLE1 = ?, SAT_TLE2 = ?, SAT_TLE_URL = ?, SAT_TLE_DATE = ? WHERE SAT_ID = ?', post2, function(err) {
                     if (err) {
                         log(err.toString(), "error");
                         res({
@@ -288,7 +314,7 @@ module.exports = function DashboardDB() {
             [
                 req.body.tle1,
                 req.body.tle2,
-                req.body.sat_id
+                req.body.id
             ]
         ];
 
@@ -356,12 +382,12 @@ module.exports = function DashboardDB() {
                 database.query('DELETE FROM SATELLITES WHERE SAT_ID = ?', req.body.RMT_ID, function(err){
                     if(err){
                         log(err.toString(), "error");
-                        res.json({
+                        res({
                             error: "Database error"
                         });
                     }
                     else{
-                        res.json({
+                        res({
                             status: "Done"
                         });
                     }
@@ -524,6 +550,7 @@ module.exports = function DashboardDB() {
         signup: signup,
         modUser: modUser,
         delUser: delUser,
+        getUsers: getUsers,
         deserializeUser: deserializeUser,
         addSatellite: addSatellite,
         modSatellite: modSatellite,

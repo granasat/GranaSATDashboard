@@ -16,6 +16,6 @@ exports.config = {
     propagator_passes_thr: 10,
     propagator_passes_step: 5,
     propagator_calculator_days: 3,
-    propagator_calculator_frequency: 60000,
-    propagator_error : 30000
+    propagator_calculator_frequency: 3600000,
+    propagator_error : 40000
 }

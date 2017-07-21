@@ -268,7 +268,7 @@ app.controller('loginModelController', function($scope, $http, $uibModalInstance
                         status: "Done"
                     });
                 }
-                else if(res.data.error.errno == 19){
+                else if(res.data.error.errno == 19 || res.data.error.errno == 1062){
                     invalidSignUpUsername();
                 }
             }, function (err) {

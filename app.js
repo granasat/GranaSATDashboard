@@ -26,7 +26,7 @@ var Yaesu = require('./rotors/yaesu.js');
 var Kenwood = require('./transceivers/kenwoodts2000.js');
 var Icom9100 = require('./transceivers/icom9100.js');
 var Propagator = require('./propagator/propagator.js');
-var create_and_fill_models = require('./sat_library/getFiles.js');
+//var create_and_fill_models = require('./sat_library/getFiles.js');
 
 
 //Database stuff
@@ -373,13 +373,13 @@ app.get('/', function(req, res, next) {
     res.sendFile(path.join(__dirname + '/static/index.html'));
 });
 
-
+/*
 app.get('/getSatLibrary', isAuthenticated, function(req, res) {
     new create_and_fill_models().getSatInfo().then(function (data) {
         res.json(data);
     })
 });
-
+*/
 
 app.listen(config.web_port, config.web_host);
 log("Web server listening: " + config.web_host + ":" + config.web_port);
