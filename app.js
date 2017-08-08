@@ -260,107 +260,121 @@ app.get('/satellites/passes', function(req, res) {
 });
 
 app.post('/satellites/passes', isAuthenticated, function(req, res) {
-    db.getSatellites(function (satellites) {
-        var sat = satellites.find(function (f) {        //Get satellite info from DB
-            return f.RMT_NAME === req.body.sat;
-        });
+    var sat = passes.find(function (satellite) {   //Get passes info from DB
+        return satellite.SAT_ID === req.body.satId;
+    });
 
-        var pass = passes.find(function (satellite) {   //Get passes info from DB
-            return satellite.name === sat.RMT_NAME;
-        }).pass.find(function (pass) {
-            return pass.id === req.body.id;
-        });
+    var pass = sat.pass.find(function (pass) {
+        return pass.id === req.body.passId;
+    });
 
-        var freq = sat.rmt[0].RMT_DOWNLINK_LOW;
+    var trsp = sat.rmt.find(function (rmt) {
+        return rmt.RMT_ID === req.body.trspId;
+    });
 
-        var passName = sat.SAT_NAME.replace(/[^a-zA-Z0-9]/g, "") + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
+    var freq = 0;
 
-        log("SCHEDULING pass for: " + sat.RMT_NAME +
+    if((freq = (trsp.RMT_DOWNLINK_LOW)? trsp.RMT_DOWNLINK_LOW : trsp.RMT_DOWNLINK_HIGH) && pass.data.length > 0){
+        var passName = sat.SAT_NAME.replace(/[^a-zA-Z0-9]/g, "") + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm");
+        var passRefreshInterval = pass.duration / pass.data.length;
+
+        log("SCHEDULING pass for: " + sat.SAT_NAME +
             "\n\t Date: " + pass.startDateUTC +
             "\n\t Duration: " + pass.duration / 1000 + " s" +
             "\n\t Frequency: " + freq + " Hz" +
             "\n\t File: " + passName + ".wav");
 
-        new Propagator(sat.RMT_NAME, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function(propagator) {
-            var passScheduled = {
-                id: req.body.id,
-                satellite: sat.RMT_NAME,
-                info: pass,
-                handler_id: setTimeout(function() {
-                    log("STARTING pass for: " + sat.RMT_NAME +
+        var passScheduled = {
+            id: req.body.passId,
+            satellite: sat.SAT_NAME,
+            info: pass,
+            handler_id: setTimeout(function() {
+                log("STARTING pass for: " + sat.SAT_NAME +
+                    "\n\t Date: " + pass.startDateUTC +
+                    "\n\t Duration: " + pass.duration / 1000 + " s" +
+                    "\n\t Frequency: " + freq + " Hz" +
+                    "\n\t File: " + passName + ".wav");
+
+                exec("arecord -f cd -d " + (pass.duration / 1000) + " " + passName + ".wav", function(error, stdout, stderr) {
+                    if (error) {
+                        log(error + stdout + stderr, 'error');
+                    } else {
+                        log("Pass recording done. Processing the audio file: " + passName);
+
+                        /*
+                        exec("sox " + passName + ".wav " + passName + "mod.wav rate 20800 channels 1", function(error, stdout, stderr) {
+                            if (error) {
+                                log(error + stdout + stderr, 'error');
+                            } else {
+                                // python GranaSatDashboard/utils/NOAAAPTDecoder.py a.wav out.png
+                                log("Audio conversion done. Processing the image: " + passName)
+                                exec("python GranaSatDashboard/utils/NOAAAPTDecoder.py " + passName + "mod.wav " + passName + ".png", function() {
+                                    log("NOAA Decoding completed: " + passName)
+                                })
+                            }
+                        })
+
+                        */
+                    }
+                });
+                // exec("arecord -f cd -d " + (pass.duration / 1000) + " | sox -t raw -e signed -c 1 -b 16 -r 11025 - " + passName + ".wav")
+
+                /*
+                    In the var pass we have the data of the pass, it is a array with the values of azi, ele and doppler.
+                    We divide the time of the pass with the number of values in pass, then it will refresh every this value.
+                 */
+
+                var i = 0;
+                var passInterval = setInterval(function() {
+                    var p = pass.data[i];
+                    console.log(p);
+
+                    if (!p.error) {
+                        //Move antennas
+                        rotors.setPosition(p, function(ans) {
+                            if (!ans.error) {
+                                log("DOING pass for " + sat.SAT_NAME + ": moving to AZ: " + p.azi + " EL: " + p.ele);
+                            }
+                        });
+
+                        //Set freq
+                        radioStation.setFrequency({
+                            VFOA: freq * p.dopplerFactor
+                        }, function(ans) {
+                            if (!ans.error) {
+                                log("DOING pass for " + sat.SAT_NAME + ": setting freq to " + freq * p.dopplerFactor + " [" + freq + "]");
+                            }
+                        })
+                    } else {
+                        log(p.error, "error")
+                    }
+
+                    i++;
+                }, passRefreshInterval);
+
+
+                setTimeout(function() {
+                    clearInterval(passInterval);
+
+                    log("ENDING pass for: " + sat.SAT_NAME +
                         "\n\t Date: " + pass.startDateUTC +
                         "\n\t Duration: " + pass.duration / 1000 + " s" +
                         "\n\t Frequency: " + freq + " Hz" +
                         "\n\t File: " + passName + ".wav");
-
-                    exec("arecord -f cd -d " + (pass.duration / 1000) + " " + passName + ".wav", function(error, stdout, stderr) {
-                        if (error) {
-                            log(error + stdout + stderr, 'error');
-                        } else {
-                            log("Pass recording done. Processing the audio file: " + passName);
-                            exec("sox " + passName + ".wav " + passName + "mod.wav rate 20800 channels 1", function(error, stdout, stderr) {
-                                if (error) {
-                                    log(error + stdout + stderr, 'error');
-                                } else {
-                                    // python GranaSatDashboard/utils/NOAAAPTDecoder.py a.wav out.png
-                                    log("Audio conversion done. Processing the image: " + passName)
-                                    exec("python GranaSatDashboard/utils/NOAAAPTDecoder.py " + passName + "mod.wav " + passName + ".png", function() {
-                                        log("NOAA Decoding completed: " + passName)
-                                    })
-                                }
-                            })
-                        }
-                    })
-                    // exec("arecord -f cd -d " + (pass.duration / 1000) + " | sox -t raw -e signed -c 1 -b 16 -r 11025 - " + passName + ".wav")
+                }, pass.duration /*Pass duration */)
 
 
-                    var passInterval = setInterval(function() {
-                        var p = propagator.getStatusNow()
+            }, new Date(pass.startDateUTC) - new Date() /*Time to pass start */)};
+        //Saving to the list
+        scheduledPasses.push(passScheduled);
+    }
+    else{
+        // There is no freq to listen
+    }
 
-                        if (!p.error) {
-                            //Move antennas
-                            rotors.setPosition(p, function(ans) {
-                                if (!ans.error) {
-                                    log("DOING pass for " + sat.RMT_NAME + ": moving to AZ: " + p.azi + " EL: " + p.ele);
-                                }
-                            })
-
-                            //Set freq
-                            radioStation.setFrequency({
-                                VFOA: freq * p.dopplerFactor
-                            }, function(ans) {
-                                if (!ans.error) {
-                                    log("DOING pass for " + sat.RMT_NAME + ": setting freq to " + freq * p.dopplerFactor + " [" + freq + "]");
-                                }
-                            })
-                        } else {
-                            log(p.error, "error")
-                        }
-
-
-                    }, config.auto_pass_refresh_rate)
-
-
-                    setTimeout(function() {
-                        clearInterval(passInterval);
-
-                        log("ENDING pass for: " + sat.RMT_NAME +
-                            "\n\t Date: " + pass.startDateUTC +
-                            "\n\t Duration: " + pass.duration / 1000 + " s" +
-                            "\n\t Frequency: " + freq + " Hz" +
-                            "\n\t File: " + passName + ".wav");
-                    }, pass.duration /*Pass duration */)
-
-
-                }, new Date(pass.startDateUTC) - new Date() /*Time to pass start */)};
-            //Saving to the list
-            scheduledPasses.push(passScheduled);
-        });
-    });
     res.json({
         status: "Done"
-    })
-
+    });
 });
 
 app.post('/satellites/undoSchedule', isAuthenticated, function(req, res) {

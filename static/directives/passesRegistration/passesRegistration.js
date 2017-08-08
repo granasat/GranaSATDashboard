@@ -38,8 +38,9 @@ app.directive('passesRegistration', function($http, $document) {
                     method: 'POST',
                     url: "satellites/passes",
                     data: {
-                        sat: scope.satelliteSelected.RMT_NAME,
-                        id: pass.id
+                        satId: scope.satelliteSelected.SAT_ID,
+                        trspId : trsp.RMT_ID,
+                        passId: pass.id
                     }
                 }).then(function (res) {
                     if (res.data.status === "Done")
