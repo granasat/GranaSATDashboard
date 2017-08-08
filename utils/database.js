@@ -1,7 +1,7 @@
-"use strict"
+"use strict";
 
 //Utils
-var config = require('../config.js').config
+var config = require('../config.js').config;
 var crypto = require('crypto');
 
 
@@ -41,7 +41,7 @@ module.exports = function DashboardDB() {
         usernameField: 'username',
         passwordField: 'password',
         passReqToCallback: true,
-    }
+    };
 
     function login(req, username, password, done) {
         log("Trying to login: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
@@ -76,7 +76,7 @@ module.exports = function DashboardDB() {
                 return done(null, false);
             }
         });
-    };
+    }
 
     function signup(req, res) {
         //req.checkBody('username', 'Name is required').notEmpty().isAlpha().len(6, 20);
@@ -110,7 +110,7 @@ module.exports = function DashboardDB() {
                 })
             }
         });
-    };
+    }
 
     function modUser(req, res) {
 
@@ -178,7 +178,7 @@ module.exports = function DashboardDB() {
                 }
             });
         }*/
-    };
+    }
 
     function delUser(req, res) {
         req.checkBody('id', 'User ID').notEmpty().isInt();
@@ -222,36 +222,55 @@ module.exports = function DashboardDB() {
         req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
         req.checkBody('tle', 'TLE is required').notEmpty();
 
+        var error = false;
+
         var post = [
             [
-                req.body.satname,
-                req.body.description,
-                req.body.rx_freq,
-                req.body.tx_freq,
-                req.body.status
+                req.body.SAT_CAT,
+                req.body.SAT_NAME,
+                req.body.SAT_DESC,
+                req.body.SAT_TLE1,
+                req.body.SAT_TLE2,
+                req.body.SAT_TLE_URL,
+                (new Date()).toString()
             ]
         ];
-
-        var post2 = [
-            req.body.tle1,
-            req.body.tle2,
-            req.body.url,
-            (new Date()).toString()
-        ];
-
-        database.query('INSERT INTO REMOTE_TRANSCEIVERS (RMT_NAME,RMT_DESC,RMT_RX_FREQ,RMT_TX_FREQ,RMT_STATUS) VALUES ?', [post], function(err) {
+//INSERT INTO REMOTE_TRANSCEIVERS (RMT_CAT, RMT_STATUS, RMT_DESC, RMT_MODE, RMT_BAUD, RMT_UPLINK_LOW, RMT_UPLINK_HIGH, RMT_DOWNLINK_LOW, RMT_DOWNLINK_HIGH) VALUES ?
+        database.query('INSERT INTO SATELLITES (SAT_CAT, SAT_NAME, SAT_DESC, SAT_TLE1,SAT_TLE2,SAT_TLE_URL,SAT_TLE_DATE) VALUES ?', [post], function(err) {
             if (!err) {
-                database.query('INSERT INTO SATELLITES (SAT_ID,SAT_TLE1,SAT_TLE2,SAT_TLE_URL,SAT_TLE_DATE) VALUES (LAST_INSERT_ID(),?)', [post2], function(err) {
-                    if (err) {
-                        log(err.toString(), "error");
-                        res({
-                            error: "Database error"
-                        })
-                    } else {
-                        res({
-                            status: "Done"
-                        })
-                    }
+                req.body.rmt.forEach(function (rmt, index, array) {
+                    var post2 = [
+                        [
+                            req.body.SAT_CAT,
+                            rmt.RMT_STATUS,
+                            rmt.RMT_DESC,
+                            rmt.RMT_MODE,
+                            rmt.RMT_BAUD,
+                            rmt.RMT_UPLINK_LOW,
+                            rmt.RMT_UPLINK_HIGH,
+                            rmt.RMT_DOWNLINK_LOW,
+                            rmt.RMT_DOWNLINK_HIGH
+                        ]
+                    ];
+                    database.query('INSERT INTO REMOTE_TRANSCEIVERS (RMT_CAT, RMT_STATUS, RMT_DESC, RMT_MODE, RMT_BAUD, RMT_UPLINK_LOW, RMT_UPLINK_HIGH, RMT_DOWNLINK_LOW, RMT_DOWNLINK_HIGH) VALUES ?', [post2], function(err) {
+                        if (err) {
+                            log(err.toString(), "error");
+                            error = true;
+                        }
+
+                        if(index === array.length - 1){
+                            if(error){
+                                res({
+                                    error: "Database error"
+                                });
+                            }
+                            else{
+                                res({
+                                    status: "Done"
+                                });
+                            }
+                        }
+                    });
                 });
             } else {
                 log(err.toString(), "error");
@@ -266,36 +285,55 @@ module.exports = function DashboardDB() {
         req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
         req.checkBody('tle', 'TLE is required').notEmpty();
 
-        var post = [
-            req.body.satname,
-            req.body.description,
-            req.body.rx_freq,
-            req.body.tx_freq,
-            req.body.status,
-            req.body.id
-        ];
+        var error = false;
 
-        var post2 = [
-            req.body.tle1,
-            req.body.tle2,
-            req.body.url,
+        var post = [
+            req.body.SAT_CAT,
+            req.body.SAT_NAME,
+            req.body.SAT_DESC,
+            req.body.SAT_TLE1,
+            req.body.SAT_TLE2,
+            req.body.SAT_TLE_URL,
             (new Date()).toString(),
             req.body.id
         ];
 
-        database.query('UPDATE REMOTE_TRANSCEIVERS SET RMT_NAME = ?,RMT_DESC = ?,RMT_RX_FREQ = ?,RMT_TX_FREQ = ?,RMT_STATUS = ? WHERE RMT_ID = ?', post, function(err) {
+        database.query('UPDATE SATELLITES SET SAT_CAT = ?, SAT_NAME = ?, SAT_DESC = ?, SAT_TLE1 = ?, SAT_TLE2 = ?, SAT_TLE_URL = ?, SAT_TLE_DATE = ? WHERE SAT_ID = ?', post, function(err) {
             if (!err) {
-                database.query('UPDATE SATELLITES SET SAT_TLE1 = ?, SAT_TLE2 = ?, SAT_TLE_URL = ?, SAT_TLE_DATE = ? WHERE SAT_ID = ?', post2, function(err) {
-                    if (err) {
-                        log(err.toString(), "error");
-                        res({
-                            error: "Database error"
-                        })
-                    } else {
-                        res({
-                            status: "Done"
-                        })
-                    }
+                req.body.rmt.forEach(function (rmt, index, array) {
+                    var post2 = [
+                        req.body.RMT_CAT,
+                        req.body.RMT_STATUS,
+                        req.body.RMT_DESC,
+                        req.body.RMT_MODE,
+                        req.body.RMT_BAUD,
+                        req.body.RMT_UPLINK_LOW,
+                        req.body.RMT_UPLINK_HIGH,
+                        req.body.RMT_DOWNLINK_LOW,
+                        req.body.RMT_DOWNLINK_HIGH,
+                        req.body.RMT_ID
+                    ];
+
+                    database.query('UPDATE REMOTE_TRANSCEIVERS SET RMT_CAT = ?, RMT_STATUS = ?, RMT_DESC= ?, RMT_MODE= ?, RMT_BAUD= ?, RMT_UPLINK_LOW= ?, RMT_UPLINK_HIGH= ?, RMT_DOWNLINK_LOW= ?, RMT_DOWNLINK_HIGH= ? WHERE RMT_ID = ?', post2, function(err) {
+                        if (err) {
+                            log(err.toString(), "error");
+
+                            error = true;
+                        }
+
+                        if(index === array.length - 1){
+                            if(error){
+                                res({
+                                    error : "Database error"
+                                });
+                            }
+                            else{
+                                res({
+                                    status : "Done"
+                                });
+                            }
+                        }
+                    });
                 });
             } else {
                 log(err.toString(), "error");
@@ -306,80 +344,17 @@ module.exports = function DashboardDB() {
         });
     }
 
-    function updateTLE(req, res) {
-        req.checkBody('tle1', 'TLE1 is required').notEmpty();
-        req.checkBody('tle2', 'TLE2 is required').notEmpty();
-
-        var post = [
-            [
-                req.body.tle1,
-                req.body.tle2,
-                req.body.id
-            ]
-        ];
-
-        database.query('UPDATE SATELLITES SET SAT_TLE1 = ?, SAT_TLE2 = ? WHERE SAT_ID = ?', [post], function(err) {
-            if (err) {
-                log(err.toString(), "error");
-                res.json({
-                    error: "Database error"
-                })
-            } else {
-                res.json({
-                    status: "Done"
-                })
-            }
-        });
-    };
-
-    function addStation(req, res) {
-        req.checkBody('estation_name', 'Station name is required').notEmpty().isAlpha();
-        req.checkBody('tle', 'TLE is required').notEmpty();
-
-        var post = [
-            [
-                req.body.satname,
-                req.body.description,
-                req.body.rx_freq,
-                req.body.tx_freq,
-                req.body.status
-            ]
-        ];
-
-        database.query('INSERT INTO REMOTE_TRANSCEIVERS (RMT_NAME,RMT_DESC,RMT_RX_FREQ,RMT_TX_FREQ,RMT_STATUS) VALUES ?', [post], function(err) {
-            if (!err) {
-                database.query('INSERT INTO SATELLITES (SAT_ID,SAT_TLE1,SAT_TLE2) VALUES (LAST_INSERT_ID(),?)', req.body.tle1, req.body.tle2, function(err) {
-                    if (err) {
-                        log(err.toString(), "error");
-                        res.json({
-                            error: "Database error"
-                        })
-                    } else {
-                        res.json({
-                            status: "Done"
-                        })
-                    }
-                });
-            } else {
-                log(err.toString(), "error");
-                res.json({
-                    error: "Database error"
-                })
-            }
-        });
-    }
-
     function delSatellite(req, res) {
         req.checkBody('rmt_id', 'Remote Transceiver ID').notEmpty().isInt();
 
-        database.query('DELETE FROM REMOTE_TRANSCEIVERS WHERE RMT_ID = ?', req.body.RMT_ID, function(err) {
+        database.query('DELETE FROM REMOTE_TRANSCEIVERS WHERE RMT_CAT = ?', req.body.SAT_CAT, function(err) {
             if (err) {
                 log(err.toString(), "error");
                 res.json({
                     error: "Database error"
                 });
             } else {
-                database.query('DELETE FROM SATELLITES WHERE SAT_ID = ?', req.body.RMT_ID, function(err){
+                database.query('DELETE FROM SATELLITES WHERE SAT_CAT = ?', req.body.SAT_CAT, function(err){
                     if(err){
                         log(err.toString(), "error");
                         res({
@@ -396,76 +371,45 @@ module.exports = function DashboardDB() {
         });
     }
 
-    function addAntenna(req, res) {
-        req.checkBody('antname', 'Antenna name is required').notEmpty().isAlpha();
-        req.checkBody('antfreq', 'Antenna frequency is required').notEmpty();
-
-        var post = [
-            [
-                req.body.antname,
-                req.body.antfreq
-            ]
-        ];
-
-        database.query('INSERT INTO ANTENNAS (ANT_NAME, ANT_FREQ) VALUES ?', [post], function(err) {
-            if (err) {
-                log(err.toString(), "error");
-                res.json({
-                    error: "Database error"
-                })
-            } else {
-                res.json({
-                    status: "Done"
-                })
-            }
-        });
-    };
-
-    function modAntenna(req, res) {
-        req.checkBody('antname', 'Antenna name is required').notEmpty().isAlpha();
-        req.checkBody('antfreq', 'Antenna frequency is required').notEmpty();
-
-        var post = [
-            [
-                req.body.antname,
-                req.body.antfreq,
-                req.body.ant_id
-            ]
-        ];
-
-        database.query('UPDATE ANTENNAS SET ANT_NAME = ?, ANT_FREQ = ? WHERE ANT_ID = ?', [post], function(err) {
-            if (err) {
-                log(err.toString(), "error");
-                res.json({
-                    error: "Database error"
-                })
-            } else {
-                res.json({
-                    status: "Done"
-                })
-            }
-        });
-    };
-
-    function delAntenna(req, res) {
-        req.checkBody('ant_id', 'Antenna ID').notEmpty().isInt();
-
-        database.query('DELETE FROM ANTENNAS WHERE ANT_ID = ?', req.body.ant_id, function(err) {
-            if (err) {
-                log(err.toString(), "error");
-                res.json({
-                    error: "Database error"
-                })
-            } else {
-                res.json({
-                    status: "Done"
-                })
-            }
-        });
-    };
-
     function getSatellites(cb) {
-        database.query('SELECT T1.*,T2.SAT_TLE1,T2.SAT_TLE2,T2.SAT_TLE_URL,T2.SAT_TLE_DATE FROM REMOTE_TRANSCEIVERS AS T1, SATELLITES AS T2 WHERE RMT_ID = SAT_ID', function(err, rows, fields) {
+        var error = false;
+
+        database.query('SELECT * FROM SATELLITES', function(err, rows, fields) {
+            if (err) {
+                log(err.toString(), "error");
+                cb({
+                    error: "Database error"
+                });
+
+            } else {
+                rows.forEach(function (sat, index, array) {
+                    database.query('SELECT * FROM REMOTE_TRANSCEIVERS WHERE RMT_CAT = ?', [sat.SAT_CAT], function(err, rmts, fields) {
+                        if(err){
+                            error = true;
+
+                            log(err.toString(), "error");
+                        } else{
+                            sat.rmt = rmts;
+                        }
+
+                        if(index === array.length - 1){
+                            if(error){
+                                cb({
+                                    error: "Database error"
+                                });
+                            }
+                            else{
+                                cb(rows);
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    }
+
+    function getRemoteTransceivers(cb){
+        database.query('SELECT * FROM REMOTE_TRANSCEIVERS', function(err, rows, fields) {
             if (err) {
                 log(err.toString(), "error");
                 cb({
@@ -474,75 +418,9 @@ module.exports = function DashboardDB() {
 
             } else {
                 cb(rows);
-            };
-        });
-
-    }
-
-    function getSatelliteTLE(sat,cb) {
-        database.query('SELECT SAT_TLE1, SAT_TLE2 FROM SATELLITES WHERE SAT_ID = (SELECT RMT_ID FROM REMOTE_TRANSCEIVERS WHERE RMT_NAME = ?)',sat, function(err, rows, fields) {
-            if (err || rows.length != 1) {
-                log(err, "error");
-                cb({
-                    error: "Database error"
-                });
-
-            } else {
-                cb(rows[0]);
-            };
-        });
-    }
-
-    function addTransceiver(req, res) {
-        req.checkBody('traname', 'Transceiver name is required').notEmpty().isAlpha();
-        req.checkBody('traport', 'Transceiver port is required').notEmpty();
-
-        var post = [
-            [
-                req.body.trasname,
-                req.body.traport
-            ]
-        ];
-
-        database.query('INSERT INTO TRANSCEIVERS (TRA_NAME, TRA_PORT) VALUES ?', [post], function(err) {
-            if (err) {
-                log(err.toString(), "error");
-                res.json({
-                    error: "Database error"
-                })
-            } else {
-                res.json({
-                    status: "Done"
-                })
             }
         });
-    };
-
-    function modTransceiver(req, res) {
-        req.checkBody('traname', 'Transceiver name is required').notEmpty().isAlpha();
-        req.checkBody('traport', 'Transceiver port is required').notEmpty();
-
-        var post = [
-            [
-                req.body.trasname,
-                req.body.traport,
-                req.body.tra_id
-            ]
-        ];
-
-        database.query('UPDATE ANTENNAS SET TRA_NAME = ?, TRA_PORT = ? WHERE TRA_ID = ?', [post], function(err) {
-            if (err) {
-                log(err.toString(), "error");
-                res.json({
-                    error: "Database error"
-                })
-            } else {
-                res.json({
-                    status: "Done"
-                })
-            }
-        });
-    };
+    }
 
     return {
         loginConfig: loginConfig,
@@ -554,15 +432,8 @@ module.exports = function DashboardDB() {
         deserializeUser: deserializeUser,
         addSatellite: addSatellite,
         modSatellite: modSatellite,
-        updateTLE: updateTLE,
-        addStation: addStation,
         delSatellite: delSatellite,
-        addAntenna: addAntenna,
-        modAntenna: modAntenna,
-        delAntenna: delAntenna,
         getSatellites: getSatellites,
-        addTransceiver: addTransceiver,
-        modTransceiver: modTransceiver,
-        getSatelliteTLE:getSatelliteTLE
+        getRemoteTransceivers : getRemoteTransceivers
     };
 }
