@@ -148,45 +148,84 @@ module.exports = function DashboardDB() {
         });
     }
 
+    function getSatellites(cb){
+        var error = false;
+        var i = 0;
 
-    function getSatellites(cb) {
-        db.all('SELECT T1.*,T2.SAT_TLE1,T2.SAT_TLE2,T2.SAT_TLE_URL,T2.SAT_TLE_DATE FROM REMOTE_TRANSCEIVERS AS T1, SATELLITES AS T2 WHERE RMT_ID = SAT_ID', function(err, rows, fields) {
+        db.all('SELECT * FROM SATELLITES', function(err, rows, fields) {
             if (err) {
                 log(err.toString(), "error");
                 cb({
                     error: "Database error"
                 });
-
             } else {
-                cb(rows);
-            };
+                rows.forEach(function (sat, index, array) {
+                    db.all('SELECT * FROM REMOTE_TRANSCEIVERS WHERE RMT_CAT = ?', sat.SAT_CAT, function (err, rmts, fields) {
+                        i++;
+                        if (err) {
+                            error = true;
+
+                            log(err.toString(), "error");
+                        } else {
+                            sat.rmt = rmts;
+                        }
+
+                        if (i === array.length){
+                            if(error){
+                                cb({
+                                    error: "Database error"
+                                });
+                            }
+                            else{
+                                cb(rows);
+                            }
+                        }
+                    })
+                });
+            }
         });
     }
 
-    function addRemoteTransceiversDB(data, cb){
-        db.run('INSERT INTO REMOTE_TRANSCEIVERS (RMT_NAME,RMT_DESC,RMT_RX_FREQ,RMT_TX_FREQ,RMT_STATUS) VALUES ($name, $desc, $rx, $tx, $status)', {
-            $name : data.satname,
-            $desc : data.description,
-            $rx : data.rx_freq,
-            $tx : data.tx_freq,
-            $status : data.status
+    function getRemoteTransceivers(cb){
+        db.all('SELECT * FROM REMOTE_TRANSCEIVERS', function(err, rows, fields){
+            if(err){
+                log(err.toString(), "error");
+                cb({
+                    error: "Database error"
+                });
+            } else{
+                cb(rows);
+            }
+        })
+    }
+
+    function addRemoteTransceiversDB(rmt, cb) {
+        db.run('INSERT INTO REMOTE_TRANSCEIVERS (RMT_CAT,RMT_STATUS,RMT_DESC,RMT_MODE,RMT_BAUD,RMT_UPLINK_LOW,RMT_UPLINK_HIGH,RMT_DOWNLINK_LOW,RMT_DOWNLINK_HIGH) VALUES ($cat, $status, $desc, $mode, $baud, $uplink_low, $uplink_high, $downlink_low, $downlink_high)', {
+            $cat : rmt.cat,
+            $status : rmt.RMT_STATUS,
+            $desc : rmt.RMT_DESC,
+            $mode : rmt.RMT_MODE,
+            $baud : rmt.RMT_BAUD,
+            $uplink_low : rmt.RMT_UPLINK_LOW,
+            $uplink_high : rmt.RMT_UPLINK_HIGH,
+            $downlink_low : rmt.RMT_DOWNLINK_LOW,
+            $downlink_high : rmt.RMT_DOWNLINK_HIGH
         }, function (result) {
-            cb({
-                result : result
-            })
+            cb(result);
         });
     }
 
     function addSatelliteDB(data, cb){
-        db.run('INSERT INTO SATELLITES VALUES (LAST_INSERT_ROWID(), $tle1, $tle2, $url, $date)', {
-            $tle1 : data.tle1,
-            $tle2 : data.tle2,
-            $url : data.url,
+        db.run('INSERT INTO SATELLITES VALUES (NULL, $cat, $name, $desc, $tle1, $tle2, $url, $date)', {
+            $cat : data.SAT_CAT,
+            $name : data.SAT_NAME,
+            $desc : data.SAT_DESC,
+            $tle1 : data.SAT_TLE1,
+            $tle2 : data.SAT_TLE2,
+            $url : data.SAT_TLE_URL,
             $date : (new Date()).toString()
         }, function (result) {
-            cb({
-                result : result
-            })
+            cb(result);
         });
     }
 
@@ -207,24 +246,38 @@ module.exports = function DashboardDB() {
         //req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
         //req.checkBody('tle', 'TLE is required').notEmpty();
 
-        addRemoteTransceiversDB(req.body, function (result) {
-            if (result.result == null) {
-                addSatelliteDB(req.body, function (result) {
-                    if (result.result == null) {
-                        res({
-                            status: "Done"
-                        });
-                    }
-                    else {
-                        log(result.result, "error");
-                        res({
-                            error: "Database error"
-                        });
-                    }
+        var error = false;
+
+
+        console.log(req.body);
+        addSatelliteDB(req.body, function (result) {
+            if (result == null) {
+                req.body.rmt.forEach(function (rmt, index, array) {
+                    rmt.cat = req.body.SAT_CAT;
+                    addRemoteTransceiversDB(rmt, function (result) {
+                        if (result != null) {
+                            console.log(result);
+
+                            error = true;
+                        }
+
+                        if (index === array.length - 1){
+                            if(error){
+                                res({
+                                    error: "Database error"
+                                });
+                            }
+                            else{
+                                res({
+                                    status: "Done"
+                                });
+                            }
+                        }
+                    });
                 });
             }
             else {
-                log(result.result, "error");
+                log(result, "error");
                 res({
                     error: "Database error"
                 });
@@ -232,34 +285,35 @@ module.exports = function DashboardDB() {
         });
     }
 
-
-
-    function modRemoteTransceiversDB(data, cb){
-        db.run('UPDATE REMOTE_TRANSCEIVERS SET RMT_NAME = $name, RMT_DESC = $desc, RMT_RX_FREQ = $rx, RMT_TX_FREQ = $tx, RMT_STATUS = $status WHERE RMT_ID = $id', {
-            $id : data.id,
-            $name : data.satname,
-            $desc : data.description,
-            $rx : data.rx_freq,
-            $tx : data.tx_freq,
-            $status : data.status
+    function modRemoteTransceiversDB(data, cb) {
+        db.run('UPDATE REMOTE_TRANSCEIVERS SET RMT_CAT = $cat, RMT_STATUS = $status, RMT_DESC= $desc, RMT_MODE= $mode, RMT_BAUD= $baud, RMT_UPLINK_LOW= $uplink_low, RMT_UPLINK_HIGH= $uplink_high, RMT_DOWNLINK_LOW= $downlink_low, RMT_DOWNLINK_HIGH= $downlink_high WHERE RMT_ID = $id', {
+            $id : data.RMT_ID,
+            $cat : data.RMT_CAT,
+            $status : data.RMT_STATUS,
+            $desc : data.RMT_DESC,
+            $mode : data.RMT_MODE,
+            $baud : data.RMT_BAUD,
+            $uplink_low : data.RMT_UPLINK_LOW,
+            $uplink_high : data.RMT_UPLINK_HIGH,
+            $downlink_low : data.RMT_DOWNLINK_LOW,
+            $downlink_high : data.RMT_DOWNLINK_HIGH
         }, function (result) {
-            cb({
-                result : result
-            })
+            cb(result);
         });
     }
 
     function modSatelliteDB(data, cb){
-        db.run('UPDATE SATELLITES SET SAT_TLE1 = $tle1, SAT_TLE2 = $tle2, SAT_TLE_URL = $url, SAT_TLE_DATE = $date WHERE SAT_ID = $id', {
-            $id : data.id,
-            $tle1 : data.tle1,
-            $tle2 : data.tle2,
-            $url : data.url,
+        db.run('UPDATE SATELLITES SET SAT_CAT = $cat, SAT_NAME = $name, SAT_DESC = $desc, SAT_TLE1 = $tle1, SAT_TLE2 = $tle2, SAT_TLE_URL = $url, SAT_TLE_DATE = $date WHERE SAT_ID = $id', {
+            $id : data.SAT_ID,
+            $cat : data.SAT_CAT,
+            $name : data.SAT_NAME,
+            $desc : data.SAT_DESC,
+            $tle1 : data.SAT_TLE1,
+            $tle2 : data.SAT_TLE2,
+            $url : data.SAT_TLE_URL,
             $date : (new Date()).toString()
         }, function (result) {
-            cb({
-                result : result
-            })
+            cb(result);
         });
     }
 
@@ -267,24 +321,34 @@ module.exports = function DashboardDB() {
         //req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
         //req.checkBody('tle', 'TLE is required').notEmpty();
 
+        var error = false;
+
         modSatelliteDB(req.body, function (result) {
-            if (result.result == null) {
-                modRemoteTransceiversDB(req.body, function (result) {
-                    if (result.result == null) {
-                        res({
-                            status: "Done"
-                        });
-                    }
-                    else {
-                        log(result.result, "error");
-                        res({
-                            error: "Database error"
-                        });
-                    }
+            if (result == null) {
+                req.body.rmt.forEach(function (trsp, index, array) {
+                    modRemoteTransceiversDB(trsp, function (result) {
+                        if (result != null) {
+                            log(result, "error");
+                            error = true;
+                        }
+
+                        if(index === array.length - 1){
+                            if(error){
+                                res({
+                                    error : "Database error"
+                                });
+                            }
+                            else{
+                                res({
+                                    status: "Done"
+                                });
+                            }
+                        }
+                    });
                 });
             }
             else {
-                log(result.result, "error");
+                log(result, "error");
                 res({
                     error: "Database error"
                 });
@@ -293,9 +357,9 @@ module.exports = function DashboardDB() {
     }
 
     function delSatellite(req, res){
-        db.run('DELETE FROM REMOTE_TRANSCEIVERS WHERE RMT_ID = ?', req.body.RMT_ID, function (result) {
+        db.run('DELETE FROM REMOTE_TRANSCEIVERS WHERE RMT_CAT = ?', req.body.SAT_CAT, function (result) {
             if(result == null){
-                db.run('DELETE FROM SATELLITES WHERE SAT_ID = ?', req.body.RMT_ID, function(result){
+                db.run('DELETE FROM SATELLITES WHERE SAT_CAT = ?', req.body.SAT_CAT, function(result){
                     if(result == null){
                         res({
                             status: "Done"
@@ -318,20 +382,6 @@ module.exports = function DashboardDB() {
         });
     }
 
-    function getSatelliteTLE(sat, cb) {
-        db.all('SELECT SAT_TLE1, SAT_TLE2 FROM SATELLITES WHERE SAT_ID = (SELECT RMT_ID FROM REMOTE_TRANSCEIVERS WHERE RMT_NAME = ?)', sat, function(err, rows, fields) {
-            if (err || rows.length != 1) {
-                log(err, "error");
-                cb({
-                    error: "Database error"
-                });
-
-            } else {
-                cb(rows[0]);
-            };
-        });
-    }
-
     return {
         loginConfig: loginConfig,
         login: login,
@@ -342,8 +392,8 @@ module.exports = function DashboardDB() {
         delUser : delUser,
         getSatellites: getSatellites,
         addSatellite : addSatellite,
+        getRemoteTransceivers : getRemoteTransceivers,
         modSatellite : modSatellite,
-        delSatellite : delSatellite,
-        getSatelliteTLE: getSatelliteTLE
+        delSatellite : delSatellite
     }
 }

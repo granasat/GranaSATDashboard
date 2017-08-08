@@ -8,11 +8,11 @@
         <h4>Available Satellites</h4>
 
         <ul>
-            <li ng-repeat="s in availableSatellites"><a ng-click="getPasses(s)">{{s.RMT_NAME}}</a></li>
+            <li ng-repeat="s in passes"><a ng-click="getPasses(s)">{{s.SAT_NAME}}</a></li>
         </ul>
     </div>
     <div ng-show="satelliteSelected != ''" class="col-md-10">
-        <h4>Passes for: {{satelliteSelected.RMT_NAME}}</h4>
+        <h4>Passes for: {{satelliteSelected.SAT_NAME}}</h4>
 
         <table class="table table-striped" style="width:100%">
             <thead>
@@ -26,19 +26,29 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat-start="pass in satellitePasses">
+                <tr ng-repeat-start="pass in satelliteSelected.pass">
                     <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{(localTimeMode) ? pass.startDateLocal : pass.startDateUTC}}</td>
                     <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
                     <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.duration | millSecondsToTimeString}}</td>
                     <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.maxElevation}}º</td>
                     <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.remainTime | millSecondsToTimeString}}</td>
                     <td>
-                        <button ng-show="!pass.scheduled" ng-click="setPass(pass)" type="button" class="btn btn-success btn-xs">
-                            Schedule
-                        </button>
-                        <button ng-show="pass.scheduled" type="button" class="btn btn-danger btn-xs disabled">
-                            Schedule
-                        </button>
+                        <div class="dropdown">
+                            <button ng-show="pass.scheduled" type="button" class="btn btn-danger btn-xs disabled">
+                                Schedule
+                            </button>
+
+
+                            <button ng-show="!pass.scheduled" type="button" class="btn btn-success dropdown-toggle btn-xs" id="select_trsp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Schedule
+                                <span class="caret"></span>
+                            </button>
+
+                            <ul class="dropdown-menu" aria-labelledby="select_trsp">
+                                <!--<li ng-repeat="trsp in satelliteSelected.rmt"><a ng-click="setPass(pass, trsp)">{{trsp.RMT_DESC}}</a></li> -->
+                                <li ng-repeat="trsp in satelliteSelected.rmt"><a>{{trsp.RMT_DESC}}</a></li>
+                            </ul>
+                        </div>
                     </td>
                 </tr>
                 <tr ng-repeat-end="" ng-if="pass.expanded">

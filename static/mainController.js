@@ -27,23 +27,15 @@ app.controller('appController', function($scope, $http, $uibModal) {
         }
     }, 1000);
 
+
+    /**
+     * When the app starts the server sends a response with all the satellite data. $scope.passes will be the
+     * most important variable in the app, it will handle the information of passes, transceivers, satellites,
+     * scheduled satellites
+     */
     $scope.setupPasses = function () {
         $scope.getAllPasses().then(function (res) {
             $scope.passes = res.data;
-
-            //Retrieve scheduled passes
-            $scope.getScheduledPasses().then(function(res) {
-                res.data.forEach(function(scheduledPass) {
-                    var pass = $scope.passes.find(function (sat) {
-                        return sat.name === scheduledPass.name;
-                    }).pass.find(function (pass) {
-                        return pass.id === scheduledPass.id;
-                    });
-
-                    $scope.scheduledPasses.push(pass);
-                    pass.scheduled = true;
-                });
-            });
         });
     };
 
@@ -163,17 +155,6 @@ app.controller('appController', function($scope, $http, $uibModal) {
         });
     };
 
-    $scope.delSat = function(sat_data){
-        return $http({
-            method: 'POST',
-            url: "/delSatellites",
-            data: sat_data
-        }).then(function (res) {
-            if(res.data.status == "Done")
-                $scope.refreshSats();
-        });
-    };
-
     $scope.getSatLibrary = function(){
         return $http({
             method: 'GET',
@@ -207,7 +188,13 @@ app.controller('appController', function($scope, $http, $uibModal) {
                 }).scheduled = false;
             }
         });
-    }
+    };
+
+    $scope.formatDDMMYYYY = function(date){
+        return date.getDate() +
+            "/" +  (date.getMonth() + 1) +
+            "/" +  date.getFullYear();
+    };
 });
 
 app.controller('loginModelController', function($scope, $http, $uibModalInstance, items) {

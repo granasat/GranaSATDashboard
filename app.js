@@ -19,14 +19,14 @@ var dateFormat = require('dateformat');
 var log = require('./utils/logger.js').Logger;
 
 //Config
-var config = require('./config.js').config
+var config = require('./config.js').config;
 
 //Rotors, transceivers and propagator
 var Yaesu = require('./rotors/yaesu.js');
 var Kenwood = require('./transceivers/kenwoodts2000.js');
 var Icom9100 = require('./transceivers/icom9100.js');
 var Propagator = require('./propagator/propagator.js');
-//var create_and_fill_models = require('./sat_library/getFiles.js');
+var satellites = require('./sat_library/final.json');
 
 
 //Database stuff
@@ -108,8 +108,6 @@ passport.deserializeUser(db.deserializeUser);
 
 
 // ROUTES, GET AND POST ////////////////////////////////////////////////
-
-// app.post('/signup', isAuthenticated, db.signup);
 
 app.post('/login', passport.authenticate('login'), function(req, res) {
     res.json({
@@ -206,7 +204,7 @@ app.post('/rotors/position', isMember, function(req, res) {
 });
 
 // SATELLITE STUFF
-var scheduledPasses = []
+var scheduledPasses = [];
 
 app.get('/satellites', isAuthenticated, function(req, res) {
     db.getSatellites(function(satelliteData) {
@@ -214,12 +212,18 @@ app.get('/satellites', isAuthenticated, function(req, res) {
     })
 });
 
+app.get('/updateSatellites', isAuthenticated, function (req, res) {
+    log("Updating satellites");
+    refreshPasses().then(function () {
+        res.json(passes);
+    });
+});
+
 app.post('/satellites', isAuthenticated, function(req, res) {
     //Set the elevation and azimuth information available on the HTTP request
     log("Adding sat: "  + req.body.satname + " " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
     db.addSatellite(req, function (data) {
-        addSatellite2Passes(req.body.satname);      //Add satellite to passes and calculate the propagator
         res.json(data);
     });
 });
@@ -267,9 +271,9 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
             return pass.id === req.body.id;
         });
 
-        var freq = sat.RMT_RX_FREQ;
+        var freq = sat.rmt[0].RMT_DOWNLINK_LOW;
 
-        var passName = sat.RMT_NAME.replace(/[^a-zA-Z0-9]/g, "") + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
+        var passName = sat.SAT_NAME.replace(/[^a-zA-Z0-9]/g, "") + "_" + dateFormat(new Date(), "dd-mm-yy-HH-mm")
 
         log("SCHEDULING pass for: " + sat.RMT_NAME +
             "\n\t Date: " + pass.startDateUTC +
@@ -373,13 +377,11 @@ app.get('/', function(req, res, next) {
     res.sendFile(path.join(__dirname + '/static/index.html'));
 });
 
-/*
+
 app.get('/getSatLibrary', isAuthenticated, function(req, res) {
-    new create_and_fill_models().getSatInfo().then(function (data) {
-        res.json(data);
-    })
+    res.json(satellites);
 });
-*/
+
 
 app.listen(config.web_port, config.web_host);
 log("Web server listening: " + config.web_host + ":" + config.web_port);
@@ -397,12 +399,12 @@ function refreshSatellites(){
             satellites.forEach(function (sat) {
                 //Search if the satellite has been added to passes
                 var included = passes.some(function (f) {
-                    return f.name === sat.RMT_NAME;
+                    return f.SAT_CAT === sat.SAT_CAT;
                 });
 
                 if (!included) {          //Add a new satellite to passes
-                    log("Adding " + sat.RMT_NAME + " to passes", "warn");
-                    passes.push({name: sat.RMT_NAME});
+                    log("Adding " + sat.SAT_NAME + " to passes", "warn");
+                    passes.push(sat);
                 }
             });
 
@@ -410,15 +412,32 @@ function refreshSatellites(){
             passes.forEach(function (satellitePasses) {
                 //Search if the satellite is in satellites
                 var included = satellites.some(function (f) {
-                    return f.RMT_NAME === satellitePasses.name;
+                    return f.SAT_CAT === satellitePasses.SAT_CAT;
                 });
 
                 if (!included) {          //Delete satellite from passes
-                    log("Deleting " + satellitePasses.name + " from passes", "warn");
+                    log("Deleting " + satellitePasses.SAT_NAME + " from passes", "warn");
 
                     passes = passes.filter(function (el) {
-                        return !el.name || el.name !== satellitePasses.name;
+                        return el.SAT_CAT !== satellitePasses.SAT_CAT;
                     });
+                }
+            });
+
+            //Refresh info of the satellites and transceivers
+            passes.forEach(function (sat) {
+                var satDB = satellites.find(function (satdb) {
+                    return satdb.SAT_CAT === sat.SAT_CAT;
+                });
+
+                if(satDB) {
+                    sat.SAT_CAT = satDB.SAT_CAT;
+                    sat.SAT_NAME = satDB.SAT_NAME;
+                    sat.SAT_DESC = satDB.SAT_DESC;
+                    sat.SAT_TLE1 = satDB.SAT_TLE1;
+                    sat.SAT_TLE2 = satDB.SAT_TLE2;
+                    sat.SAT_TLE_URL = satDB.SAT_TLE_URL;
+                    sat.rmt = satDB.rmt;
                 }
             });
 
@@ -429,55 +448,60 @@ function refreshSatellites(){
 
 
 /**
- * Calculate passes for the next config.propagator_calculator_days days and added to passes
+ * Refresh and calculate passes from satellites in DB
+ * @returns {Promise} - Function's promise
  */
-
 function refreshPasses(){
-    refreshSatellites().then(function () {
-        var start = new Date();
-        var end = new Date(start.getTime() + (1000 * 60 * 60 * 24 * config.propagator_calculator_days));
+    return new Promise(function (resolve, reject) {
+        refreshSatellites().then(function () {
+            var start = new Date();
+            var end = new Date(start.getTime() + (1000 * 60 * 60 * 24 * config.propagator_calculator_days));
+            var promises = [];
 
-        log("Calculating passes from " + start + " to " + end, "warn");
-        passes.forEach(function (sat) {
-            new Propagator(sat.name, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function (p) {
-                if(sat.pass){           //There is a previous propagator, we have to compare them
-                    var nextPasses = p.getPasses(start, end);
-                    nextPasses.forEach(function (elem, index, array) {
-                        var findPass = sat.pass.find(function (pass) {                  //If it is a new pass it can't be found
-                            return Math.abs(pass.endDateLocal.getTime() - elem.endDateLocal.getTime()) < config.propagator_error;
-                        });
-
-                        if(findPass) {
-                            elem.id = findPass.id;
-                        }
-
-                        if(index === array.length) {
-                            sat.pass = nextPasses;
-                        }
-                    });
-                }
-                else{
-                    sat.pass = p.getPasses(start, end);
-                }
+            log("Calculating passes from " + start + " to " + end, "warn");
+            passes.forEach(function (sat) {
+                promises.push(fetchPasses(sat));
             });
+
+            Promise.all(promises).then(function () {
+                resolve();
+            });
+
         });
     });
 }
 
 /**
- * Calculate passes for a single satellite and added to passes
- * @param {String} sat - Satellite's name.
+ * Calculate passes of a satellite for the next config.propagator_calculator_days days and added to passes
  */
-function addSatellite2Passes(sat){
-    refreshSatellites().then(function () {
+
+function fetchPasses(sat){
+    return new Promise(function (resolve, reject) {
         var start = new Date();
         var end = new Date(start.getTime() + (1000 * 60 * 60 * 24 * config.propagator_calculator_days));
 
-        log("Calculating passes of " + sat + " from " + start + " to " + end, "warn");
-        new Propagator(sat, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt, db).then(function (p) {
-            passes.find(function (el) {
-                return el.name === sat;
-            }).pass = p.getPasses(start, end);
+        new Propagator(sat.SAT_TLE1, sat.SAT_TLE2, sat.SAT_NAME, config.ground_station_lng, config.ground_station_lat, config.ground_station_alt).then(function (p) {
+            if(sat.pass){           //There is a previous propagator, we have to compare them
+                var nextPasses = p.getPasses(start, end);
+                nextPasses.forEach(function (elem, index, array) {
+                    var findPass = sat.pass.find(function (pass) {                  //If it is a new pass it can't be found
+                        return Math.abs(pass.endDateLocal.getTime() - elem.endDateLocal.getTime()) < config.propagator_error;
+                    });
+
+                    if(findPass) {
+                        elem.id = findPass.id;
+                    }
+
+                    if(index === array.length - 1) {
+                        sat.pass = nextPasses;
+                        resolve();
+                    }
+                });
+            }
+            else{
+                sat.pass = p.getPasses(start, end);
+                resolve();
+            }
         });
     });
 }

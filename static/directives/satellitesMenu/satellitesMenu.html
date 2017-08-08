@@ -4,7 +4,7 @@
 
 <div class="page-body">
     <div class="table-responsive">
-        <table class="table table-hover">
+        <table class="table">
             <thead>
             <tr>
                 <th>Name</th>
@@ -12,38 +12,151 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat-start="sat in availableSatellites">
-                <td ng-click="sat.expanded = !sat.expanded">{{sat.RMT_NAME}}</td>
-                <td ng-click="sat.expanded = !sat.expanded">{{sat.RMT_DESC}}</td>
+            <tr ng-repeat-start="sat in passes">
+                <td ng-click="sat.expanded = !sat.expanded">{{sat.SAT_NAME}}</td>
+                <td ng-click="sat.expanded = !sat.expanded">{{sat.SAT_DESC}}</td>
                 <td><button ng-click="modSatModal(sat)" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
                     <button ng-click="delSat(sat)" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></td>
             </tr>
             <tr ng-repeat-end  ng-show="sat.expanded">
                 <td colspan="6" style="padding: 0" >
-                    <div class="isCollapsed">
-                        <table class="table table-hover">
-                            <thead>
-                            <th>RX Frequency</th>
-                            <th>TX Frequency</th>
-                            <th>Status</th>
-                            <th>TLE1</th>
-                            <th>TLE2</th>
-                            <th>URL</th>
-                            <th>Last LTE Update</th>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>{{sat.RMT_RX_FREQ}}</td>
-                                <td>{{sat.RMT_TX_FREQ}}</td>
-                                <td>{{sat.RMT_STATUS}}</td>
-                                <td>{{sat.SAT_TLE1}}</td>
-                                <td>{{sat.SAT_TLE2}}</td>
-                                <td>{{sat.SAT_TLE_URL}}</td>
-                                <td>{{sat.SAT_TLE_DATE}}</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <div class="sat-info isCollapsed">
+
+                        <div class="row sat-element">
+                            <div class="col-md-3">
+                                <strong>Catalog number: </strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{sat.SAT_CAT}}
+                            </div>
+                        </div>
+
+                        <div class="row sat-element">
+                            <div class="col-md-3">
+                                <strong>TLE1: </strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{sat.SAT_TLE1}}
+                            </div>
+                        </div>
+
+                        <div class="row sat-element">
+                            <div class="col-md-3">
+                                <strong>TLE2: </strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{sat.SAT_TLE2}}
+                            </div>
+                        </div>
+
+                        <div class="row sat-element">
+                            <div class="col-md-3">
+                                <strong>Last TLE update: </strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{sat.SAT_TLE_DATE}}
+                            </div>
+                        </div>
+
+                        <div class="row sat-element">
+                            <div class="col-md-3">
+                                <strong>URL: </strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{sat.SAT_TLE_URL}}
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="satellite-title">
+                                Transmitters <span class="badge hidden-xs">{{sat.rmt.length}}</span>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-md-12">
+                                    <div ng-repeat="rmt in sat.rmt" class="col-md-4">
+                                        <div class="panel panel-primary panel-transmitter">
+                                            <div class="panel-heading">
+                                                <h4>{{rmt.RMT_DESC}}
+                                                    <button type="button" class="btn btn-default btn-sm pull-right suggest-transmitter">
+                                                        <span class="glyphicon glyphicon-pencil" title="Suggest edits"></span>
+                                                    </button>
+                                                </h4>
+                                            </div>
+                                            <div class="row panel-body">
+                                                <div class="col-md-12">
+
+                                                    <div ng-if="rmt.RMT_STATUS" class="row transmitter-element">
+                                                        <div class="col-md-6">
+                                                            <span class="label label-default">Status</span>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {{rmt.RMT_STATUS}}
+                                                        </div>
+                                                    </div>
+
+                                                    <div ng-if="rmt.RMT_MODE" class="row transmitter-element">
+                                                        <div class="col-md-6">
+                                                            <span class="label label-default">Mode</span>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {{rmt.RMT_MODE}}
+                                                        </div>
+                                                    </div>
+
+                                                    <div ng-if="rmt.RMT_BAUD" class="row transmitter-element">
+                                                        <div class="col-md-6">
+                                                            <span class="label label-default">Baud Rate</span>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {{rmt.RMT_BAUD}}
+                                                        </div>
+                                                    </div>
+
+                                                    <div ng-if="rmt.RMT_UPLINK_LOW" class="row transmitter-element">
+                                                        <div class="col-md-6">
+                                                            <span class="label label-default">Uplink low</span>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {{rmt.RMT_UPLINK_LOW}}
+                                                        </div>
+                                                    </div>
+
+                                                    <div ng-if="rmt.RMT_UPLINK_HIGH" class="row transmitter-element">
+                                                        <div class="col-md-6">
+                                                            <span class="label label-default">Uplink high</span>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {{rmt.RMT_UPLINK_HIGH}}
+                                                        </div>
+                                                    </div>
+
+                                                    <div ng-if="rmt.RMT_DOWNLINK_LOW" class="row transmitter-element">
+                                                        <div class="col-md-6">
+                                                            <span class="label label-default">Downlink low</span>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {{rmt.RMT_DOWNLINK_LOW}}
+                                                        </div>
+                                                    </div>
+
+                                                    <div ng-if="rmt.RMT_DOWNLINK_HIGH" class="row transmitter-element">
+                                                        <div class="col-md-6">
+                                                            <span class="label label-default">Downlink high</span>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {{rmt.RMT_DOWNLINK_HIGH}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                 </td>
             </tr>
             </tbody>
@@ -58,7 +171,7 @@
     </div>
     <div class="modal-body">
         <form>
-            <div class="form-group" ng-show="importSatBox">
+            <div class="form-group" ng-show="importedSats">
                 <label for="sat_name">Import</label>
                 <br>
                 <div style="display:inline-block"><input type="checkbox" id="myCheck" ng-click="import = !import"><input ng-show="import" ng-model="search" type="text" class="form-control" id="sat_search"></div>
@@ -77,22 +190,12 @@
                 <input ng-model="sat_name" type="text" class="form-control" id="sat_name">
             </div>
             <div class="form-group">
+                <label for="sat_cat">Category Number</label>
+                <input ng-model="sat_cat" type="text" class="form-control" id="sat_cat">
+            </div>
+            <div class="form-group">
                 <label for="sat_desc">Description</label>
                 <textarea ng-model="sat_desc" class="form-control" rows="3" id="sat_desc"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="sat_rx">RX Frequency</label>
-                <input ng-model="sat_rx" type="text" class="form-control" id="sat_rx">
-            </div>
-            <div class="form-group">
-                <label for="sat_tx">TX Frequency</label>
-                <input ng-model="sat_tx" type="text" class="form-control" id="sat_tx">
-            </div>
-            <div class="form-group">
-                <label>Status</label>
-                <label><input ng-model="sat_status" value="Active" type="radio" name="status">Active</label>
-                <label><input ng-model="sat_status" value="Disable" type="radio" name="status">Disable</label>
-                <label><input ng-model="sat_status" value="Unknown" type="radio" name="status">Unknown</label>
             </div>
             <div class="form-group">
                 <label for="sat_tle1">TLE1</label>
@@ -105,6 +208,59 @@
             <div class="form-group">
                 <label for="sat_url">URL</label>
                 <input ng-model="sat_url" type="text" class="form-control" id="sat_url">
+            </div>
+            <div class="form-group">
+                <label>Remote Transceivers <button ng-click="addRemoteTransceiverButton()" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></label>
+                <table class="table">
+                    <tbody>
+                    <tr ng-repeat-start="rmt in rmt_array">
+                        <td style="width:70%">
+                            <span class="glyphicon glyphicon-chevron-down" aria-hidden="true" data-toggle="collapse" data-target=#{{$index}}></span>
+                        </td>
+                        <td style="width:10%">
+                            <span ng-click="delRemoteTransceiverButton(rmt)" class="glyphicon glyphicon-remove" aria-hidden="true" data-toggle="collapse" data-target="#demo"></span>
+                        </td>
+                    </tr>
+                    <tr ng-repeat-end>
+                        <td colspan="2" style="padding: 0">
+                        <div id={{$index}} class="collapse">
+                            <div class="form-group">
+                                <label for="rmt_name">Name</label>
+                                <input ng-model=rmt.RMT_DESC type="text" class="form-control" id="rmt_name">
+                            </div>
+                            <div class="form-group">
+                                <label for="rmt_status">Status</label>
+                                <input ng-model=rmt.RMT_STATUS type="text" class="form-control" id="rmt_status">
+                            </div>
+                            <div class="form-group">
+                                <label for="rmt_mode">Mode</label>
+                                <input ng-model=rmt.RMT_MODE type="text" class="form-control" id="rmt_mode">
+                            </div>
+                            <div class="form-group">
+                                <label for="rmt_baud">Baud Rate</label>
+                                <input ng-model=rmt.RMT_BAUD type="text" class="form-control" id="rmt_baud">
+                            </div>
+                            <div class="form-group">
+                                <label for="rmt_uplink_low">Uplink Low</label>
+                                <input ng-model=rmt.RMT_UPLINK_LOW type="text" class="form-control" id="rmt_uplink_low">
+                            </div>
+                            <div class="form-group">
+                                <label for="rmt_uplink_high">Uplink High</label>
+                                <input ng-model=rmt.RMT_UPLINK_HIGH type="text" class="form-control" id="rmt_uplink_high">
+                            </div>
+                            <div class="form-group">
+                                <label for="rmt_downlink_low">Downlink Low</label>
+                                <input ng-model=rmt.RMT_DOWNLINK_LOW type="text" class="form-control" id="rmt_downlink_low">
+                            </div>
+                            <div class="form-group">
+                                <label for="rmt_downlink_high">Downlink High</label>
+                                <input ng-model=rmt.RMT_DOWNLINK_HIGH type="text" class="form-control" id="rmt_downlink_high">
+                            </div>
+                        </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </form>
     </div>
