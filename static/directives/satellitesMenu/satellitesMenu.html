@@ -176,6 +176,7 @@
                     <table class="table table-hover" cellspacing="0" cellpadding="1" border="1" style="margin-bottom: 0px;">
                         <tr ng-repeat="importedSat in importedSats | filter:{name:search}" ng-click="importedSatClick(importedSat)">
                             <td>{{importedSat.name}}</td>
+                            <td>{{importedSat.trsp.length}} trsp's</td>
                         </tr>
                     </table>
                 </div>
