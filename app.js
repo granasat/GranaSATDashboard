@@ -295,7 +295,7 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
                     "\n\t Frequency: " + freq + " Hz" +
                     "\n\t File: " + passName + ".wav");
 
-                exec("arecord -f cd -d " + (pass.duration / 1000) + " " + passName + ".wav", function(error, stdout, stderr) {
+                exec("arecord -f cd -D hw:1,0 -d " + (pass.duration / 1000) + " " + passName + ".wav", function(error, stdout, stderr) {
                     if (error) {
                         log(error + stdout + stderr, 'error');
                     } else {
