@@ -1,0 +1,229 @@
+<tr ng-click="root.ic.expanded = !root.ic.expanded">
+    <td>
+        <span ng-show="!root.ic.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+        <span ng-show="root.ic.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 19px;">&nbsp;</span>
+        IC910
+    </td>
+    <td></td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.ic.expanded" ng-click="root.ic.radio.expanded = !root.ic.radio.expanded">
+    <td>
+        <span ng-show="!root.ic.radio.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 38px;">&nbsp;</span>
+        <span ng-show="root.ic.radio.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 38px;">&nbsp;</span>
+        <img src="../../images/icons/radio.png" height="20px"/> Radio
+    </td>
+    <td></td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+    <tr ng-show="root.ic.expanded && root.ic.radio.expanded">
+        <td>
+            <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 57px;"></span> f [Hz]
+        </td>
+        <td>435423463</td>
+        <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+        <td></td>
+    </tr>
+
+    <tr ng-show="root.ic.expanded && root.ic.radio.expanded">
+        <td>
+            <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 57px;"></span> RF power [%]
+        </td>
+        <td>0</td>
+        <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+        <td></td>
+    </tr>
+
+    <tr ng-show="root.ic.expanded && root.ic.radio.expanded" ng-click="root.ic.radio.connection.expanded = !root.ic.radio.connection.expanded">
+        <td>
+            <span ng-show="!root.ic.radio.connection.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 57px;">&nbsp;</span>
+            <span ng-show="root.ic.radio.connection.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 57px;">&nbsp;</span>
+            <span class="glyphicon glyphicon-cog"></span> Connection
+        </td>
+        <td></td>
+        <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+        <td></td>
+    </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.radio.expanded && root.ic.radio.connection.expanded">
+            <td>
+                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;"></span> From address [dec]
+            </td>
+            <td>224</td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.radio.expanded && root.ic.radio.connection.expanded">
+            <td>
+                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;"></span> To address [dec]
+            </td>
+            <td>96</td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.radio.expanded && root.ic.radio.connection.expanded">
+            <td>
+                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;"></span> Timeout [ms]
+            </td>
+            <td>300</td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.radio.expanded && root.ic.radio.connection.expanded">
+            <td>
+                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;"></span> Delay between commands [ms]
+            </td>
+            <td>50</td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.radio.expanded && root.ic.radio.connection.expanded">
+            <td>
+                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;"></span> Repeats
+            </td>
+            <td>3</td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+
+<tr ng-show="root.ic.expanded" ng-click="root.ic.serial.expanded = !root.ic.serial.expanded">
+    <td>
+        <span ng-show="!root.ic.serial.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 38px;">&nbsp;</span>
+        <span ng-show="root.ic.serial.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 38px;">&nbsp;</span>
+        <img src="../../images/icons/plug.png" height="25px" data-toggle="tooltip" title="Hooray!"/> Serial Radio
+    </td>
+    <td></td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+    <tr ng-show="root.ic.expanded && root.ic.serial.expanded">
+        <td>
+            <span class="glyphicon glyphicon-edit" style="padding-left: 57px;"></span> Debug on send
+        </td>
+        <td><input id="checkBox" type="checkbox"></td>
+        <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+        <td></td>
+    </tr>
+
+    <tr ng-show="root.ic.expanded && root.ic.serial.expanded">
+        <td>
+            <span class="glyphicon glyphicon-list-alt" style="padding-left: 57px;"></span> Debug
+        </td>
+        <td>None</td>
+        <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+        <td></td>
+    </tr>
+
+    <tr ng-show="root.ic.expanded && root.ic.serial.expanded">
+        <td>
+            <span class="glyphicon glyphicon-list-alt" style="padding-left: 57px;"></span> Port Name
+        </td>
+        <td>ttyUSB0</td>
+        <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+        <td></td>
+    </tr>
+
+    <tr ng-show="root.ic.expanded && root.ic.serial.expanded">
+        <td>
+            <span class="glyphicon glyphicon-list-alt" style="padding-left: 57px;"></span> Provider
+        </td>
+        <td>SerialConn</td>
+        <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+        <td></td>
+    </tr>
+
+    <tr ng-show="root.ic.expanded && root.ic.serial.expanded" ng-click="root.ic.serial.connection.expanded = !root.ic.serial.connection.expanded">
+        <td>
+            <span ng-show="!root.ic.serial.connection.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 57px;">&nbsp;</span>
+            <span ng-show="root.ic.serial.connection.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 57px;">&nbsp;</span>
+            <span class="glyphicon glyphicon-cog"></span> Connection
+        </td>
+        <td></td>
+        <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+        <td></td>
+    </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.connection.expanded">
+            <td>
+                <span class="glyphicon glyphicon-list-alt" style="padding-left: 76px;"></span> Baud Rate
+            </td>
+            <td>9600</td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.connection.expanded">
+            <td>
+                <span class="glyphicon glyphicon-list-alt" style="padding-left: 76px;"></span> Data Bits
+            </td>
+            <td>8</td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.connection.expanded">
+            <td>
+                <span class="glyphicon glyphicon-list-alt" style="padding-left: 76px;"></span> Stop bits
+            </td>
+            <td>1.0</td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.connection.expanded">
+            <td>
+                <span class="glyphicon glyphicon-edit" style="padding-left: 76px;"></span> Disable on broken serial
+            </td>
+            <td><input id="brokenSerial" type="checkbox"></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+    <tr ng-show="root.ic.expanded && root.ic.serial.expanded" ng-click="root.ic.serial.command.expanded = !root.ic.serial.command.expanded">
+        <td>
+            <span ng-show="!root.ic.serial.command.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 57px;">&nbsp;</span>
+            <span ng-show="root.ic.serial.command.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 57px;">&nbsp;</span>
+            <span class="glyphicon glyphicon-console"></span> Commands
+        </td>
+        <td></td>
+        <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+        <td></td>
+    </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.command.expanded">
+            <td>
+                <span class="glyphicon glyphicon-console" style="padding-left: 76px;"></span> Send
+            </td>
+            <td><span class="glyphicon glyphicon-play" style="padding-left: 76px;"></span></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.command.expanded">
+            <td>
+                <span class="glyphicon glyphicon-console" style="padding-left: 76px;"></span> Send bits
+            </td>
+            <td><span class="glyphicon glyphicon-play" style="padding-left: 76px;"></span></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.command.expanded">
+            <td>
+                <span class="glyphicon glyphicon-console" style="padding-left: 76px;"></span> Send hex
+            </td>
+            <td><span class="glyphicon glyphicon-play" style="padding-left: 76px;"></span></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
