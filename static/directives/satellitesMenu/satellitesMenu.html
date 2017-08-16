@@ -211,8 +211,11 @@
                 <table class="table">
                     <tbody>
                     <tr ng-repeat-start="rmt in rmt_array">
-                        <td style="width:70%">
+                        <td style="width:5%">
                             <span class="glyphicon glyphicon-chevron-down" aria-hidden="true" data-toggle="collapse" data-target=#{{$index}}></span>
+                        </td>
+                        <td style="width:85%">
+                            {{rmt.RMT_DESC}}
                         </td>
                         <td style="width:10%">
                             <span ng-click="delRemoteTransceiverButton(rmt)" class="glyphicon glyphicon-remove" aria-hidden="true" data-toggle="collapse" data-target="#demo"></span>
@@ -220,7 +223,7 @@
                     </tr>
                     <tr ng-repeat-end>
                         <td colspan="2" style="padding: 0">
-                        <div id={{$index}} class="collapse">
+                        <div id={{$index}} class="collapse" style="margin-top: 10px">
                             <div class="form-group">
                                 <label for="rmt_name">Name</label>
                                 <input ng-model=rmt.RMT_DESC type="text" class="form-control" id="rmt_name">
