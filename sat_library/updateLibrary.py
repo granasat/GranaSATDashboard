@@ -3,6 +3,7 @@ import urllib2
 import satellite
 import json
 import os
+import sys
 
 def updateSats():
     if len(DATA.files) < 1:
@@ -28,8 +29,8 @@ def updateTrsp():
     print("Saving trsp file in %s" % (DATA.cacheDir + DATA.trspFile))
     trspFile = open(DATA.cacheDir + DATA.trspFile, 'w')
 
-    print("Downloading tranceivers data from %s" % DATA.satnogsURL)
-    response = urllib2.urlopen(DATA.satnogsURL)
+    print("Downloading tranceivers data from %s" % DATA.satnogsTrspURL)
+    response = urllib2.urlopen(DATA.satnogsTrspURL)
     print("Downloaded successfully, writing content")
 
     trspFile.write(response.read())
@@ -37,7 +38,20 @@ def updateTrsp():
     trspFile.close()
     print("Written successfully")
 
-def createFile():
+def createModesFile(path):
+    print("Saving mode file in %s" % (path + DATA.modesFile))
+    modesFile = open(path + DATA.modesFile, 'w')
+
+    print("Downloading modes data from %s" % DATA.satnogsModesURL)
+    response = urllib2.urlopen(DATA.satnogsModesURL)
+    print("Downloaded successfully, writing content")
+
+    modesFile.write(response.read())
+
+    modesFile.close()
+    print("Written successfully")
+
+def createTrspFile(path):
     # First of all load the trsp
     print("Loading trsp")
     trsps = json.load(open(DATA.cacheDir + DATA.trspFile))
@@ -82,19 +96,36 @@ def createFile():
     def obj_dict(obj):
         return obj.__dict__
 
-    print("Writing content to %s" % DATA.resultFile)
-    with open(DATA.resultFile, 'w') as outfile:
+    print("Writing content to %s" % (path + DATA.resultFile))
+    with open(path + DATA.resultFile, 'w') as outfile:
         json.dump(satellites, outfile, default=obj_dict)
 
     print("Data was written successfully")
 
+if len(sys.argv) > 1 and os.path.isdir(sys.argv[1]):
+    dir_path = ""
 
-print("Updating library");
-cachedir = os.path.dirname(DATA.cacheDir)
-if not os.path.exists(cachedir):
-    print("Creating %s" % DATA.cacheDir)
-    os.makedirs(cachedir)
+    if sys.argv[1] == ".":
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+    else:
+        dir_path = sys.argv[1]
 
-updateSats()
-updateTrsp()
-createFile()
+
+    if dir_path[-1:] != '/':
+        dir_path += '/'
+
+    print("Updating library")
+    cachedir = os.path.dirname(DATA.cacheDir)
+    if not os.path.exists(cachedir):
+        print("Creating %s" % DATA.cacheDir)
+        os.makedirs(cachedir)
+
+    updateSats()
+    updateTrsp()
+    createTrspFile(dir_path)
+    createModesFile(dir_path)
+
+else:
+    print("Put a directory")
+
+

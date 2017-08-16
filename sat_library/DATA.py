@@ -1,9 +1,11 @@
 cacheDir = '.cache/'
 trspFile = 'trsp.json'
-satnogsURL = 'https://db.satnogs.org/api/transmitters/?format=json'
+modesFile = 'modes.json'
+satnogsTrspURL = 'https://db.satnogs.org/api/transmitters/?format=json'
+satnogsModesURL = 'https://db.satnogs.org/api/modes/?format=json'
 baseURL = "http://www.celestrak.com/NORAD/elements/"
 linesneeded = 3
-resultFile = 'sat_library/final.json'
+resultFile = 'final.json'
 
 files = ['amateur.txt',
          'cubesat.txt',
