@@ -212,7 +212,8 @@
                     <tbody>
                     <tr ng-repeat-start="rmt in rmt_array">
                         <td style="width:5%">
-                            <span class="glyphicon glyphicon-chevron-down" aria-hidden="true" data-toggle="collapse" data-target=#{{$index}}></span>
+                            <span class="glyphicon glyphicon-chevron-up" ng-click="rmt.collapsed = !rmt.collapsed" ng-show="rmt.collapsed" aria-hidden="true" data-toggle="collapse" data-target=#{{$index}}></span>
+                            <span class="glyphicon glyphicon-chevron-down" ng-click="rmt.collapsed = !rmt.collapsed" ng-show="!rmt.collapsed" aria-hidden="true" data-toggle="collapse" data-target=#{{$index}}></span>
                         </td>
                         <td style="width:85%">
                             {{rmt.RMT_DESC}}
