@@ -401,6 +401,15 @@ app.get('/getModes', isAuthenticated, function (req, res) {
     res.json(modes);
 });
 
+app.get('/getConf', isAuthenticated, function (req, res) {
+    var copyConf = {};
+
+    for(var attr in config){
+        if(attr !== "database_user" && attr !== "database_password" && attr !== "aprsfi_apikey") copyConf[attr] = config[attr]
+    }
+
+    res.json(copyConf);
+});
 
 app.listen(config.web_port, config.web_host);
 log("Web server listening: " + config.web_host + ":" + config.web_port);
