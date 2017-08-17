@@ -14,12 +14,13 @@ var path = require('path');
 var util = require('util')
 var exec = require('child_process').exec;
 var dateFormat = require('dateformat');
+var fs = require('fs');
 
 //Log
 var log = require('./utils/logger.js').Logger;
 
 //Config
-var config = require('./config.js').config;
+var config = require('./config.json');
 
 //Rotors, transceivers and propagator
 var Yaesu = require('./rotors/yaesu.js');
@@ -409,6 +410,30 @@ app.get('/getConf', isAuthenticated, function (req, res) {
     }
 
     res.json(copyConf);
+});
+
+
+app.post('/updateConf', isAuthenticated, function (req, res) {
+    var newConf = req.body.conf;
+    var newConfJSON = JSON.stringify(newConf);
+
+    fs.writeFile('config.json', newConfJSON, function (err) {
+        if (err){
+            log(err.toString(), "error");
+
+            res.json({
+                error : "Error while writing json"
+            })
+        }
+        else{
+            res.json({
+                status : "Done"
+            })
+
+            config = newConf;
+        }
+
+    })
 });
 
 app.listen(config.web_port, config.web_host);

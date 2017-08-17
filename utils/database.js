@@ -1,7 +1,7 @@
 "use strict";
 
 //Utils
-var config = require('../config.js').config;
+var config = require('../config.json');
 var crypto = require('crypto');
 
 

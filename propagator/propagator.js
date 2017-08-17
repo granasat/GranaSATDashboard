@@ -2,7 +2,7 @@
 var satellite = require("satellite.js").satellite;
 var log = require('../utils/logger.js').Logger;
 var Promise = require('bluebird');
-var config = require('../config.js').config;
+var config = require('../config.json');
 
 module.exports = function Propagator(tle1, tle2, satname, stationLng, stationLat, stationAlt) {
     var p = new Promise.defer();

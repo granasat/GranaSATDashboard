@@ -1,4 +1,4 @@
-var config = require('../config.js').config
+var config = require('../config.json')
 var colors = require('colors')
 var dateFormat = require('dateformat')
 var fs = require('fs')
