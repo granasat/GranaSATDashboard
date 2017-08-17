@@ -11,14 +11,14 @@
 
         <tbody>
         <tr ng-click="root.expanded = !root.expanded">
-            <td>
+            <td class="col-md-4">
                 <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 0px;">&nbsp;</span>
                 <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 0px;">&nbsp;</span>
                 root
             </td>
-            <td></td>
-            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
-            <td></td>
+            <td class="col-md-4"></td>
+            <td class="col-md-1"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td class="col-md-2"></td>
         </tr>
 
         <tr ng-show="root.expanded">

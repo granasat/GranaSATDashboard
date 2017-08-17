@@ -11,27 +11,66 @@
 
 <tr ng-show="root.ground.expanded">
     <td>
-        <span class="glyphicon glyphicon-screenshot" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.lat}}></span> Latitude
+        <span class="glyphicon glyphicon-screenshot" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.lat}}></span> Latitude
     </td>
-    <td>{{config.ground_station_lat}}</td>
+
+    <td ng-show="!root.ground.lat.edit">
+        <span ng-click="root.ground.lat.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.ground_station_lat}}
+    </td>
+
+    <td ng-show="root.ground.lat.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <span ng-click="root.ground.lat.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span>
+                <input ng-model="config.ground_station_lat" type="text" class="form-control" id="root.ground.lat">
+            </div>
+        </form>
+    </td>
+
     <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
     <td></td>
 </tr>
 
 <tr ng-show="root.ground.expanded">
     <td>
-        <span class="glyphicon glyphicon-screenshot" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.lng}}></span> Longitude
+        <span class="glyphicon glyphicon-screenshot" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.lng}}></span> Longitude
     </td>
-    <td>{{config.ground_station_lng}}</td>
+
+    <td ng-show="!root.ground.lng.edit">
+        <span ng-click="root.ground.lng.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.ground_station_lng}}
+    </td>
+
+    <td ng-show="root.ground.lng.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <span ng-click="root.ground.lng.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span>
+                <input ng-model="config.ground_station_lng" type="text" class="form-control" id="root.ground.lng">
+            </div>
+        </form>
+    </td>
+
     <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
     <td></td>
 </tr>
 
 <tr ng-show="root.ground.expanded">
     <td>
-        <span class="glyphicon glyphicon-screenshot" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.alt}}></span> Altitude
+        <span class="glyphicon glyphicon-screenshot" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.alt}}></span> Altitude
     </td>
-    <td>config.ground_station_alt</td>
+
+    <td ng-show="!root.ground.alt.edit">
+        <span ng-click="root.ground.alt.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.ground_station_alt}}
+    </td>
+
+    <td ng-show="root.ground.alt.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <span ng-click="root.ground.alt.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span>
+                <input ng-model="config.ground_station_alt" type="text" class="form-control" id="root.ground.alt">
+            </div>
+        </form>
+    </td>
+
     <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
-    <td></td>   
+    <td></td>
 </tr>
