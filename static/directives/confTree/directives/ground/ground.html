@@ -1,0 +1,37 @@
+<tr ng-click="root.ground.expanded = !root.ground.expanded">
+    <td>
+        <span ng-show="!root.ground.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+        <span ng-show="root.ground.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 19px;">&nbsp;</span>
+        Ground
+    </td>
+    <td></td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.ground.expanded">
+    <td>
+        <span class="glyphicon glyphicon-screenshot" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.lat}}></span> Latitude
+    </td>
+    <td>37.179640</td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.ground.expanded">
+    <td>
+        <span class="glyphicon glyphicon-screenshot" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.lng}}></span> Longitude
+    </td>
+    <td>-3.6095</td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.ground.expanded">
+    <td>
+        <span class="glyphicon glyphicon-screenshot" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.alt}}></span> Altitude
+    </td>
+    <td>672</td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>

@@ -29,3 +29,11 @@ app.controller('ic910', function($scope) {
         send_hex : "send hex"
     };
 });
+
+app.controller('ground', function($scope) {
+    $scope.R = {
+        lat : "Ground Station latitude",
+        lng : "Ground Station longitude",
+        alt : "Ground Station altitude"
+    };
+});
