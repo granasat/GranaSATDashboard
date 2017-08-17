@@ -235,8 +235,30 @@
                             </div>
                             <div class="form-group">
                                 <label for="rmt_mode">Mode</label>
-                                <input ng-model=rmt.RMT_MODE type="text" class="form-control" id="rmt_mode">
+
+                                <div class="form-group" id="rmt_mode">
+                                    <div class="dropdown">
+                                        <button ng-show="!rmt.RMT_MODE" class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            Dropdown
+                                            <span class="caret"></span>
+                                        </button>
+                                        <button ng-show="rmt.RMT_MODE" class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            {{findMode(rmt.RMT_MODE).name}}
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                            <li>
+                                                <div class="row" style="width: 400px;">
+                                                    <ul ng-repeat="modeGroup in modes" class="list-unstyled col-md-4">
+                                                        <li ng-repeat="mode in modeGroup" ng-click="rmt.RMT_MODE = mode.id">{{mode.name}}</li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
+
                             <div class="form-group">
                                 <label for="rmt_baud">Baud Rate</label>
                                 <input ng-model=rmt.RMT_BAUD type="text" class="form-control" id="rmt_baud">

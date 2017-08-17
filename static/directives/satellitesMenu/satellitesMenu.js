@@ -7,6 +7,7 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
             if (newValue == true) {
                 //scope.updateSatellites();
                 scope.importSats();
+                scope.importModes();
             }
         });
 
@@ -35,9 +36,16 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
             });
         };
 
+        scope.importModes = function () {
+            scope.getModes().then(function (res) {
+                scope.satModes = res.data;
+            })
+        };
+
         scope.addSatModal = function() {
             scope.items = {};
             scope.items.importedSats = scope.importedSats;       //Show the box to import satellites from SatLibrary
+            scope.items.satModes = scope.satModes;          //Import available modes
             var addSatModalInstance = $uibModal.open({
                 animation: scope.animationsEnabled,
                 templateUrl: 'addSatModal.html',
@@ -70,6 +78,7 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
         scope.modSatModal = function (sat_data) {           //Don't show import box
             scope.items = {};
             scope.items.satdata = sat_data;
+            scope.items.satModes = scope.satModes;          //Import available modes
             var modSatModalInstance = $uibModal.open({
                 animation: scope.animationsEnabled,
                 templateUrl: 'addSatModal.html',
@@ -140,6 +149,15 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
 });
 
 app.controller('addSatModalController', function($scope, $uibModalInstance, items) {
+
+    $scope.satModes = items.satModes;           //Available modes
+    var tLenght = $scope.satModes.length/3;
+
+    //Split the array in 3 for the dropdown menu
+    $scope.modes = [$scope.satModes.slice(0, Math.round(tLenght)),
+                    $scope.satModes.slice(Math.round(tLenght), Math.round(tLenght) * 2),
+                    $scope.satModes.slice(Math.round(tLenght) * 2, 999)];
+
     if(items.importedSats){     //Show the box to import satellites from satLibrary
         $scope.importedSats = items.importedSats;
     }
@@ -217,6 +235,12 @@ app.controller('addSatModalController', function($scope, $uibModalInstance, item
     $scope.delRemoteTransceiverButton = function (rmt) {
         $scope.rmt_array = $scope.rmt_array.filter(function (el) {
             return el.index !== rmt.index;
+        });
+    };
+
+    $scope.findMode = function (reqId) {
+        return $scope.satModes.find(function (el) {
+            return el.id === reqId
         });
     };
 });

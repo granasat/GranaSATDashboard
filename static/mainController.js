@@ -162,6 +162,13 @@ app.controller('appController', function($scope, $http, $uibModal) {
         });
     };
 
+    $scope.getModes = function(){
+        return $http({
+            method: 'GET',
+            url: "/getModes"
+        });
+    };
+
     $scope.getAllPasses = function() {
         return $http({
             method: 'GET',

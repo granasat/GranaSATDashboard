@@ -27,11 +27,12 @@ var Kenwood = require('./transceivers/kenwoodts2000.js');
 var Icom9100 = require('./transceivers/icom9100.js');
 var Propagator = require('./propagator/propagator.js');
 var satellites = require('./sat_library/final.json');
+var modes = require('./sat_library/modes.json');
 
 
 //Database stuff
 // var db = new require("./utils/test_database.js")()
-var db = new require("./utils/database.js")()
+var db = new require("./utils/database.js")();
 
 
 //Auth stuff
@@ -83,7 +84,7 @@ function isMember(req, res, next){          //Member is when user.USR_TYPE == 2,
         return next();
     } else {
         res.json({
-            status: "No auth",
+            status: "No auth"
         })
     }
 }
@@ -93,7 +94,7 @@ function isAuthenticated(req, res, next) {  //Only authenticated (user.USR_TYPE 
         return next();
     } else {
         res.json({
-            status: "No auth",
+            status: "No auth"
         })
     }
 }
@@ -135,7 +136,7 @@ app.get('/groundstation', function(req, res) {
         name: config.ground_name,
         lat: config.ground_station_lat,
         lng: config.ground_station_lng,
-        alt: config.ground_station_alt,
+        alt: config.ground_station_alt
     })
 });
 
@@ -394,6 +395,10 @@ app.get('/', function(req, res, next) {
 
 app.get('/getSatLibrary', isAuthenticated, function(req, res) {
     res.json(satellites);
+});
+
+app.get('/getModes', isAuthenticated, function (req, res) {
+    res.json(modes);
 });
 
 
