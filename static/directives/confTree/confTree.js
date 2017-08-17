@@ -20,6 +20,23 @@ app.directive('confTree', function($http, $document) {
                 console.log(scope.config);
             });
         }
+
+        scope.updateConf = function () {
+            console.log("Updating");
+
+            return $http({
+                method: 'POST',
+                url: "/updateConf",
+                data: {conf : scope.config}
+            }).then(function (res) {
+                if(res.data.status === "Done"){
+                    console.log("DONE")
+                }
+                else{
+                    window.alert("Error");
+                }
+            });
+        }
     }
 
     return {

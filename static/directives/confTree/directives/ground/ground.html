@@ -65,7 +65,7 @@
     <td ng-show="root.ground.alt.edit">
         <form class="form-inline">
             <div class="form-group">
-                <span ng-click="root.ground.alt.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span>
+                <span ng-click="updateConf(); root.ground.alt.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span>
                 <input ng-model="config.ground_station_alt" type="text" class="form-control" id="root.ground.alt">
             </div>
         </form>
