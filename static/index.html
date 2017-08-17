@@ -94,7 +94,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="#">...</a></li>
-                            <li><a href="#" ng-click="selectedTab = 7">Configuration</a></li>
+                            <li ng-show="logged"><a href="#" ng-click="selectedTab = 7">Configuration</a></li>
                             <li role="separator" class="divider"></li>
                             <li ng-click="loginModal()" ng-class="{'disabled': logged}"><a>Login</a></li>
                             <li ng-click="logout()" ng-class="{'disabled': !logged}"><a>Logout</a></li>
@@ -114,7 +114,7 @@
         <passes-registration ng-show="selectedTab == 4"> </passes-registration>
         <manage-users ng-show="selectedTab == 5"> </manage-users>
         <satellites-menu ng-show="selectedTab == 6"> </satellites-menu>
-        <conf-tree ng-show="selectedTab == 7"></conf-tree>
+        <conf-tree ng-show="selectedTab == 7 && logged"></conf-tree>
         <webcam-video ng-show="videoShow == true && selectedTab != 0"> </webcam-video>
 
         <!-- Main menu -->
