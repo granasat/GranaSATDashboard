@@ -21,7 +21,7 @@
     <td ng-show="root.ground.lat.edit">
         <form class="form-inline">
             <div class="form-group">
-                <span ng-click="root.ground.lat.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span>
+                <span ng-click="updateConf(); root.ground.lat.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span>
                 <input ng-model="config.ground_station_lat" type="text" class="form-control" id="root.ground.lat">
             </div>
         </form>
@@ -43,7 +43,7 @@
     <td ng-show="root.ground.lng.edit">
         <form class="form-inline">
             <div class="form-group">
-                <span ng-click="root.ground.lng.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span>
+                <span ng-click="updateConf(); root.ground.lng.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span>
                 <input ng-model="config.ground_station_lng" type="text" class="form-control" id="root.ground.lng">
             </div>
         </form>

@@ -37,3 +37,13 @@ app.controller('ground', function($scope) {
         alt : "Ground Station altitude"
     };
 });
+
+app.controller('propagator', function($scope){
+   $scope.R = {
+       passes_thr : "Passes thr?",
+       passes_step : "Passes step",
+       calculator_days : "Calculator days",
+       calculator_frequency : "Calculator frequency",
+       error : "Error"
+   }
+});
