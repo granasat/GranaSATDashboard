@@ -10,6 +10,7 @@
   "log_file": "utils/log.txt",
   "aprs_log_file": "utils/aprs.txt",
   "auto_pass_refresh_rate": 1000,
+  "ground_location" : "Spain, Granada, Facultad de Ciencias",
   "ground_station_lat": 37.179640,
   "ground_station_lng": -3.6095,
   "ground_station_alt": 673,
