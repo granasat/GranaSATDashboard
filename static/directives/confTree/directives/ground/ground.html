@@ -11,6 +11,28 @@
 
 <tr ng-show="root.ground.expanded">
     <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.location}}></span> Location
+    </td>
+
+    <td ng-show="!root.ground.location.edit">
+        <span ng-click="root.ground.location.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.ground_location}}
+    </td>
+
+    <td ng-show="root.ground.location.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <span ng-click="updateConf(); root.ground.location.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span>
+                <input ng-model="config.ground_location" type="text" class="form-control" id="root.ground.location">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.ground.expanded">
+    <td>
         <span class="glyphicon glyphicon-screenshot" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.lat}}></span> Latitude
     </td>
 

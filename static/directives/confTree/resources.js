@@ -32,6 +32,7 @@ app.controller('ic910', function($scope) {
 
 app.controller('ground', function($scope) {
     $scope.R = {
+        location : "Location of the ground station",
         lat : "Ground Station latitude",
         lng : "Ground Station longitude",
         alt : "Ground Station altitude"
