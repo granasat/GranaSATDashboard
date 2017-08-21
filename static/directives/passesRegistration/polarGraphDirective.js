@@ -12,10 +12,25 @@ app.directive('d3Bars', ['d3', function(d3) {
             data.push([-(elem.azi * conv + subpi), -0.5 + (elem.ele/180)]);
         });
 
+        var tLenght = (data.length/5);
+        var startDate = new Date(Date.parse(scope.satelliteSelected.pass[scope.selectedItem].startDateLocal));
+        var selec = [];
+
+        for(var i = 0; i < 5; i++){
+            selec.push({
+                data : scope.satelliteSelected.pass[scope.selectedItem].data[Math.round(tLenght - 1) * i],
+                time : new Date(startDate.getTime() + (Math.round(tLenght - 1) * i * scope.config.propagator_passes_step * 1000))
+            })
+        }
+
         var width = 470,
             height = 300,
             radius = Math.min(width, height) / 2 - 30;
 
+
+        console.log("radio: " + radius);
+
+        // Circle External line
         var r = d3.scale.linear()
             .domain([0, .5])
             .range([0, radius]);
@@ -43,6 +58,7 @@ app.directive('d3Bars', ['d3', function(d3) {
         gr.append("circle")
             .attr("r", r);
 
+        //Elevation text
         gr.append("text")
             .attr("y", function (d) {
                 return -r(d) - 4;
@@ -51,6 +67,22 @@ app.directive('d3Bars', ['d3', function(d3) {
             .style("text-anchor", "middle")
             .text(function (d) {
                 return d;
+            });
+
+        svg.append("g")
+            .selectAll("text")
+            .data(selec)
+            .enter()
+            .append("text")
+            .attr("x", function (d) {
+                console.log(d.data);
+                return Math.sin(d.data.azi * conv) * radius * ((-d.data.ele + 90)/ 90)
+            })
+            .attr("y", function (d) {
+                return - (Math.cos(d.data.azi * conv) * radius * ((-d.data.ele + 90)/ 90))
+            })
+            .text(function (d) {
+                return d.time.getUTCHours() + ":" + ((d.time.getUTCMinutes() < 10)? "0" + d.time.getUTCMinutes(): d.time.getUTCMinutes());
             });
 
         var ga = svg.append("g")
