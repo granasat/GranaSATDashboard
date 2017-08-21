@@ -1,8 +1,9 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('appController', function($scope, $http, $uibModal) {
-    $scope.selectedTab = 0
-    $scope.logged = false
-    $scope.user = ""
+    $scope.selectedTab = 0;
+    $scope.logged = false;
+    $scope.user = "";
+    $scope.userInfo = {};
     $scope.type = 3;
     $scope.videoShow = false;
     $scope.mobileEnabled = false;
@@ -71,6 +72,10 @@ app.controller('appController', function($scope, $http, $uibModal) {
                     $scope.logged = true;
                     $scope.user = res.user;
                     $scope.type = res.userType;
+
+                    $scope.getUserInfo().then(function (res) {
+                        $scope.userInfo = res.data;
+                    });
                 }
                 else{
                     window.alert("Account created successfully");
@@ -97,6 +102,13 @@ app.controller('appController', function($scope, $http, $uibModal) {
         return $http({
             method: 'GET',
             url: "/getUsers"
+        });
+    };
+
+    $scope.getUserInfo = function () {
+        return $http({
+            method: 'GET',
+            url: "/getUserInfo"
         });
     };
 

@@ -107,6 +107,19 @@ module.exports = function DashboardDB() {
         });
     }
 
+    function getUser(req, res){
+        db.get('SELECT USR_ID, USR_NAME, USR_ORGANIZATION, USR_MAIL, USR_TYPE, USR_LAST_VST, USR_BLOCKED FROM USERS WHERE USR_NAME = ?', req, function(err, data) {
+            if (!err) {
+                res(data);
+            }
+            else{
+                res({
+                    error: "Database error"
+                })
+            }
+        });
+    }
+
     function modUser(req, res){
         if(req.body.password == null){      //No modify password
             db.run('UPDATE USERS SET USR_NAME = $name, USR_ORGANIZATION = $org, USR_MAIL = $mail, USR_TYPE = $type, USR_BLOCKED = $blocked WHERE USR_ID = $id', {
@@ -388,6 +401,7 @@ module.exports = function DashboardDB() {
         signup : signup,
         deserializeUser: deserializeUser,
         getUsers : getUsers,
+        getUser : getUser,
         modUser : modUser,
         delUser : delUser,
         getSatellites: getSatellites,

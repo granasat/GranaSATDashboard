@@ -40,7 +40,8 @@ app.directive('passesRegistration', function($http, $document) {
                     data: {
                         satId: scope.satelliteSelected.SAT_ID,
                         trspId : trsp.RMT_ID,
-                        passId: pass.id
+                        passId: pass.id,
+                        scheduledBy : scope.userInfo.USR_ORGANIZATION
                     }
                 }).then(function (res) {
                     if (res.data.status === "Done"){
@@ -48,6 +49,7 @@ app.directive('passesRegistration', function($http, $document) {
                         scope.sortScheduledPasses();
                     }
                     pass.scheduled = true;
+                    pass.scheduledBy = scope.userInfo.USR_ORGANIZATION;
                 });
             }
         };

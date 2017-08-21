@@ -211,6 +211,19 @@ module.exports = function DashboardDB() {
         });
     }
 
+    function getUser(req, res){
+        database.query('SELECT USR_ID, USR_NAME, USR_ORGANIZATION, USR_MAIL, USR_TYPE, USR_LAST_VST, USR_BLOCKED FROM USERS WHERE USR_NAME = ?', req, function(err, data) {
+            if (!err) {
+                res(data);
+            }
+            else{
+                res({
+                    error: "Database error"
+                })
+            }
+        });
+    }
+
     function deserializeUser(id, done) {
         database.query('SELECT * FROM USERS WHERE USR_ID = ?', id, function(err, rows) {
             if (rows.length == 0) return done(null, false);
@@ -429,6 +442,7 @@ module.exports = function DashboardDB() {
         modUser: modUser,
         delUser: delUser,
         getUsers: getUsers,
+        getUser: getUser,
         deserializeUser: deserializeUser,
         addSatellite: addSatellite,
         modSatellite: modSatellite,

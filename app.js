@@ -149,6 +149,14 @@ app.get('/getUsers', isAdmin, function(req, res){
     });
 });
 
+app.get('/getUserInfo', isAuthenticated, function (req, res) {
+   log("Picking up info of " + req.user.USR_NAME, "warn");
+
+   db.getUser(req.user.USR_NAME, function (result) {
+       res.json(result);
+   })
+});
+
 app.post('/modUser', isAdmin, function (req, res) {
    log("Modifying users from: " + req.user.USR_NAME + " " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
 
@@ -376,6 +384,7 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
             }, new Date(pass.startDateUTC) - new Date() /*Time to pass start */)};
         //Saving to the list
         pass.scheduled = true;
+        pass.scheduledBy = req.body.scheduledBy;
         scheduledPasses.push(passScheduled);
     }
     else{

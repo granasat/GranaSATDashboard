@@ -153,6 +153,7 @@
                                             <th>Start Date</th>
                                             <th>Duration</th>
                                             <th>Max Elevation</th>
+                                            <th>Scheduled by</th>
                                             <th>Remain time</th>
                                         </tr>
                                     </thead>
@@ -162,6 +163,7 @@
                                             <td>{{pass.startDateUTC}}</td>
                                             <td>{{pass.duration | millSecondsToTimeString}}</td>
                                             <td>{{pass.maxElevation}}º</td>
+                                            <td>{{pass.scheduledBy}}</td>
                                             <td>{{pass.remainTime | millSecondsToTimeString}}
                                             </td><td><button ng-if="logged" ng-click="undoSchedule(pass)" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></td>
                                         </tr>
