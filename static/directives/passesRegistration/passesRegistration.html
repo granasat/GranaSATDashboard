@@ -56,9 +56,13 @@
                             <div class="col-md-7">
                                 <d3-bars data="d3Data" label="title" ng-mousemove="coordsMove($event)"></d3-bars>
                             </div>
-                            <div style="margin-top: 16px" class="col-md-3">
+                            <div style="margin-top: 16px" class="col-md-5">
                                 ADS Ac: {{pass.data[0].azi.toFixed(2)}}º        <br>
                                 PDS Ac: {{pass.data[pass.data.length - 1].azi.toFixed(2)}}º        <br>
+                                From : {{config.ground_location}} <br>
+                                Latitude : {{config.ground_station_lat}} <br>
+                                Longitude : {{config.ground_station_lng}} <br>
+                                Altitude : {{config.ground_station_alt}} <br>
                             </div>
                         </div>
                     </td>
