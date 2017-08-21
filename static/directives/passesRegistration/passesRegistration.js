@@ -43,8 +43,10 @@ app.directive('passesRegistration', function($http, $document) {
                         passId: pass.id
                     }
                 }).then(function (res) {
-                    if (res.data.status === "Done")
+                    if (res.data.status === "Done"){
                         scope.scheduledPasses.push(pass);
+                        scope.sortScheduledPasses();
+                    }
                     pass.scheduled = true;
                 });
             }

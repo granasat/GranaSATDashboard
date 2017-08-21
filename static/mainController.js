@@ -47,6 +47,8 @@ app.controller('appController', function($scope, $http, $uibModal) {
                        $scope.scheduledPasses.push(pass);
                    });
             });
+
+            $scope.sortScheduledPasses();
         });
     };
 
@@ -202,6 +204,12 @@ app.controller('appController', function($scope, $http, $uibModal) {
                 });
             }
         });
+    };
+    
+    $scope.sortScheduledPasses = function () {
+        $scope.scheduledPasses.sort(function (a, b) {
+            return a.remainTime - b.remainTime;
+        })
     };
 
     $scope.formatDDMMYYYY = function(date){
