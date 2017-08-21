@@ -251,8 +251,15 @@ app.post('/delSatellites', isAuthenticated, function(req, res) {
 app.get('/satellites/scheduled', function(req, res) {
     res.json(scheduledPasses.map(function(e) {
         return {
-            name: e.satellite,
-            id: e.id
+            satellite: e.satellite,
+            id: e.id,
+            startDateUTC : e.info.startDateUTC,
+            endDateUTC : e.info.endDateUTC,
+            startDateLocal : e.info.startDateLocal,
+            endDateLocal : e.info.endDateLocal,
+            duration : e.info.duration,
+            maxElevation : e.info.maxElevation,
+            scheduled : e.info.scheduled
         }
     }))
 });
@@ -368,6 +375,7 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
 
             }, new Date(pass.startDateUTC) - new Date() /*Time to pass start */)};
         //Saving to the list
+        pass.scheduled = true;
         scheduledPasses.push(passScheduled);
     }
     else{
@@ -380,6 +388,16 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
 });
 
 app.post('/satellites/undoSchedule', isAuthenticated, function(req, res) {
+
+    log("Undo Scheduled pass with id:" + req.body.id, "warn");
+
+    var pass = scheduledPasses.find(function (pass) {
+        return pass.id === req.body.id;
+    });
+
+    if(pass)
+        pass.info.scheduled = false;
+
     scheduledPasses = scheduledPasses.filter(function (pass) {
        return pass.id !== req.body.id;
     });

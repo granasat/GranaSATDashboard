@@ -53,6 +53,6 @@ app.directive('passesRegistration', function($http, $document) {
 
     return {
         link: link,
-        templateUrl: 'directives/passesRegistration/passesRegistration.html',
+        templateUrl: 'directives/passesRegistration/passesRegistration.html'
     };
 });

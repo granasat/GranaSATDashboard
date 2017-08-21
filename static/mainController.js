@@ -36,6 +36,17 @@ app.controller('appController', function($scope, $http, $uibModal) {
     $scope.setupPasses = function () {
         $scope.getAllPasses().then(function (res) {
             $scope.passes = res.data;
+
+            $scope.passes.forEach(function (sat) {
+               var filtered = sat.pass.filter(function (pass) {
+                   return pass.scheduled === true;
+               });
+
+               if(filtered.length > 0)
+                   filtered.forEach(function (pass) {
+                       $scope.scheduledPasses.push(pass);
+                   });
+            });
         });
     };
 
@@ -183,16 +194,12 @@ app.controller('appController', function($scope, $http, $uibModal) {
             data: {id : scheduledPass.id}
         }).then(function (res) {
             if(res.data.status === "Done"){
-                $scope.scheduledPasses = $scope.scheduledPasses.filter(function (pass){
-                    return pass.id !== scheduledPass.id;
-                });
-
                 //Change schedule attribute of the pass with the same id in passes
-                $scope.passes.find(function (sat) {
-                    return sat.name === scheduledPass.satellite;
-                }).pass.find(function (pass) {
-                    return pass.id === scheduledPass.id;
-                }).scheduled = false;
+                scheduledPass.scheduled = false;
+
+                $scope.scheduledPasses = $scope.scheduledPasses.filter(function (el) {
+                    return el.id !== scheduledPass.id;
+                });
             }
         });
     };
