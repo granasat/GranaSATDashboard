@@ -442,7 +442,10 @@ app.get('/getConf', isAuthenticated, function (req, res) {
 
 app.post('/updateConf', isAuthenticated, function (req, res) {
     var newConf = req.body.conf;
-    var newConfJSON = JSON.stringify(newConf);
+    newConf.database_user = config.database_user;
+    newConf.database_password = config.database_password;
+
+    var newConfJSON = JSON.stringify(newConf, undefined, 2);
 
     fs.writeFile('config.json', newConfJSON, function (err) {
         if (err){
