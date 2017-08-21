@@ -54,7 +54,7 @@
                     <td colspan="6" style="padding: 0">
                         <div class="isCollapsed">
                             <div class="col-md-7">
-                                <d3-bars data="d3Data" label="title"></d3-bars>
+                                <d3-bars data="d3Data" label="title" ng-mousemove="coordsMove($event)"></d3-bars>
                             </div>
                             <div style="margin-top: 16px" class="col-md-3">
                                 ADS Ac: {{pass.data[0].azi.toFixed(2)}}º        <br>

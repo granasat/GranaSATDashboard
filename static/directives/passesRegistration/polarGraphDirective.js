@@ -27,9 +27,6 @@ app.directive('d3Bars', ['d3', function(d3) {
             height = 300,
             radius = Math.min(width, height) / 2 - 30;
 
-
-        console.log("radio: " + radius);
-
         // Circle External line
         var r = d3.scale.linear()
             .domain([0, .5])
@@ -75,7 +72,6 @@ app.directive('d3Bars', ['d3', function(d3) {
             .enter()
             .append("text")
             .attr("x", function (d) {
-                console.log(d.data);
                 return Math.sin(d.data.azi * conv) * radius * ((-d.data.ele + 90)/ 90)
             })
             .attr("y", function (d) {
@@ -84,6 +80,37 @@ app.directive('d3Bars', ['d3', function(d3) {
             .text(function (d) {
                 return d.time.getUTCHours() + ":" + ((d.time.getUTCMinutes() < 10)? "0" + d.time.getUTCMinutes(): d.time.getUTCMinutes());
             });
+
+
+        svg.append("text")
+            .attr("id", "azi")
+            .attr("x", -radius)
+            .attr("y", radius - 15);
+
+        svg.append("text")
+            .attr("id", "ele")
+            .attr("x", -radius)
+            .attr("y", radius);
+
+        scope.coordsMove = function ($event) {
+
+            var x = ($event.offsetX - width / 2);
+            var y = (-$event.offsetY + height / 2);
+
+            var hip = Math.sqrt(Math.pow(x, 2) + Math.pow(- y, 2));
+            var ele = Math.round((-0.75 * hip) + 90);
+
+
+            var azi = Math.atan(x / y) * Math.pow(conv, -1);
+
+            var fAzi = Math.round((y > 0 && x > 0)? (azi) : (y < 0)? (180 + azi) : (360 + azi));
+
+            svg.select("#azi")
+                .text((ele > 0)? "AZ " + fAzi + "º" : "");
+
+            svg.select("#ele")
+                .text((ele > 0)? "EL " + ele + "º" : "");
+        };
 
         var ga = svg.append("g")
             .attr("class", "a axis")
