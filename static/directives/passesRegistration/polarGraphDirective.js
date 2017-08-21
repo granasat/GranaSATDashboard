@@ -83,14 +83,20 @@ app.directive('d3Bars', ['d3', function(d3) {
 
 
         svg.append("text")
+            .attr("id", "ele")
+            .attr("x", -radius - 30)
+            .attr("y", radius-30);
+
+        svg.append("text")
             .attr("id", "azi")
-            .attr("x", -radius)
+            .attr("x", -radius - 30)
             .attr("y", radius - 15);
 
         svg.append("text")
-            .attr("id", "ele")
-            .attr("x", -radius)
-            .attr("y", radius);
+            .attr("id", "dopler")
+            .attr("x", -radius - 30)
+            .attr("y", radius + 15);
+
 
         scope.coordsMove = function ($event) {
 
@@ -110,6 +116,15 @@ app.directive('d3Bars', ['d3', function(d3) {
 
             svg.select("#ele")
                 .text((ele > 0)? "EL " + ele + "º" : "");
+
+            var findDopler = scope.satelliteSelected.pass[scope.selectedItem].data.find( function (el) {
+                return Math.round(el.azi) === fAzi && Math.round(el.ele) === ele;
+            });
+
+            if(findDopler){
+                svg.select("#dopler")
+                    .text("DO " + findDopler.dopplerFactor);
+            }
         };
 
         var ga = svg.append("g")
