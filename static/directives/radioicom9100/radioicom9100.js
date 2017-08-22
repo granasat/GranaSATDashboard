@@ -1,4 +1,4 @@
-app.directive('radioIcom9100', function($http, $document) {
+app.directive('radioIcom9100', function($http, $document, $uibModal) {
     function link(scope, element, attrs) {
 
         scope.$watch("UTCTime", function(newValue, oldValue) {})
@@ -24,6 +24,24 @@ app.directive('radioIcom9100', function($http, $document) {
             display.setValue('VF0' + e + ': ----------- Hz');
         })
 
+        scope.setFreqModal = function() {
+            var setFreqModalInstance = $uibModal.open({
+                animation: scope.animationsEnabled,
+                templateUrl: 'setFreqModal.html',
+                controller: 'setFreqModelController as c',
+                size: "sm",
+                resolve: {
+                    items: function() {
+                        return scope.items;
+                    }
+                }
+            });
+
+            setFreqModalInstance.result.then(function(data) {
+                scope.setRadio({VFOA: data.VFOA, BFreq :data.BFreq});
+            });
+        };
+
         setInterval(function() {
             if (scope.selectedTab == 2  || scope.selectedTab == 0) {
                 scope.getRadio().then(function(res) {
@@ -42,4 +60,21 @@ app.directive('radioIcom9100', function($http, $document) {
         link: link,
         templateUrl: 'directives/radioicom9100/radioicom9100.html',
     };
+});
+
+
+app.controller('setFreqModelController', function($scope, $uibModalInstance, items) {
+
+    $scope.set = function(){
+        $uibModalInstance.close({
+            VFOA: $scope.AFreq,
+            BFreq: $scope.BFreq
+        });
+    };
+
+    $scope.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
+    };
+
+
 });

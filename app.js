@@ -187,7 +187,7 @@ app.get('/radiostation/freq', function(req, res) {
 });
 
 app.post('/radiostation/freq', isMember, function(req, res) {
-    log("Moving radio freq: " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+    log("Moving radio freq: " + " A " + req.body.VFOA + " " + req.user.USR_NAME + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
 
     radioStation.setFrequency(req.body, function(data) {
         res.json(data);
@@ -444,6 +444,8 @@ app.post('/updateConf', isAuthenticated, function (req, res) {
     var newConf = req.body.conf;
     newConf.database_user = config.database_user;
     newConf.database_password = config.database_password;
+
+
 
     var newConfJSON = JSON.stringify(newConf, undefined, 2);
 
