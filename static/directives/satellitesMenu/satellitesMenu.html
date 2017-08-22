@@ -288,7 +288,8 @@
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-success" type="button" ng-click="add()">Add</button>
+        <button ng-show="importedSats" class="btn btn-success" type="button" ng-click="add()">Add</button>
+        <button ng-show="!importedSats" class="btn btn-success" type="button" ng-click="add()">Modify</button>
         <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
     </div>
 </script>
