@@ -132,8 +132,6 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
                     scope.passes = scope.passes.filter(function (sat) {         //Modify locally
                         return sat.SAT_CAT !== sat_data.SAT_CAT;
                     });
-
-                    scope.updateSatellites();       //Request to node for sending to the user the updated passes
                 }
                 else{
                     window.alert("Database error");
