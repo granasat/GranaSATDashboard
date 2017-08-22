@@ -8,7 +8,7 @@
         <h4>Available Satellites</h4>
 
         <ul>
-            <li ng-repeat="s in passes"><a ng-click="getPasses(s)">{{s.SAT_NAME}}</a></li>
+            <li ng-repeat="s in passes"><a href="#" ng-click="getPasses(s)">{{s.SAT_NAME}}</a></li>
         </ul>
     </div>
     <div ng-show="satelliteSelected != ''" class="col-md-10">
@@ -45,7 +45,7 @@
                             </button>
 
                             <ul class="dropdown-menu" aria-labelledby="select_trsp">
-                                <li ng-repeat="trsp in satelliteSelected.rmt"><a ng-click="setPass(pass, trsp)">{{trsp.RMT_DESC}}</a></li>
+                                <li ng-repeat="trsp in satelliteSelected.rmt"><a href="#" ng-click="setPass(pass, trsp)">{{trsp.RMT_DESC}}</a></li>
                             </ul>
                         </div>
                     </td>

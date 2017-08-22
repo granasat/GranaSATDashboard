@@ -76,16 +76,16 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" ng-click="selectedTab = 0">GranaSAT Dashboard</a>
+                <a href="#" class="navbar-brand" ng-click="selectedTab = 0">GranaSAT Dashboard</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul ng-show="logged" class="nav navbar-nav">
-                    <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 1" ng-class="{'active': selectedTab == 1}"><a>Rotors</a></li>
-                    <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 2" ng-class="{'active': selectedTab == 2}"><a>Antennas</a></li>
-                    <li ng-show="type == 1" ng-click="selectedTab = 3" ng-class="{'active': selectedTab == 3}"><a>Terminal</a></li>
-                    <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a>Passes</span></a></li>
-                    <li ng-show="type == 1" ng-click="selectedTab = 5" ng-class="{'active': selectedTab == 5}"><a>Management</a></li>
-                    <li ng-click="selectedTab = 6" ng-class="{'active': selectedTab == 6}"><a>Satellites</a></li>
+                    <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 1" ng-class="{'active': selectedTab == 1}"><a href="#">Rotors</a></li>
+                    <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 2" ng-class="{'active': selectedTab == 2}"><a href="#">Antennas</a></li>
+                    <li ng-show="type == 1" ng-click="selectedTab = 3" ng-class="{'active': selectedTab == 3}"><a href="#">Terminal</a></li>
+                    <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a href="#">Passes</span></a></li>
+                    <li ng-show="type == 1" ng-click="selectedTab = 5" ng-class="{'active': selectedTab == 5}"><a href="#">Management</a></li>
+                    <li ng-click="selectedTab = 6" ng-class="{'active': selectedTab == 6}"><a href="#">Satellites</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li ng-show="scheduledPasses.length > 0"><a><span class="label label-danger">{{scheduledPasses.length}} {{scheduledPasses.length > 1 ? "passes" : "pass"}}</a></li>
@@ -98,8 +98,8 @@
                             <li><a href="#">...</a></li>
                             <li ng-show="logged"><a href="#" ng-click="selectedTab = 7">Configuration</a></li>
                             <li role="separator" class="divider"></li>
-                            <li ng-click="loginModal()" ng-class="{'disabled': logged}"><a>Login</a></li>
-                            <li ng-click="logout()" ng-class="{'disabled': !logged}"><a>Logout</a></li>
+                            <li ng-click="loginModal()" ng-class="{'disabled': logged}"><a href="#">Login</a></li>
+                            <li ng-click="logout()" ng-class="{'disabled': !logged}"><a href="#">Logout</a></li>
                         </ul>
                     </li>
                 </ul>

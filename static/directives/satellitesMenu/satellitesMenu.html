@@ -175,7 +175,7 @@
                 <div ng-show="import" style="height:100px; overflow: auto">
                     <table class="table table-hover" cellspacing="0" cellpadding="1" border="1" style="margin-bottom: 0px;">
                         <tr ng-repeat="importedSat in importedSats | filter:{name:search}" ng-click="importedSatClick(importedSat)">
-                            <td>{{importedSat.name}}</td>
+                            <td><a href="#" style="color: inherit; text-decoration: inherit"> {{importedSat.name}} </a></td>
                             <td>{{importedSat.trsp.length}} trsp's</td>
                         </tr>
                     </table>
@@ -212,14 +212,14 @@
                     <tbody>
                     <tr ng-repeat-start="rmt in rmt_array">
                         <td style="width:5%">
-                            <span class="glyphicon glyphicon-chevron-up" ng-click="rmt.collapsed = !rmt.collapsed" ng-show="rmt.collapsed" aria-hidden="true" data-toggle="collapse" data-target=#{{$index}}></span>
-                            <span class="glyphicon glyphicon-chevron-down" ng-click="rmt.collapsed = !rmt.collapsed" ng-show="!rmt.collapsed" aria-hidden="true" data-toggle="collapse" data-target=#{{$index}}></span>
+                            <a href="#" style="color: inherit; text-decoration: inherit"><span class="glyphicon glyphicon-chevron-up" ng-click="rmt.collapsed = !rmt.collapsed" ng-show="rmt.collapsed" aria-hidden="true" data-toggle="collapse" data-target=#{{$index}}></span></a>
+                            <a href="#" style="color: inherit; text-decoration: inherit"><span class="glyphicon glyphicon-chevron-down" ng-click="rmt.collapsed = !rmt.collapsed" ng-show="!rmt.collapsed" aria-hidden="true" data-toggle="collapse" data-target=#{{$index}}></span></a>
                         </td>
                         <td style="width:85%">
                             {{rmt.RMT_DESC}}
                         </td>
                         <td style="width:10%">
-                            <span ng-click="delRemoteTransceiverButton(rmt)" class="glyphicon glyphicon-remove" aria-hidden="true" data-toggle="collapse" data-target="#demo"></span>
+                            <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="delRemoteTransceiverButton(rmt)" class="glyphicon glyphicon-remove" aria-hidden="true" data-toggle="collapse" data-target="#demo"></span></a>
                         </td>
                     </tr>
                     <tr ng-repeat-end>
@@ -238,7 +238,7 @@
 
                                 <div class="form-group" id="rmt_mode">
                                     <div class="dropdown">
-                                        <button ng-show="!rmt.RMT_MODE" class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        <button ng-show="!rmt.RMT_MODE" class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                             Dropdown
                                             <span class="caret"></span>
                                         </button>
@@ -250,7 +250,7 @@
                                             <li>
                                                 <div class="row" style="width: 400px;">
                                                     <ul ng-repeat="modeGroup in modes" class="list-unstyled col-md-4">
-                                                        <li ng-repeat="mode in modeGroup" ng-click="rmt.RMT_MODE = mode.id">{{mode.name}}</li>
+                                                        <li ng-repeat="mode in modeGroup" ng-click="rmt.RMT_MODE = mode.id"><a href="#" style="color: inherit; text-decoration: inherit">{{mode.name}}</a></li>
                                                     </ul>
                                                 </div>
                                             </li>
