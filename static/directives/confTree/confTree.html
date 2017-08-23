@@ -117,16 +117,7 @@
 
         <tbody log ng-show="root.expanded"></tbody>
 
-        <tr ng-show="root.expanded">
-            <td>
-                <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
-                <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
-                logFile
-            </td>
-            <td></td>
-            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
-            <td></td>
-        </tr>
+        <tbody log-file ng-show="root.expanded" ng-controller="log_file"></tbody>
 
         <tr ng-show="root.expanded">
             <td>

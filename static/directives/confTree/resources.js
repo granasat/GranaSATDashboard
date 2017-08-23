@@ -48,3 +48,10 @@ app.controller('propagator', function($scope){
        error : "Error"
    }
 });
+
+app.controller('log_file', function($scope){
+    $scope.R = {
+        log_file : "File Path where will be store log file",
+        log_size_sent : "Last bytes sent to user"
+    }
+});
