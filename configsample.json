@@ -8,6 +8,7 @@
   "serial_transceiver_keenwoodts2000": "/dev/ttyS0",
   "serial_transceiver_icom9100": "/dev/ttyUSB1",
   "log_file": "utils/log.txt",
+  "log_size_sent": "10000",
   "aprs_log_file": "utils/aprs.txt",
   "auto_pass_refresh_rate": 1000,
   "ground_location" : "Spain, Granada, Facultad de Ciencias",
