@@ -468,6 +468,37 @@ app.post('/updateConf', isAuthenticated, function (req, res) {
     })
 });
 
+app.get('/getLog', isAuthenticated, function (req, res) {
+    var stats = fs.statSync(config.log_file);
+
+    var stream = fs.createReadStream(config.log_file, {
+        flags: "r",
+        encoding: "utf-8",
+        fd: null,
+        start: stats.size - 5000,
+        end: stats.size
+    });
+
+    var data = "";
+
+    stream.on("data", function(moreData){
+        data += moreData;
+    });
+
+    stream.on("error", function(){
+        log("Error while reading log file", "error");
+        res.json({
+            error : "Error while reading log file"
+        })
+    });
+
+    stream.on("end", function(){
+        res.json({
+            data : data
+        })
+    });
+});
+
 app.listen(config.web_port, config.web_host);
 log("Web server listening: " + config.web_host + ":" + config.web_port);
 

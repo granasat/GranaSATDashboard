@@ -1,4 +1,4 @@
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp', ['ui.bootstrap', 'luegg.directives']);
 app.controller('appController', function($scope, $http, $uibModal) {
     $scope.selectedTab = 0;
     $scope.logged = false;
