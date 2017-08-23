@@ -475,7 +475,7 @@ app.get('/getLog', isAuthenticated, function (req, res) {
         flags: "r",
         encoding: "utf-8",
         fd: null,
-        start: stats.size - 5000,
+        start: stats.size - config.log_size_sent,
         end: stats.size
     });
 
