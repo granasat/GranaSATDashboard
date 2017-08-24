@@ -1,4 +1,3 @@
-import DATA
 import urllib2
 import satellite
 import json
@@ -6,18 +5,18 @@ import os
 import sys
 
 def updateSats():
-    if len(DATA.files) < 1:
+    if len(DATA["scripts_update_files"]) < 1:
         print('No files to fetch from network')
     else:
         print('Fetching data')
 
-        for file in DATA.files:
+        for file in DATA["scripts_update_files"]:
             print('Fetching data from ' + file)
 
-            response = urllib2.urlopen(DATA.baseURL + file)
+            response = urllib2.urlopen(DATA["scripts_update_baseurl"] + file)
 
             # open the file for writing
-            fh = open(DATA.cacheDir + file, "w")
+            fh = open(DATA["scripts_update_cache_dir"] + file, "w")
 
             # read from request while writing to file
             fh.write(response.read())
@@ -26,11 +25,11 @@ def updateSats():
         print("Files downloaded successfully")
 
 def updateTrsp():
-    print("Saving trsp file in %s" % (DATA.cacheDir + DATA.trspFile))
-    trspFile = open(DATA.cacheDir + DATA.trspFile, 'w')
+    print("Saving trsp file in %s" % (DATA["scripts_update_cache_dir"] + DATA["scripts_update_trsp_file"]))
+    trspFile = open(DATA["scripts_update_cache_dir"] + DATA["scripts_update_trsp_file"], 'w')
 
-    print("Downloading tranceivers data from %s" % DATA.satnogsTrspURL)
-    response = urllib2.urlopen(DATA.satnogsTrspURL)
+    print("Downloading tranceivers data from %s" % DATA["scripts_update_satnogs_trsp_url"])
+    response = urllib2.urlopen(DATA["scripts_update_satnogs_trsp_url"])
     print("Downloaded successfully, writing content")
 
     trspFile.write(response.read())
@@ -39,11 +38,11 @@ def updateTrsp():
     print("Written successfully")
 
 def createModesFile(path):
-    print("Saving mode file in %s" % (path + DATA.modesFile))
-    modesFile = open(path + DATA.modesFile, 'w')
+    print("Saving mode file in %s" % (path + DATA["scripts_update_modes_file"]))
+    modesFile = open(path + DATA["scripts_update_modes_file"], 'w')
 
-    print("Downloading modes data from %s" % DATA.satnogsModesURL)
-    response = urllib2.urlopen(DATA.satnogsModesURL)
+    print("Downloading modes data from %s" % DATA["scripts_update_satnogs_modes_url"])
+    response = urllib2.urlopen(DATA["scripts_update_satnogs_modes_url"])
     print("Downloaded successfully, writing content")
 
     modesFile.write(response.read())
@@ -54,7 +53,7 @@ def createModesFile(path):
 def createTrspFile(path):
     # First of all load the trsp
     print("Loading trsp")
-    trsps = json.load(open(DATA.cacheDir + DATA.trspFile))
+    trsps = json.load(open(DATA["scripts_update_cache_dir"] + DATA["scripts_update_trsp_file"]))
 
     print("Getting category numbers")
     trspcat = set()
@@ -63,11 +62,12 @@ def createTrspFile(path):
 
     print("Filling satellite data")
     satellites = []
-    for file in DATA.files:
+    numSats = 0
+    for file in DATA["scripts_update_files"]:
         print("Extracting satellites from %s" % file)
-        f = open(DATA.cacheDir + file, 'r')
+        f = open(DATA["scripts_update_cache_dir"] + file, 'r')
 
-        if DATA.linesneeded == 3:
+        if DATA["scripts_update_linesneeded"] == "3":
             numSats = 0
             i = 0
             for line in f:
@@ -79,7 +79,7 @@ def createTrspFile(path):
                     tle2 = line.rstrip()
                 i += 1
                 if i == 3:
-                    sat = satellite.Satellite(name, file[:-4], tle1, tle2, DATA.baseURL + file)
+                    sat = satellite.Satellite(name, file[:-4], tle1, tle2, DATA["scripts_update_baseurl"] + file)
                     if sat.cat in trspcat:
                         for trsp in trsps:
                             if sat.cat == trsp['norad_cat_id']:
@@ -96,11 +96,17 @@ def createTrspFile(path):
     def obj_dict(obj):
         return obj.__dict__
 
-    print("Writing content to %s" % (path + DATA.resultFile))
-    with open(path + DATA.resultFile, 'w') as outfile:
+    print("Writing content to %s" % (path + DATA["scripts_update_result_file"]))
+    with open(path + DATA["scripts_update_result_file"], 'w') as outfile:
         json.dump(satellites, outfile, default=obj_dict)
 
     print("Data was written successfully")
+
+
+configFile = sys.argv[2] if len(sys.argv) > 2 else 'config.json'
+
+with open(configFile) as data_file:
+    DATA = json.load(data_file)
 
 if len(sys.argv) > 1 and os.path.isdir(sys.argv[1]):
     dir_path = ""
@@ -115,9 +121,9 @@ if len(sys.argv) > 1 and os.path.isdir(sys.argv[1]):
         dir_path += '/'
 
     print("Updating library")
-    cachedir = os.path.dirname(DATA.cacheDir)
+    cachedir = os.path.dirname(DATA["scripts_update_cache_dir"])
     if not os.path.exists(cachedir):
-        print("Creating %s" % DATA.cacheDir)
+        print("Creating %s" % DATA["scripts_update_cache_dir"])
         os.makedirs(cachedir)
 
     updateSats()
@@ -127,5 +133,4 @@ if len(sys.argv) > 1 and os.path.isdir(sys.argv[1]):
 
 else:
     print("Put a directory")
-
 
