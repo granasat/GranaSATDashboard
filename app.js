@@ -404,8 +404,12 @@ app.post('/satellites/undoSchedule', isAuthenticated, function(req, res) {
         return pass.id === req.body.id;
     });
 
-    if(pass)
+    if(pass){
+        clearTimeout(pass.handler_id);
         pass.info.scheduled = false;
+    }
+
+
 
     scheduledPasses = scheduledPasses.filter(function (pass) {
        return pass.id !== req.body.id;
