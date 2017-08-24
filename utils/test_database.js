@@ -262,22 +262,20 @@ module.exports = function DashboardDB() {
         var error = false;
 
 
-        console.log(req.body);
         addSatelliteDB(req.body, function (result) {
             if (result == null) {
                 req.body.rmt.forEach(function (rmt, index, array) {
                     rmt.cat = req.body.SAT_CAT;
                     addRemoteTransceiversDB(rmt, function (result) {
                         if (result != null) {
-                            console.log(result);
-
                             error = true;
                         }
 
                         if (index === array.length - 1){
                             if(error){
+                                log(result, "error");
                                 res({
-                                    error: "Database error"
+                                    error : result
                                 });
                             }
                             else{
@@ -292,7 +290,7 @@ module.exports = function DashboardDB() {
             else {
                 log(result, "error");
                 res({
-                    error: "Database error"
+                    error: result
                 });
             }
         });

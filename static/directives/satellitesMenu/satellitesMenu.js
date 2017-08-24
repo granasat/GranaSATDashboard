@@ -69,7 +69,12 @@ app.directive('satellitesMenu', function($http, $document, $uibModal) {
                         scope.updateSatellites();       //Request to node for sending to the user the updated passes
                     }
                     else{
-                        window.alert("Database error");
+                        if(res.data.error && res.data.error.errno === 19){
+                            window.alert("That satellite is already in the DB!");
+                        }
+                        else{
+                            window.alert("Database error");
+                        }
                     }
                 });
             });
