@@ -30,7 +30,9 @@ app.directive('confTree', function($http, $document) {
                 data: {conf : scope.config}
             }).then(function (res) {
                 if(res.data.status === "Done"){
-                    console.log("DONE")
+                    console.log("DONE");
+
+                    scope.updateSatellites();           //Request to node for sending to the user the updated passes
                 }
                 else{
                     window.alert("Error");
