@@ -55,3 +55,20 @@ app.controller('log_file', function($scope){
         log_size_sent : "Last bytes sent to user"
     }
 });
+
+app.controller('scripts', function($scope){
+    $scope.R = {
+        library : "Path of python script",
+        dest : "Destination path",
+        cache_dir : "Cache directory",
+        trsp_file : "Where temporarily trsp's whill be store",
+        modes_file : "Where modes will be store",
+        satnogs_trsp_url : "Satnogs trsp URL",
+        satnogs_modes_url : "Satnogs modes URL",
+        baseurl : "Celestrak base URL",
+        linesneeded : "Lines needed to split the content of celestrak, do not touch excep celestrak change the format",
+        result_file : "Where results will be store",
+        files : "Celestrak files",
+        run : "Run Python script"
+    }
+});

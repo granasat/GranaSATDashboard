@@ -27,8 +27,8 @@ var Yaesu = require('./rotors/yaesu.js');
 var Kenwood = require('./transceivers/kenwoodts2000.js');
 var Icom9100 = require('./transceivers/icom9100.js');
 var Propagator = require('./propagator/propagator.js');
-var satellites = require('./sat_library/final.json');
-var modes = require('./sat_library/modes.json');
+var satellites = require('./' + config.scripts_update_library_dest + "/" + config.scripts_update_result_file);
+var modes = require('./' + config.scripts_update_library_dest + "/" + config.scripts_update_modes_file);
 
 
 //Database stuff
@@ -448,7 +448,7 @@ app.post('/updateConf', isAuthenticated, function (req, res) {
     var newConf = req.body.conf;
 
     for(var attr in newConf){
-        if(config[attr] !== newConf[attr]){
+        if(config[attr] !== newConf[attr] && Object.prototype.toString.call(config[attr]) !== '[object Array]' ){
             log("Modifying config " + attr + " from " + config[attr] + " to " + newConf[attr], "warn")
         }
     }
@@ -515,6 +515,18 @@ app.get('/getLog', isAuthenticated, function (req, res) {
             res.json({
                 error : "Error while reading log file"
             })
+        }
+    });
+});
+
+app.get('/updateLibrary', isAuthenticated, function (req, res) {
+    log("Updating sat library", "warn");
+
+    exec("python " + config.scripts_update_library + " " + config.scripts_update_library_dest, function(error, stdout, stderr) {
+        if (error) {
+            log(error + stdout + stderr, 'error');
+        } else {
+            log("Sat library updated");
         }
     });
 });

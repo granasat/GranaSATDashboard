@@ -1,0 +1,256 @@
+<tr ng-click="root.scripts.expanded = !root.scripts.expanded">
+    <td>
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-show="!root.scripts.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span></a>
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-show="root.scripts.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 19px;">&nbsp;</span></a>
+        Scripts
+    </td>
+    <td></td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.scripts.expanded" ng-click="root.scripts.update_library.expanded = !root.scripts.update_library.expanded">
+    <td>
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-show="!root.scripts.update_library.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 38px;">&nbsp;</span></a>
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-show="root.scripts.update_library.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 38px;">&nbsp;</span></a>
+        Update Library (Python)
+    </td>
+    <td></td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.library}}></span> Script path
+    </td>
+
+    <td ng-show="!root.scripts.update_library.library.edit">
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="root.scripts.update_library.library.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.scripts_update_library}}</a>
+    </td>
+
+    <td ng-show="root.scripts.update_library.library.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.scripts.update_library.library.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.scripts_update_library" type="text" class="form-control" id="root.scripts.update_library.library">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.dest}}></span> Destination path
+    </td>
+
+    <td ng-show="!root.scripts.update_library.library_dest.edit">
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="root.scripts.update_library.library_dest.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.scripts_update_library_dest}}</a>
+    </td>
+
+    <td ng-show="root.scripts.update_library.library_dest.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.scripts.update_library.library_dest.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.scripts_update_library_dest" type="text" class="form-control" id="root.scripts.update_library.library_dest">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+
+<tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.cache_dir}}></span> Caché path
+    </td>
+
+    <td ng-show="!root.scripts.update_library.cache_dir.edit">
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="root.scripts.update_library.cache_dir.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.scripts_update_cache_dir}}</a>
+    </td>
+
+    <td ng-show="root.scripts.update_library.cache_dir.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.scripts.update_library.cache_dir.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.scripts_update_cache_dir" type="text" class="form-control" id="root.scripts.update_library.cache_dir">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.trsp_file}}></span> Trsp path
+    </td>
+
+    <td ng-show="!root.scripts.update_library.trsp_file.edit">
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="root.scripts.update_library.trsp_file.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.scripts_update_trsp_file}}</a>
+    </td>
+
+    <td ng-show="root.scripts.update_library.trsp_file.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.scripts.update_library.trsp_file.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.scripts_update_trsp_file" type="text" class="form-control" id="root.scripts.update_library.trsp_file">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.modes_file}}></span> Modes File
+    </td>
+
+    <td ng-show="!root.scripts.update_library.modes_file.edit">
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="root.scripts.update_library.modes_file.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.scripts_update_modes_file}}</a>
+    </td>
+
+    <td ng-show="root.scripts.update_library.modes_file.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.scripts.update_library.modes_file.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.scripts_update_modes_file" type="text" class="form-control" id="root.scripts.update_library.modes_file">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.satnogs_trsp_url}}></span> Satnogs trsp URL
+    </td>
+
+    <td ng-show="!root.scripts.update_library.satnogs_trsp_url.edit">
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="root.scripts.update_library.satnogs_trsp_url.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.scripts_update_satnogs_trsp_url}}</a>
+    </td>
+
+    <td ng-show="root.scripts.update_library.satnogs_trsp_url.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.scripts.update_library.satnogs_trsp_url.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.scripts_update_satnogs_trsp_url" type="text" class="form-control" id="root.scripts.update_library.satnogs_trsp_url">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.satnogs_modes_url}}></span> Satnogs modes URL
+    </td>
+
+    <td ng-show="!root.scripts.update_library.satnogs_modes_url.edit">
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="root.scripts.update_library.satnogs_modes_url.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.scripts_update_satnogs_modes_url}}</a>
+    </td>
+
+    <td ng-show="root.scripts.update_library.satnogs_modes_url.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.scripts.update_library.satnogs_modes_url.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.scripts_update_satnogs_modes_url" type="text" class="form-control" id="root.scripts.update_library.satnogs_modes_url">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+
+<tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.baseurl}}></span> Celestrak base URL
+    </td>
+
+    <td ng-show="!root.scripts.update_library.baseurl.edit">
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="root.scripts.update_library.baseurl.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.scripts_update_baseurl}}</a>
+    </td>
+
+    <td ng-show="root.scripts.update_library.baseurl.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.scripts.update_library.baseurl.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.scripts_update_baseurl" type="text" class="form-control" id="root.scripts.update_library.baseurl">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.linesneeded}}></span> Lines needed
+    </td>
+
+    <td ng-show="!root.scripts.update_library.linesneeded.edit">
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="root.scripts.update_library.linesneeded.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.scripts_update_linesneeded}}</a>
+    </td>
+
+    <td ng-show="root.scripts.update_library.linesneeded.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.scripts.update_library.linesneeded.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.scripts_update_linesneeded" type="text" class="form-control" id="root.scripts.update_library.linesneeded">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.result_file}}></span> Result file
+    </td>
+
+    <td ng-show="!root.scripts.update_library.result_file.edit">
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="root.scripts.update_library.result_file.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.scripts_update_result_file}}</a>
+    </td>
+
+    <td ng-show="root.scripts.update_library.result_file.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.scripts.update_library.result_file.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.scripts_update_result_file" type="text" class="form-control" id="root.scripts.update_library.result_file">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.run}}></span> Run script
+    </td>
+
+    <td>
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateLibrary()" class="glyphicon glyphicon-play" data-toggle="tooltip" title="Edit"></span></a>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
