@@ -446,6 +446,14 @@ app.get('/getConf', isAuthenticated, function (req, res) {
 
 app.post('/updateConf', isAuthenticated, function (req, res) {
     var newConf = req.body.conf;
+
+    for(var attr in newConf){
+        if(config[attr] !== newConf[attr]){
+            log("Modifying config " + attr + " from " + config[attr] + " to " + newConf[attr], "warn")
+        }
+    }
+
+
     newConf.database_user = config.database_user;
     newConf.database_password = config.database_password;
 
