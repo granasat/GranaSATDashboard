@@ -19,5 +19,6 @@
   "propagator_passes_step": 5,
   "propagator_calculator_days": 3,
   "propagator_calculator_frequency": 3600000,
-  "propagator_error" : 40000
+  "propagator_error" : 40000,
+  "scripts_update_library": "sat_library/updateLibrary.py"
 }
