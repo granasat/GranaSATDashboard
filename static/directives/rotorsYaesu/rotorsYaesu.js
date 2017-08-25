@@ -33,7 +33,7 @@ app.directive('rotorsYaesu', function($http, $document, $uibModal) {
         // scope.$watch("UTCTime", function(newValue, oldValue) {})
 
         setInterval(function() {                                           //Refresh rotors's position every second
-            if (scope.selectedTab == 1 || scope.selectedTab == 0) {
+            if (scope.selectedTab == 1 || scope.selectedTab == 0 || scope.selectedTab == 7) {
                 scope.getRotors().then(function(res) {
                     scope.yaesuPosition = res.data
                 });

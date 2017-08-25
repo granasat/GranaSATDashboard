@@ -1,0 +1,54 @@
+<tr ng-click="root.yaesu.expanded = !root.yaesu.expanded">
+    <td>
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="!root.yaesu.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span></a>
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="root.yaesu.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 19px;">&nbsp;</span></a>
+        YAESU
+    </td>
+    <td></td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.yaesu.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"></span> Elevation
+    </td>
+
+    <td ng-show="!root.yaesu.ele.edit">
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="root.yaesu.ele.edit = true; root.yaesu.tempEle = yaesuPosition.ele" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span>{{yaesuPosition.ele}}º</a>
+    </td>
+
+    <td ng-show="root.yaesu.ele.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="moveAzi(); root.yaesu.ele.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="root.yaesu.tempEle" type="text" class="form-control" id="root.yaesu.ele">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.yaesu.expanded">
+    <td>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"></span> Azimuth
+    </td>
+
+    <td ng-show="!root.yaesu.azi.edit">
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="root.yaesu.azi.edit = true; root.yaesu.tempAzi = yaesuPosition.azi" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span>{{yaesuPosition.azi}}º</a>
+    </td>
+
+    <td ng-show="root.yaesu.azi.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="moveEle(); root.yaesu.azi.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="root.yaesu.tempAzi" type="text" class="form-control" id="root.yaesu.azi">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
