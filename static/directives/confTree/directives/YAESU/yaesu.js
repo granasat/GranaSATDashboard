@@ -3,25 +3,33 @@
  */
 app.directive('yaesu', function($http) {
     function link(scope, element, attrs) {
+        scope.tempEle = 0;
+        scope.tempAzi = 0;
 
         scope.moveEle = function () {
+            console.log(scope.tempEle);
+            console.log(scope.yaesuPosition.azi);
+
             return $http({
                 method: 'POST',
                 url: "/rotors/position",
                 data: {
-                    ele : scope.root.yaesu.tempEle,
-                    azi : scope.yaesuPosition.azi,
+                    ele : scope.tempEle,
+                    azi : scope.yaesuPosition.azi
                 }
             });
         }
 
         scope.moveAzi = function () {
+            console.log(scope.yaesuPosition.ele);
+            console.log(scope.tempAzi);
+
             return $http({
                 method: 'POST',
                 url: "/rotors/position",
                 data: {
                         ele : scope.yaesuPosition.ele,
-                        azi : scope.root.yaesu.tempAzi,
+                        azi : scope.tempAzi
                       }
             });
         }

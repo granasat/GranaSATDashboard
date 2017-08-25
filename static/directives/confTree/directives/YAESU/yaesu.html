@@ -15,14 +15,14 @@
     </td>
 
     <td ng-show="!root.yaesu.ele.edit">
-        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="root.yaesu.ele.edit = true; root.yaesu.tempEle = yaesuPosition.ele" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span>{{yaesuPosition.ele}}º</a>
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="root.yaesu.ele.edit = true; tempEle = yaesuPosition.ele" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span>{{yaesuPosition.ele}}º</a>
     </td>
 
     <td ng-show="root.yaesu.ele.edit">
         <form class="form-inline">
             <div class="form-group">
-                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="moveAzi(); root.yaesu.ele.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
-                <input ng-model="root.yaesu.tempEle" type="text" class="form-control" id="root.yaesu.ele">
+                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="moveEle(); root.yaesu.ele.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="tempEle" type="text" class="form-control" id="root.yaesu.ele">
             </div>
         </form>
     </td>
@@ -37,14 +37,14 @@
     </td>
 
     <td ng-show="!root.yaesu.azi.edit">
-        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="root.yaesu.azi.edit = true; root.yaesu.tempAzi = yaesuPosition.azi" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span>{{yaesuPosition.azi}}º</a>
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="root.yaesu.azi.edit = true; tempAzi = yaesuPosition.azi" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span>{{yaesuPosition.azi}}º</a>
     </td>
 
     <td ng-show="root.yaesu.azi.edit">
         <form class="form-inline">
             <div class="form-group">
-                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="moveEle(); root.yaesu.azi.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
-                <input ng-model="root.yaesu.tempAzi" type="text" class="form-control" id="root.yaesu.azi">
+                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="moveAzi(); root.yaesu.azi.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="tempAzi" type="text" class="form-control" id="root.yaesu.azi">
             </div>
         </form>
     </td>
