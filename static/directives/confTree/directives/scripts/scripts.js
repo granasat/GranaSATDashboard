@@ -5,9 +5,17 @@ app.directive('scripts', function($http) {
     function link(scope, element, attrs) {
 
         scope.updateLibrary = function () {
+            scope.root.scripts.update_library.runnning = true;
+
             return $http({
                 method: 'GET',
                 url: "/updateLibrary"
+            }).then(function (res) {
+                scope.root.scripts.update_library.runnning = false;
+
+                if(res.data.error){
+                    window.alert("Something goes wrong with python script");
+                }
             });
         }
 

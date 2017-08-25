@@ -22,7 +22,7 @@
 
 <tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
     <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.library}}></span> Script path
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.library}}></span> Script path
     </td>
 
     <td ng-show="!root.scripts.update_library.library.edit">
@@ -44,7 +44,7 @@
 
 <tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
     <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.dest}}></span> Destination path
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.dest}}></span> Destination path
     </td>
 
     <td ng-show="!root.scripts.update_library.library_dest.edit">
@@ -67,7 +67,7 @@
 
 <tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
     <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.cache_dir}}></span> Caché path
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.cache_dir}}></span> Caché path
     </td>
 
     <td ng-show="!root.scripts.update_library.cache_dir.edit">
@@ -89,7 +89,7 @@
 
 <tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
     <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.trsp_file}}></span> Trsp path
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.trsp_file}}></span> Trsp path
     </td>
 
     <td ng-show="!root.scripts.update_library.trsp_file.edit">
@@ -111,7 +111,7 @@
 
 <tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
     <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.modes_file}}></span> Modes File
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.modes_file}}></span> Modes File
     </td>
 
     <td ng-show="!root.scripts.update_library.modes_file.edit">
@@ -133,7 +133,7 @@
 
 <tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
     <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.satnogs_trsp_url}}></span> Satnogs trsp URL
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.satnogs_trsp_url}}></span> Satnogs trsp URL
     </td>
 
     <td ng-show="!root.scripts.update_library.satnogs_trsp_url.edit">
@@ -155,7 +155,7 @@
 
 <tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
     <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.satnogs_modes_url}}></span> Satnogs modes URL
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.satnogs_modes_url}}></span> Satnogs modes URL
     </td>
 
     <td ng-show="!root.scripts.update_library.satnogs_modes_url.edit">
@@ -178,7 +178,7 @@
 
 <tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
     <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.baseurl}}></span> Celestrak base URL
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.baseurl}}></span> Celestrak base URL
     </td>
 
     <td ng-show="!root.scripts.update_library.baseurl.edit">
@@ -200,7 +200,7 @@
 
 <tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
     <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.linesneeded}}></span> Lines needed
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.linesneeded}}></span> Lines needed
     </td>
 
     <td ng-show="!root.scripts.update_library.linesneeded.edit">
@@ -222,7 +222,7 @@
 
 <tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
     <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.result_file}}></span> Result file
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.result_file}}></span> Result file
     </td>
 
     <td ng-show="!root.scripts.update_library.result_file.edit">
@@ -244,11 +244,12 @@
 
 <tr ng-show="root.scripts.expanded && root.scripts.update_library.expanded">
     <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.run}}></span> Run script
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.run}}></span> Run script
     </td>
 
     <td>
-        <a href="" style="color: inherit; text-decoration: inherit"><span ng-click="updateLibrary()" class="glyphicon glyphicon-play" data-toggle="tooltip" title="Edit"></span></a>
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-show="!root.scripts.update_library.runnning" ng-click="updateLibrary()" class="glyphicon glyphicon-play" data-toggle="tooltip" title="Edit"></span></a>
+        <a href="" style="color: inherit; text-decoration: inherit"><span ng-show="root.scripts.update_library.runnning" class="glyphicon glyphicon-pause" data-toggle="tooltip" title="Edit"></span></a>
     </td>
 
     <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>

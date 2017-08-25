@@ -12,6 +12,7 @@ var proxy = require('express-http-proxy');
 var _ = require('lodash')
 var path = require('path');
 var util = require('util')
+var spawn = require('child_process').spawn;
 var exec = require('child_process').exec;
 var dateFormat = require('dateformat');
 var fs = require('fs');
@@ -522,13 +523,45 @@ app.get('/getLog', isAuthenticated, function (req, res) {
 app.get('/updateLibrary', isAuthenticated, function (req, res) {
     log("Updating sat library", "warn");
 
-    exec("python " + config.scripts_update_library + " " + config.scripts_update_library_dest, function(error, stdout, stderr) {
+    var update_scripts = spawn("python", [config.scripts_update_library, config.scripts_update_library_dest], {
+        encoding: 'utf-8'
+    });
+
+    update_scripts.stdout.on('data', function (data) {
+        log(data.toString());
+    });
+
+    update_scripts.stderr.on('data', function(data){
+        log(data.toString(), "error");
+    });
+
+    update_scripts.on('close', function (code) {
+        log("Script exit code: " + code.toString());
+
+        if(code === 0){
+            res.json({
+                status : "Done"
+            })
+        }
+        else{
+            res.json({
+                error: "Error while execting python"
+            })
+        }
+    })
+
+
+    /*
+    , function(error, stdout, stderr) {
+        console.log(stdout);
+
         if (error) {
             log(error + stdout + stderr, 'error');
         } else {
             log("Sat library updated");
         }
     });
+    */
 });
 
 app.listen(config.web_port, config.web_host);
