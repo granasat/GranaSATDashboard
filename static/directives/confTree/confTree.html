@@ -21,17 +21,7 @@
             <td class="col-md-2"></td>
         </tr>
 
-        <tr ng-show="root.expanded">
-            <td>
-                <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
-                <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
-                Web
-            </td>
-            <td></td>
-            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
-            <td></td>
-        </tr>
-
+        <tbody web ng-show="root.expanded" ng-controller="web"></tbody>
 
         <tbody yaesu ng-show="root.expanded"></tbody>
 

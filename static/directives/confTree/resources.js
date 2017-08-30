@@ -72,3 +72,10 @@ app.controller('scripts', function($scope){
         run : "Run Python script"
     }
 });
+
+app.controller('web', function($scope){
+    $scope.R = {
+        web_host : "Host of the server",
+        web_port : "Port of the server"
+    }
+});
