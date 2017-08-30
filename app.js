@@ -541,27 +541,14 @@ app.get('/updateLibrary', isAuthenticated, function (req, res) {
         if(code === 0){
             res.json({
                 status : "Done"
-            })
+            });
         }
         else{
             res.json({
                 error: "Error while execting python"
-            })
-        }
-    })
-
-
-    /*
-    , function(error, stdout, stderr) {
-        console.log(stdout);
-
-        if (error) {
-            log(error + stdout + stderr, 'error');
-        } else {
-            log("Sat library updated");
+            });
         }
     });
-    */
 });
 
 app.listen(config.web_port, config.web_host);
