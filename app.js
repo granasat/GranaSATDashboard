@@ -30,6 +30,9 @@ var Icom9100 = require('./transceivers/icom9100.js');
 var Propagator = require('./propagator/propagator.js');
 var satellites = require('./' + config.scripts_update_library_dest + "/" + config.scripts_update_result_file);
 var modes = require('./' + config.scripts_update_library_dest + "/" + config.scripts_update_modes_file);
+var Recordings = require('./recordings/recordings');
+
+var record = new Recordings("data.json", path.join(__dirname, "recordings/"));
 
 
 //Database stuff
@@ -313,11 +316,12 @@ app.post('/satellites/passes', isAuthenticated, function(req, res) {
                     "\n\t Frequency: " + freq + " Hz" +
                     "\n\t File: " + passName + ".wav");
 
-                exec("arecord -f cd -D hw:1,0 -d " + (pass.duration / 1000) + " " + passName + ".wav", function(error, stdout, stderr) {
+                exec("arecord -f cd -D hw:1,0 -d " + (pass.duration / 1000) + " " + config.recordings_path + passName + ".wav", function(error, stdout, stderr) {
                     if (error) {
                         log(error + stdout + stderr, 'error');
                     } else {
                         log("Pass recording done. Processing the audio file: " + passName);
+                        record.addRecording(passName + ".wav", passScheduled);
 
                         /*
                         exec("sox " + passName + ".wav " + passName + "mod.wav rate 20800 channels 1", function(error, stdout, stderr) {
@@ -550,6 +554,20 @@ app.get('/updateLibrary', isAuthenticated, function (req, res) {
         }
     });
 });
+
+app.get('/getRecordings', isAuthenticated, function (req, res) {
+    log("Getting recordings");
+
+    res.json(record.getRecordings());
+});
+
+app.get('/downloadRecording', function (req, res) {
+    log("Downloading a recording");
+
+    res.download(record.getRecording(req.query.data));
+});
+
+
 
 app.listen(config.web_port, config.web_host);
 log("Web server listening: " + config.web_host + ":" + config.web_port);

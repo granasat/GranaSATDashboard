@@ -55,6 +55,7 @@
     <script src="directives/satellitesMenu/satellitesMenu.js"></script>
     <script src="directives/passesRegistration/d3.js"></script>
     <script src="directives/passesRegistration/polarGraphDirective.js"></script>
+    <script src="directives/recordings/recordings.js"></script>
 
     <!-- TreeSet View Conf File Directives -->
     <script src="directives/confTree/resources.js"></script>
@@ -92,6 +93,7 @@
                     <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a href="#">Passes</span></a></li>
                     <li ng-show="type == 1" ng-click="selectedTab = 5" ng-class="{'active': selectedTab == 5}"><a href="#">Management</a></li>
                     <li ng-click="selectedTab = 6" ng-class="{'active': selectedTab == 6}"><a href="#">Satellites</a></li>
+                    <li ng-click="selectedTab = 8" ng-class="{'active': selectedTab == 8}"><a href="#">Recordings</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li ng-show="scheduledPasses.length > 0"><a><span class="label label-danger">{{scheduledPasses.length}} {{scheduledPasses.length > 1 ? "passes" : "pass"}}</a></li>
@@ -123,6 +125,7 @@
         <manage-users ng-show="selectedTab == 5"> </manage-users>
         <satellites-menu ng-show="selectedTab == 6"> </satellites-menu>
         <conf-tree ng-show="selectedTab == 7 && logged"></conf-tree>
+        <recordings ng-show="selectedTab == 8 && logged"></recordings>
         <webcam-video ng-show="videoShow == true && selectedTab != 0"> </webcam-video>
 
         <!-- Main menu -->

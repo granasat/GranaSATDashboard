@@ -1,0 +1,26 @@
+<div class='page-header'>
+    <h1>Recordings</h1>
+</div>
+
+
+<div class="page-body">
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Id</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="record in recordings">
+                <td>{{record.name}}</td>
+                <td>{{record.id}}</td>
+                <td>
+                    <a class="btn btn-warning" href="" ng-href="downloadRecording?data={{record.id}}" role="button" target="_blank"><span class="glyphicon glyphicon-download" aria-hidden="true"></span></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

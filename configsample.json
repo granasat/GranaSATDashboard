@@ -20,6 +20,7 @@
   "propagator_calculator_days": 3,
   "propagator_calculator_frequency": 3600000,
   "propagator_error" : 40000,
+  "recordings_path" : "recordings/",
   "scripts_update_library": "sat_library/updateLibrary.py",
   "scripts_update_library_dest" : "sat_library",
   "scripts_update_cache_dir" : ".cache/",
