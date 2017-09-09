@@ -21,7 +21,12 @@
             <tr ng-repeat="user in users">
                 <td>{{user.USR_ID}}</td>
                 <td>{{user.USR_NAME}}</td>
-                <td>{{user.USR_ORGANIZATION}}</td>
+                <td>
+                    <div ng-show="!user.edit">{{user.USR_ORGANIZATION}}</div>
+
+                    <input ng-show="user.edit" ng-model="user.USR_ORGANIZATION" type="text" class="form-control" id="user.USR_ORGANIZATION">
+
+                </td>
                 <td>{{user.USR_MAIL}}</td>
                 <td><div ng-show="!user.edit">{{user.USR_TYPE}}</div>
                     <select ng-model="user.USR_TYPE" ng-show="user.edit">
