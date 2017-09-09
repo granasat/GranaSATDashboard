@@ -45,7 +45,7 @@
                             </button>
 
                             <ul class="dropdown-menu" aria-labelledby="select_trsp">
-                                <li ng-repeat="trsp in satelliteSelected.rmt"><a href="#" ng-click="setPass(pass, trsp)">{{trsp.RMT_DESC}}</a></li>
+                                <li ng-repeat="trsp in satelliteSelected.rmt"><a href="#" ng-click="setPass(pass, trsp)">{{trsp.RMT_DESC}} ({{trsp.RMT_DOWNLINK_LOW/1.0E6}})</a></li> <!-- AmRoldan Frecuencia-->
                             </ul>
                         </div>
                     </td>
