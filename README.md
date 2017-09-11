@@ -30,26 +30,26 @@ $ apt-get install build-essential
 First of all we have to install npm and bower dependencies:
 
 ```
-npm install
-bower install
+$ npm install
+$ bower install
 ``` 
 
 Then we have to create config.json file. Copy confgisample.json into config.json:
 
 ```
-cp configsample.json config.json
+$ cp configsample.json config.json
 ```
 
 By default the proyect will use a mysql database, but you can change it to use a sqlite database that is in utils/test_database.db
 Go to app.js and change the variable called db to:
 
 ```
-var db = new require("./utils/test_database.js")();
+$ var db = new require("./utils/test_database.js")();
 ```
 
 And then you are able to run the Dashboard:
 ```
-sudo node app.js
+$ sudo node app.js
 ```
 
 ### Dashboard Main:
