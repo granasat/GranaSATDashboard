@@ -64,5 +64,5 @@ $ sudo node app.js
 
 * **Pablo Garrido**  - *Initial work* - [Pablogs9](https://github.com/pablogs9)
 * **Fran Acién** - *Collaborator* - [Acien101](https://github.com/acien101)
-* **Alberto Marín** - *Database and Propagator* - [Albertomn86](https://github.com/albertomn86)
+* **Alberto Marín** - *Initial work* - [Albertomn86](https://github.com/albertomn86)
 
