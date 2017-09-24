@@ -1,7 +1,7 @@
 copytoproduction.sh
-config.js
 utils/log.txt
 bower_components/
+config.json
 **/.DS_Store
 
 # Logs

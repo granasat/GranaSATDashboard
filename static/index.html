@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="directives/granaSATterminal/simple-console.css">
-
+    <link rel="stylesheet" href="directives/passesRegistration/polarPlotStyle.css">
+    <link rel="stylesheet" href="directives/satellitesMenu/satellitesMenu.css">
     <!-- Some custom styles -->
     <style type="text/css">
         html {
@@ -50,12 +51,29 @@
     <script src="directives/rotorsYaesu/rotorsYaesu.js"></script>
     <script src="directives/webcamVideo/webcamVideo.js"></script>
     <script src="directives/passesRegistration/passesRegistration.js"></script>
+    <script src="directives/manageUsers/manageUsers.js"></script>
+    <script src="directives/satellitesMenu/satellitesMenu.js"></script>
+    <script src="directives/passesRegistration/d3.js"></script>
+    <script src="directives/passesRegistration/polarGraphDirective.js"></script>
+    <script src="directives/recordings/recordings.js"></script>
 
+    <!-- TreeSet View Conf File Directives -->
+    <script src="directives/confTree/resources.js"></script>
+    <script src="directives/confTree/confTree.js"></script>
+    <script src="directives/confTree/directives/ic910/ic910.js"></script>
+    <script src="directives/confTree/directives/ground/ground.js"></script>
+    <script src="directives/confTree/directives/propagator/propagator.js"></script>
+    <script src="directives/confTree/directives/log/log.js"></script>
+    <script src="../bower_components/angular-scroll-glue/src/scrollglue.js"></script>
+    <script src="directives/confTree/directives/log_file/log_file.js"></script>
+    <script src="directives/confTree/directives/scripts/scripts.js"></script>
+    <script src="directives/confTree/directives/YAESU/yaesu.js"></script>
+    <script src="directives/confTree/directives/Web/web.js"></script>
 
 </head>
 
 
-<body ng-app="myApp" ng-controller="appController" style="padding-top: 50px;">
+<body ng-app="myApp" ng-controller="appController" style="padding-top: 50px;" ng-init="setupPasses()">
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -65,15 +83,17 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" ng-click="selectedTab = 0">GranaSAT Dashboard</a>
+                <a href="#" class="navbar-brand" ng-click="selectedTab = 0">GranaSAT Dashboard</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul ng-show="logged" class="nav navbar-nav">
-                    <li ng-click="selectedTab = 1" ng-class="{'active': selectedTab == 1}"><a>Rotors</a></li>
-                    <li ng-click="selectedTab = 2" ng-class="{'active': selectedTab == 2}"><a>Antennas</a></li>
-                    <li ng-click="selectedTab = 3" ng-class="{'active': selectedTab == 3}"><a>Terminal</a></li>
-                    <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a>Passes</span></a></li>
-                    <li ng-click="selectedTab = 5" ng-class="{'active': selectedTab == 5}"><a>Management</a></li>
+                    <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 1" ng-class="{'active': selectedTab == 1}"><a href="#">Rotors</a></li>
+                    <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 2" ng-class="{'active': selectedTab == 2}"><a href="#">Antennas</a></li>
+                    <li ng-show="type == 1" ng-click="selectedTab = 3" ng-class="{'active': selectedTab == 3}"><a href="#">Terminal</a></li>
+                    <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a href="#">Passes</span></a></li>
+                    <li ng-show="type == 1" ng-click="selectedTab = 5" ng-class="{'active': selectedTab == 5}"><a href="#">Management</a></li>
+                    <li ng-click="selectedTab = 6" ng-class="{'active': selectedTab == 6}"><a href="#">Satellites</a></li>
+                    <li ng-click="selectedTab = 8" ng-class="{'active': selectedTab == 8}"><a href="#">Recordings</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li ng-show="scheduledPasses.length > 0"><a><span class="label label-danger">{{scheduledPasses.length}} {{scheduledPasses.length > 1 ? "passes" : "pass"}}</a></li>
@@ -84,10 +104,10 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="#">...</a></li>
-                            <li><a href="#">Configuration</a></li>
+                            <li ng-show="logged"><a href="#" ng-click="selectedTab = 7">Configuration</a></li>
                             <li role="separator" class="divider"></li>
-                            <li ng-click="loginModal()" ng-class="{'disabled': logged}"><a>Login</a></li>
-                            <li ng-click="logout()" ng-class="{'disabled': !logged}"><a>Logout</a></li>
+                            <li ng-click="loginModal()" ng-class="{'disabled': logged}"><a href="#">Login</a></li>
+                            <li ng-click="logout()" ng-class="{'disabled': !logged}"><a href="#">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -102,6 +122,10 @@
         <radio-icom9100 ng-show="selectedTab == 2"> </radio-icom9100>
         <granasat-terminal ng-show="selectedTab == 3"> </granasat-terminal>
         <passes-registration ng-show="selectedTab == 4"> </passes-registration>
+        <manage-users ng-show="selectedTab == 5"> </manage-users>
+        <satellites-menu ng-show="selectedTab == 6"> </satellites-menu>
+        <conf-tree ng-show="selectedTab == 7 && logged"></conf-tree>
+        <recordings ng-show="selectedTab == 8 && logged"></recordings>
         <webcam-video ng-show="videoShow == true && selectedTab != 0"> </webcam-video>
 
         <!-- Main menu -->
@@ -138,16 +162,19 @@
                                             <th>Start Date</th>
                                             <th>Duration</th>
                                             <th>Max Elevation</th>
+                                            <th>Scheduled by</th>
                                             <th>Remain time</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="pass in scheduledPasses">
                                             <td>{{pass.satellite}}</td>
-                                            <td>{{pass.info.startDateUTC}}</td>
-                                            <td>{{pass.info.duration | millSecondsToTimeString}}</td>
-                                            <td>{{pass.info.maxElevation}}º</td>
-                                            <td>{{pass.remainTime | millSecondsToTimeString}}</td>
+                                            <td>{{pass.startDateUTC}}</td>
+                                            <td>{{pass.duration | millSecondsToTimeString}}</td>
+                                            <td>{{pass.maxElevation}}º</td>
+                                            <td>{{pass.scheduledBy}}</td>
+                                            <td>{{pass.remainTime | millSecondsToTimeString}}
+                                            </td><td><button ng-if="logged" ng-click="undoSchedule(pass)" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -184,7 +211,7 @@
         <div class="modal-header">
             <h3 class="modal-title">Login</h3>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" ng-show="!signUp">
             <form>
                 <div class="form-group">
                     <label for="username">Username</label>
@@ -194,10 +221,41 @@
                     <label for="password">Password</label>
                     <input ng-model="password" type="password" class="form-control" id="password" placeholder="Password">
                 </div>
+                <div>
+                    Create a account <a ng-click="signUp = !signUp">here</a>
+                </div>
+            </form>
+        </div>
+        <div class="modal-body" ng-show="signUp">
+            <form>
+                <div class="form-group">
+                    <label for="new_username">Username</label>
+                    <input ng-model="new_username" type="text" class="form-control" id="new_username" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label for="new_password">Password</label>
+                    <input ng-model="new_password" type="password" class="form-control" id="new_password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="new_repetedpassword">Repeat password</label>
+                    <input ng-model="new_repetedpassword" type="password" class="form-control" id="new_repetedpassword" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="new_organization">Organization</label>
+                    <input ng-model="new_organization" type="text" class="form-control" id="new_organization" placeholder="Organization">
+                </div>
+                <div class="form-group">
+                    <label for="new_mail">Mail</label>
+                    <input ng-model="new_mail" type="text" class="form-control" id="new_mail" placeholder="Mail address">
+                </div>
+                <div>
+                    I have <a ng-click="signUp = !signUp">an account.</a>
+                </div>
             </form>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-success" type="button" ng-click="ok()">Login</button>
+            <button class="btn btn-success" type="button" ng-show="!signUp" ng-click="loginButton()">Login</button>
+            <button class="btn btn-primary" type="button" ng-show="signUp" ng-click="signupButton()">Sign up</button>
             <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
         </div>
     </script>

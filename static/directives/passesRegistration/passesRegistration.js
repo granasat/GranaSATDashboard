@@ -7,69 +7,56 @@ app.directive('passesRegistration', function($http, $document) {
 
 
     function link(scope, element, attrs) {
-        scope.satelliteSelected = ""
-
         scope.$watch("logged", function(newValue, oldValue) {
             if (newValue == true) {
-                scope.getSatellites().then(function(res) {
-                    scope.availableSatellites = res.data
-                    scope.satelliteSelected = scope.availableSatellites[0]
-                        // scope.$watch("satelliteSelected", function() {})
-                    scope.getPasses(scope.satelliteSelected)
-                })
+                scope.passes.forEach(function (sat) {
+                    sat.pass.forEach(function (pass) {
+                        pass.collapse = true;
+                    })
+                });
+
+                scope.satelliteSelected = scope.passes[0];
+                scope.getPasses(scope.satelliteSelected);
             }
         });
 
-        scope.getPasses = function(satellite) {
-            scope.satelliteSelected = satellite
-            scope.satellitePasses = []
-            $http({
-                method: 'GET',
-                url: "satellites/passes",
-                params: {
-                    satellite: scope.satelliteSelected.RMT_NAME
-                }
-            }).then(function(res) {
-                res.data.forEach(function(e) {
-                    e.collapse = true
-                })
-                scope.satellitePasses = res.data
-            });
-        }
+        scope.getPasses = function(sat){
+            scope.satelliteSelected = sat;
+        };
 
-        scope.setPass = function(pass) {
-            $http({
-                method: 'POST',
-                url: "satellites/passes",
-                data: {
-                    satellite: scope.satelliteSelected,
-                    pass: pass
-                }
-            }).then(function(res) {
-                // console.log(res);
+        scope.setPass = function(pass, trsp) {
+            var problematicPasses = scope.scheduledPasses.filter(function (scheduledPass) {
+                return (new Date(scheduledPass.startDateLocal).getTime() <= new Date(pass.endDateLocal).getTime() && new Date(scheduledPass.endDateLocal).getTime() >= new Date(pass.endDateLocal).getTime()) ||
+                    (new Date(scheduledPass.startDateLocal).getTime() <= new Date(pass.startDateLocal).getTime() && new Date(scheduledPass.endDateLocal).getTime() >= new Date(pass.startDateLocal).getTime()) ||
+                    (new Date(scheduledPass.startDateLocal).getTime() >= new Date(pass.startDateLocal).getTime() && new Date(scheduledPass.endDateLocal).getTime() <= new Date(pass.endDateLocal).getTime());
             });
-        }
 
-        setInterval(function() {
-            //Update remainTime for calculated passes
-            if (scope.satellitePasses) {
-                scope.satellitePasses.forEach(function(e) {
-                    e.startDateUTC = new Date(e.startDateUTC)
-                    e.remainTime = e.startDateUTC - new Date();
-                })
+            if (problematicPasses.length > 0) {           //The pass that the user is trying to schedule have conflict with a pass that is already scheduled
+                window.alert("That pass is troubled due to another scheduled pass that occurs in the same space of time");
+            } else {
+                $http({
+                    method: 'POST',
+                    url: "satellites/passes",
+                    data: {
+                        satId: scope.satelliteSelected.SAT_ID,
+                        trspId : trsp.RMT_ID,
+                        passId: pass.id,
+                        scheduledBy : scope.userInfo.USR_ORGANIZATION
+                    }
+                }).then(function (res) {
+                    if (res.data.status === "Done"){
+                        scope.scheduledPasses.push(pass);
+                        scope.sortScheduledPasses();
+                    }
+                    pass.scheduled = true;
+                    pass.scheduledBy = scope.userInfo.USR_ORGANIZATION;
+                });
             }
-
-            //Retrieve scheduled passes
-            scope.getScheduledPasses().then(function(res) {
-                res.data.forEach(function(e) {
-                    e.remainTime = new Date(e.startDateUTC) - new Date()
-                })
-                scope.scheduledPasses = res.data
-            });
-        }, 1000);
+        };
     }
+
     return {
         link: link,
-        templateUrl: 'directives/passesRegistration/passesRegistration.html',
+        templateUrl: 'directives/passesRegistration/passesRegistration.html'
     };
 });

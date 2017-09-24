@@ -1,0 +1,121 @@
+<tr ng-click="root.propagator.expanded = !root.propagator.expanded">
+    <td>
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="!root.propagator.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span></a>
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="root.propagator.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 19px;">&nbsp;</span></a>
+        Propagator
+    </td>
+    <td></td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.propagator.expanded">
+    <td>
+        <span class="glyphicon glyphicon-sort-by-order" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.passes_thr}}></span> Passes_thr
+    </td>
+
+    <td ng-show="!root.propagator.passes_thr.edit">
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="root.propagator.passes_thr.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.propagator_passes_thr}}</a>
+    </td>
+
+    <td ng-show="root.propagator.passes_thr.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.propagator.passes_thr.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.propagator_passes_thr" type="text" class="form-control" id="root.propagator.passes_thr">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.propagator.expanded">
+    <td>
+        <span class="glyphicon glyphicon-sort-by-order" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.passes_step}}></span> Passes_step
+    </td>
+
+    <td ng-show="!root.propagator.passes_step.edit">
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="root.propagator.passes_step.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.propagator_passes_step}}</a>
+    </td>
+
+    <td ng-show="root.propagator.passes_step.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.propagator.passes_step.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.propagator_passes_step" type="text" class="form-control" id="root.propagator.passes_step">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.propagator.expanded">
+    <td>
+        <span class="glyphicon glyphicon-time" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.calculator_days}}></span> Calculator days
+    </td>
+
+    <td ng-show="!root.propagator.calculator_days.edit">
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="root.propagator.calculator_days.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.propagator_calculator_days}}</a>
+    </td>
+
+    <td ng-show="root.propagator.calculator_days.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.propagator.calculator_days.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.propagator_calculator_days" type="text" class="form-control" id="root.propagator.calculator_days">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+
+<tr ng-show="root.propagator.expanded">
+    <td>
+        <span class="glyphicon glyphicon-repeat" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.calculator_frequency}}></span> Calculator frequency
+    </td>
+
+    <td ng-show="!root.propagator.calculator_frequency.edit">
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="root.propagator.calculator_frequency.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.propagator_calculator_frequency}}</a>
+    </td>
+
+    <td ng-show="root.propagator.calculator_frequency.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.propagator.calculator_frequency.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.propagator_calculator_frequency" type="text" class="form-control" id="root.propagator.calculator_frequency">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
+<tr ng-show="root.propagator.expanded">
+    <td>
+        <span class="glyphicon glyphicon-sort-by-order" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.error}}></span> Propagator error
+    </td>
+
+    <td ng-show="!root.propagator.error.edit">
+        <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="root.propagator.error.edit = true" class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit"></span> {{config.propagator_error}}</a>
+    </td>
+
+    <td ng-show="root.propagator.error.edit">
+        <form class="form-inline">
+            <div class="form-group">
+                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-click="updateConf(); root.propagator.error.edit = false" class="glyphicon glyphicon-ok" data-toggle="tooltip" title="Edit"></span></a>
+                <input ng-model="config.propagator_error" type="text" class="form-control" id="root.propagator.error">
+            </div>
+        </form>
+    </td>
+
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>

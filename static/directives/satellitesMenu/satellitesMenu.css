@@ -1,0 +1,25 @@
+.suggest-transmitter {
+    margin-top: -6px;
+}
+
+.panel-transmitter {
+    margin: 20px 0;
+}
+
+.transmitter-element {
+    margin: 10px;
+}
+
+.sat-info {
+    margin: 10px 5px 10px 5px;
+    line-height: 140%;
+}
+
+.sat-element {
+    margin: 10px;
+}
+
+.label-default {
+    background-color: #999;
+    padding: 6px 6px 6px 6px;
+}

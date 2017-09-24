@@ -8,11 +8,11 @@
         <h4>Available Satellites</h4>
 
         <ul>
-            <li ng-repeat="s in availableSatellites"><a ng-click="getPasses(s)">{{s.RMT_NAME}}</a></li>
+            <li ng-repeat="s in passes"><a href="#" ng-click="getPasses(s)">{{s.SAT_NAME}}</a></li>
         </ul>
     </div>
     <div ng-show="satelliteSelected != ''" class="col-md-10">
-        <h4>Passes for: {{satelliteSelected.RMT_NAME}}</h4>
+        <h4>Passes for: {{satelliteSelected.SAT_NAME}}</h4>
 
         <table class="table table-striped" style="width:100%">
             <thead>
@@ -26,25 +26,47 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="pass in satellitePasses">
-                    <td>{{ ((localTimeMode) ? (pass.startDateLocal | date:'yyyy-MM-dd HH:mm:ss') : pass.startDateUTC) }}</td>
-                    <td>{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
-                    <td>{{pass.duration | millSecondsToTimeString}}</td>
-                    <td>{{pass.maxElevation}}º</td>
-                    <td>{{pass.remainTime | millSecondsToTimeString}}</td>
+                <tr ng-repeat-start="pass in satelliteSelected.pass">
+                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{(localTimeMode) ? pass.startDateLocal : pass.startDateUTC}}</td>
+                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
+                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.duration | millSecondsToTimeString}}</td>
+                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.maxElevation}}º</td>
+                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.remainTime | millSecondsToTimeString}}</td>
                     <td>
-                        <button ng-click="setPass(pass)" type="button" class="btn btn-success btn-xs">
-                            Schedule
-                        </button>
+                        <div class="dropdown">
+                            <button ng-show="pass.scheduled" type="button" class="btn btn-danger btn-xs disabled">
+                                Schedule
+                            </button>
+
+
+                            <button ng-show="!pass.scheduled" type="button" class="btn btn-success dropdown-toggle btn-xs" id="select_trsp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Schedule
+                                <span class="caret"></span>
+                            </button>
+
+                            <ul class="dropdown-menu" aria-labelledby="select_trsp">
+                                <li ng-repeat="trsp in satelliteSelected.rmt"><a href="#" ng-click="setPass(pass, trsp)">{{trsp.RMT_DESC}} ({{trsp.RMT_DOWNLINK_LOW/1.0E6}})</a></li> <!-- AmRoldan Frecuencia-->
+                            </ul>
+                        </div>
                     </td>
                 </tr>
-                <tr ng-if="pass.expanded" ng-repeat-end="">
-                    <td colspan="3">{{person.details}}</td>
+                <tr ng-repeat-end="" ng-if="pass.expanded">
+                    <td colspan="6" style="padding: 0">
+                        <div class="isCollapsed">
+                            <div class="col-md-7">
+                                <d3-bars data="d3Data" label="title" ng-mousemove="coordsMove($event)"></d3-bars>
+                            </div>
+                            <div style="margin-top: 16px" class="col-md-5">
+                                ADS Ac: {{pass.data[0].azi.toFixed(2)}}º        <br>
+                                PDS Ac: {{pass.data[pass.data.length - 1].azi.toFixed(2)}}º        <br>
+                                From : {{config.ground_location}} <br>
+                                Latitude : {{config.ground_station_lat}} <br>
+                                Longitude : {{config.ground_station_lng}} <br>
+                                Altitude : {{config.ground_station_alt}} <br>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
-                <!-- <div uib-collapse="pass.collapse">
-                    <div class="well well-lg">Some content</div>
-                </div> -->
-
             </tbody>
         </table>
     </div>

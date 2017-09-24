@@ -1,12 +1,11 @@
-"use strict"
-var satellite = require("satellite.js").satellite
+"use strict";
+var satellite = require("satellite.js").satellite;
 var log = require('../utils/logger.js').Logger;
 var Promise = require('bluebird');
-var config = require('../config.js').config
+var config = require('../config.json');
 
-module.exports = function Propagator(satelliteName, stationLng, stationLat, stationAlt, db) {
+module.exports = function Propagator(tle1, tle2, satname, stationLng, stationLat, stationAlt) {
     var p = new Promise.defer();
-
     var observerGd = {
         longitude: stationLng * satellite.constants.deg2rad,
         latitude: stationLat * satellite.constants.deg2rad,
@@ -16,28 +15,19 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
     var tle = ["", ""];
 
     var getTLE = function() {
-
-        db.getSatelliteTLE(satelliteName, function(data) {
-            // log("DB answer TLE for: " + satelliteName)
-
-            if (!data.error) {
-                tle[0] = data.SAT_TLE1
-                tle[1] = data.SAT_TLE2
-                p.resolve({
-                    getStatusNow: getStatusNow,
-                    getPasses: getPasses,
-                    getStatus: getStatus
-                })
-            } else {
-                log("TLE retrievement error", "error")
-            }
+        tle[0] = tle1;
+        tle[1] = tle2;
+        p.resolve({
+            getStatusNow: getStatusNow,
+            getPasses: getPasses,
+            getStatus: getStatus
         })
-    }
+    };
 
     var getStatus = function(atDate) {
         if (!tle) {
             return {
-                error: "No TLE available",
+                error: "No TLE available"
             }
         } else {
             var tleLine1 = tle[0];
@@ -76,14 +66,14 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
             return {
                 azi: lookAngles.azimuth * satellite.constants.rad2deg,
                 ele: lookAngles.elevation * satellite.constants.rad2deg,
-                dopplerFactor: dopplerFactor,
+                dopplerFactor: dopplerFactor
             }
         }
-    }
+    };
 
     var getStatusNow = function() {
         return getStatus(new Date())
-    }
+    };
 
     var getPasses = function(start, end) {
 
@@ -91,10 +81,10 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
         var passes = [];
         var raise = 0;
         var maxElevation = 0;
-        var data = []
+        var data = [];
 
         for (var i = start.getTime(); i < end.getTime();) {
-            var c = getStatus(new Date(i))
+            var c = getStatus(new Date(i));
             if (c.ele >= 0 && !visible) {
                 raise = i;
                 visible = true;
@@ -103,14 +93,16 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
             }
             if (c.ele <= 0 && visible) {
                 passes.push({
-                    startDateUTC: new Date(raise).toUTCString(),
-                    endDateUTC: new Date(i).toUTCString(),
-                    startDateLocal: new Date(raise).toString(),
-                    endDateLocal: new Date(i).toString(),
+                    startDateUTC: new Date(raise),
+                    endDateUTC: new Date(i),
+                    startDateLocal: new Date(raise),
+                    endDateLocal: new Date(i),
                     duration: i - raise,
                     maxElevation: maxElevation.toFixed(2),
+                    id : Math.random() * (10000),
+                    satellite : satname,
                     data: data
-                })
+                });
                 raise = 0;
                 visible = false;
             }
@@ -120,17 +112,18 @@ module.exports = function Propagator(satelliteName, stationLng, stationLat, stat
             if (visible) {
                 data.push(c)
             }
+
             if (c.ele > -config.propagator_passes_thr && !visible) {
-                i += 1000
-            } else if (c.ele < config.propagator_passes_thr && visible) {
-                i += 1000
-            } else {
+                i += 5000
+            }else if (visible) {
+                i += 5000
+            }else {
                 i += (1000 * 60 * config.propagator_passes_step)
             }
         }
         return passes
-    }
+    };
 
-    getTLE()
+    getTLE();
     return p.promise
-}
+};

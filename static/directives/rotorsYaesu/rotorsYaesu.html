@@ -24,4 +24,28 @@
 
 <div>
     <button ng-click="goToOrigin()" type="button" class="btn btn-success">Go to Origin</button>
+    <button ng-click="setPositionModal()" type="button" class="btn btn-primary">Move</button>
 </div>
+
+
+<script type="text/ng-template" id="setPositionModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Move rotors</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label for="Azimuth">Azimuth</label>
+                <input ng-model="azimuth" type="text" class="form-control" id="azimuth" placeholder="000">
+            </div>
+            <div class="form-group">
+                <label for="Elevation">Elevation</label>
+                <input ng-model="elevation" type="text" class="form-control" id="elevation" placeholder="000">
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" type="button" ng-click="move()">Move</button>
+        <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</script>

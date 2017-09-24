@@ -1,0 +1,141 @@
+<div style="margin-top: 20px">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Element</th>
+            <th></th>
+            <th></th>
+            <th>Las Update</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr ng-click="root.expanded = !root.expanded">
+            <td class="col-md-4">
+                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 0px;">&nbsp;</span></a>
+                <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="root.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 0px;">&nbsp;</span></a>
+                root
+            </td>
+            <td class="col-md-4"></td>
+            <td class="col-md-1"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td class="col-md-2"></td>
+        </tr>
+
+        <tbody web ng-show="root.expanded" ng-controller="web"></tbody>
+
+        <tbody yaesu ng-show="root.expanded"></tbody>
+
+        <tbody ic910 ng-show="root.expanded" ng-controller="ic910"></tbody>
+
+        <tbody ground ng-show="root.expanded" ng-controller="ground"></tbody>
+
+        <tbody propagator ng-show="root.expanded" ng-controller="propagator"></tbody>
+
+        <tr ng-show="root.expanded">
+            <td>
+                <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                TNC4E
+            </td>
+            <td></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.expanded">
+            <td>
+                <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                TNC7multi
+            </td>
+            <td></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.expanded">
+            <td>
+                <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                gs
+            </td>
+            <td></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.expanded">
+            <td>
+                <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                kenwood
+            </td>
+            <td></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.expanded">
+            <td>
+                <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                mserver
+            </td>
+            <td></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.expanded">
+            <td>
+                <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                Scheduler
+            </td>
+            <td></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tbody log ng-show="root.expanded"></tbody>
+
+        <tbody log-file ng-show="root.expanded" ng-controller="log_file"></tbody>
+
+        <tr ng-show="root.expanded">
+            <td>
+                <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                MySQL
+            </td>
+            <td></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.expanded">
+            <td>
+                <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                Scheduler
+            </td>
+            <td></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tr ng-show="root.expanded">
+            <td>
+                <span ng-show="!root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                <span ng-show="root.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 19px;">&nbsp;</span>
+                time
+            </td>
+            <td></td>
+            <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+            <td></td>
+        </tr>
+
+        <tbody scripts ng-show="root.expanded" ng-controller="scripts"></tbody>
+
+        </tbody>
+    </table>
+</div>
