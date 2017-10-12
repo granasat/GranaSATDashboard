@@ -10,8 +10,8 @@ GranaSAT Dashboard project aims to control our Ground Station via web, including
 
 ## Special Thanks for supporting this research
 
-<img src="http://www.esa.int/ESA_Multimedia/Images/2015/03/SOCIS" alt="SOCIS ESA Program">
-Thanks to the ESA Program [SOCIS]](http://www.esa.int/Our_Activities/Space_Engineering_Technology/SOCIS_The_ESA_Summer_of_Code_in_Space) - The ESA Summer Code in Space- that selected GranaSAT Aerospace Group proposals for developing a Dashboard for GroundStation with receiving and transmitting purposes.
+<img src="http://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/03/socis/15309314-1-eng-GB/SOCIS_large.jpg" alt="SOCIS ESA Program">
+Thanks to the ESA Program [SOCIS](http://www.esa.int/Our_Activities/Space_Engineering_Technology/SOCIS_The_ESA_Summer_of_Code_in_Space) - The ESA Summer Code in Space- that selected GranaSAT Aerospace Group proposals for developing a Dashboard for GroundStation with receiving and transmitting purposes.
 
 ## Getting Started
 
