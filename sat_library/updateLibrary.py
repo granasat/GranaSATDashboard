@@ -67,7 +67,7 @@ def createTrspFile(path):
         print("Extracting satellites from %s" % file)
         f = open(DATA["scripts_update_cache_dir"] + file, 'r')
 
-        if DATA["scripts_update_linesneeded"] == "3":
+        if int(DATA["scripts_update_linesneeded"]) == 3:
             numSats = 0
             i = 0
             for line in f:
