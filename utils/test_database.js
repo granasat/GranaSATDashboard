@@ -41,17 +41,28 @@ module.exports = function DashboardDB() {
     function login(req, username, password, done) {
         log("Trying to login: " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
 
+
         db.get('SELECT * FROM USERS WHERE USR_NAME = ?', username, function(err, user) {
+
             if(user == null){
                 return done(null, false, { message: 'Incorrect username.'});
             }
             else{
-                if (hashPassword(password, user.USR_PASSWORD.split(":")[0]) == user.USR_PASSWORD.split(":")[1]) {
-                    log("Logged " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
-                    return done(null, user);
-                } else {
-                    log("Non valid password for " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
-                    return done(null, false);
+
+                if (user.USR_BLOCKED == 1 || user.USR_VERIFIED == 0) {
+                    log("Blocked or not verified " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "warn");
+                    return done(null, false, { message: 'Blocked.'});
+                }
+
+                else {
+
+                    if (hashPassword(password, user.USR_PASSWORD.split(":")[0]) == user.USR_PASSWORD.split(":")[1]) {
+                        log("Logged " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress));
+                        return done(null, user);
+                    } else {
+                        log("Non valid password for " + username + " from " + (req.headers['x-forwarded-for'] || req.connection.remoteAddress), "error");
+                        return done(null, false);
+                    }
                 }
             }
         })
@@ -73,12 +84,14 @@ module.exports = function DashboardDB() {
 
         var salt = createSalt();
 
-        db.run('INSERT INTO USERS (USR_NAME,USR_ORGANIZATION,USR_MAIL,USR_PASSWORD,USR_TYPE) VALUES ($username, $org, $mail, $password, $type)', {
+        db.run('INSERT INTO USERS (USR_NAME,USR_ORGANIZATION,USR_MAIL,USR_PASSWORD,USR_TYPE, USR_IMG, USR_VERIFIED) VALUES ($username, $org, $mail, $password, $type, $img, $verified_user)', {
             $username : req.username,
             $password : salt + ":" + hashPassword(req.password, salt),
             $org : req.org,
             $mail : req.mail,
-            $type: 3
+            $type: 3,
+            $img: config.user_image_default,
+            $verified_user : 0,
         }, function (result) {
             if (result == null) {
                 res({
@@ -86,6 +99,7 @@ module.exports = function DashboardDB() {
                 });
             }
             else {
+                console.log(result);
                 log(result, "error");
                 res({
                     error: result
@@ -95,7 +109,7 @@ module.exports = function DashboardDB() {
     }
 
     function getUsers(cb){
-        db.all('SELECT USR_ID, USR_NAME, USR_ORGANIZATION, USR_MAIL, USR_TYPE, USR_LAST_VST, USR_BLOCKED FROM USERS', function (err, rows) {
+        db.all('SELECT USR_ID, USR_NAME, USR_ORGANIZATION, USR_MAIL, USR_TYPE, USR_LAST_VST, USR_BLOCKED, USR_IMG, USR_TOKEN, USR_VERIFIED FROM USERS', function (err, rows) {
             if(err){
                 cb({
                     error: "Database error"
@@ -108,7 +122,7 @@ module.exports = function DashboardDB() {
     }
 
     function getUser(req, res){
-        db.get('SELECT USR_ID, USR_NAME, USR_ORGANIZATION, USR_MAIL, USR_TYPE, USR_LAST_VST, USR_BLOCKED FROM USERS WHERE USR_NAME = ?', req, function(err, data) {
+        db.get('SELECT USR_ID, USR_NAME, USR_ORGANIZATION, USR_MAIL, USR_TYPE, USR_LAST_VST, USR_BLOCKED, USR_IMG, USR_TOKEN, USR_VERIFIED FROM USERS WHERE USR_NAME = ?', req, function(err, data) {
             if (!err) {
                 res(data);
             }
@@ -120,6 +134,107 @@ module.exports = function DashboardDB() {
         });
     }
 
+
+    function modToken(req,res) {
+        db.run('UPDATE USERS SET USR_TOKEN = $usr_token WHERE USR_ID = $id', {
+            $id: req.USR_ID,
+            $usr_token: req.USR_TOKEN
+        }, function (result) {
+            if (result == null) {
+                res({
+                    status: "Done"
+                });
+            }
+            else {
+                log(result.result, "error");
+                res({
+                    error: "Database error"
+                });
+            }
+        });
+    }
+
+
+    function verifyUser (req,res) {
+
+        db.run('UPDATE USERS SET USR_VERIFIED = $verified_user WHERE USR_ID = $id', {
+            $id: req.USR_ID,
+            $verified_user: 1
+        }, function (result) {
+            if (result == null) {
+                res({
+                    status: "Done"
+                });
+            }
+            else {
+                log(result.result, "error");
+                res({
+                    error: "Database error"
+                });
+            }
+        });
+    }
+
+    function modUser(req, res) {
+
+        if(req.USR_PASSWORD == null){      //No modify password
+            db.run('UPDATE USERS SET USR_NAME = $name, USR_ORGANIZATION = $org, USR_MAIL = $mail, USR_TYPE = $type, USR_BLOCKED = $blocked, USR_IMG = $img WHERE USR_ID = $id', {
+                $id : req.USR_ID,
+                $name : req.USR_NAME,
+                $org : req.USR_ORGANIZATION,
+                $mail : req.USR_MAIL,
+                $type : req.USR_TYPE,
+                $blocked : req.USR_BLOCKED,
+                $img : req.USR_IMG
+            }, function (result) {
+                if(result == null){
+                    res({
+                        status : "Done"
+                    });
+                }
+                else {
+                    log(result.result, "error");
+                    res({
+                        error: "Database error"
+                    });
+                }
+            });
+        }
+
+
+        // Modifying password
+        else {
+
+            var salt = createSalt();
+
+            db.run('UPDATE USERS SET USR_NAME = $name, USR_PASSWORD = $password, USR_ORGANIZATION = $org, USR_MAIL = $mail, USR_TYPE = $type, USR_BLOCKED = $blocked, USR_IMG = $img WHERE USR_ID = $id', {
+                $id: req.USR_ID,
+                $name: req.USR_NAME,
+                $org: req.USR_ORGANIZATION,
+                $mail: req.USR_MAIL,
+                $type: req.USR_TYPE,
+                $blocked: req.USR_BLOCKED,
+                $password: salt + ":" + hashPassword(req.USR_PASSWORD, salt),
+                $img : req.USR_IMG
+            }, function (result) {
+                if (result == null) {
+                    res({
+                        status: "Done"
+                    });
+                }
+                else {
+                    log(result.result, "error");
+                    res({
+                        error: "Database error"
+                    });
+                }
+            });
+        }
+    }
+
+
+
+/*
     function modUser(req, res){
         if(req.body.password == null){      //No modify password
             db.run('UPDATE USERS SET USR_NAME = $name, USR_ORGANIZATION = $org, USR_MAIL = $mail, USR_TYPE = $type, USR_BLOCKED = $blocked WHERE USR_ID = $id', {
@@ -144,6 +259,8 @@ module.exports = function DashboardDB() {
             });
         }
     }
+
+*/
 
     function delUser(req, res){
         db.run('DELETE FROM USERS WHERE USR_ID = ?', req.body.USR_ID, function (result) {
@@ -196,6 +313,61 @@ module.exports = function DashboardDB() {
                     })
                 });
             }
+        });
+    }
+
+
+    function getVHFRepeaters(cb){
+        db.all('SELECT FREQ,SUBTONE,DUPLEX,NAME,LOCATOR,INDICATIVE,OBSERVATION FROM REPEATERS_VHF', function(err, rows, fields){
+            if(err){
+                log(err.toString(), "error");
+                cb({
+                    error: "Database error"
+                });
+            } else{
+                cb(rows);
+            }
+        })
+    }
+
+    function addVHFRepeater(data, cb){
+        db.run('INSERT INTO REPEATERS_VHF (FREQ, DUPLEX, SUBTONE, LOCATOR, NAME, OBSERVATION, INDICATIVE) VALUES ($freq, $duplex, $subtone, $locator, $name, $observation, $indicative)', {
+            $freq : data.FREQ,
+            $duplex : data.DUPLEX,
+            $subtone : data.SUBTONE,
+            $locator : data.LOCATOR,
+            $name : data.NAME,
+            $observation : data.OBSERVATION,
+            $indicative : data.INDICATIVE
+        }, function (result) {
+            cb(result);
+        });
+    }
+
+    function getUHFRepeaters(cb){
+        db.all('SELECT * FROM REPEATERS_UHF', function(err, rows, fields){
+            if(err){
+                log(err.toString(), "error");
+                cb({
+                    error: "Database error"
+                });
+            } else{
+                cb(rows);
+            }
+        })
+    }
+
+    function addUHFRepeater(data, cb){
+        db.run('INSERT INTO REPEATERS_UHF (FREQ, DUPLEX, SUBTONE, LOCATOR, NAME, OBSERVATION, INDICATIVE) VALUES ($freq, $duplex, $subtone, $locator, $name, $observation, $indicative)', {
+            $freq : data.FREQ,
+            $duplex : data.DUPLEX,
+            $subtone : data.SUBTONE,
+            $locator : data.LOCATOR,
+            $name : data.NAME,
+            $observation : data.OBSERVATION,
+            $indicative : data.INDICATIVE
+        }, function (result) {
+            cb(result);
         });
     }
 
@@ -328,6 +500,24 @@ module.exports = function DashboardDB() {
         });
     }
 
+
+    function updateSatelliteTLE(data, cb) {
+
+        console.log((new Date()).toString());
+
+
+        db.run('UPDATE SATELLITES SET SAT_TLE1 = $tle1, SAT_TLE2 = $tle2, SAT_TLE_DATE = $date WHERE SAT_NAME = $name', {
+            $name : data.SAT_NAME,
+            $tle1 : data.SAT_TLE1,
+            $tle2 : data.SAT_TLE2,
+            $date : (new Date()).toString(),
+
+        }, function (result) {
+            cb(result);
+        });
+    }
+
+
     function modSatellite(req, res){
         //req.checkBody('satname', 'Satellite name is required').notEmpty().isAlpha();
         //req.checkBody('tle', 'TLE is required').notEmpty();
@@ -406,6 +596,13 @@ module.exports = function DashboardDB() {
         addSatellite : addSatellite,
         getRemoteTransceivers : getRemoteTransceivers,
         modSatellite : modSatellite,
-        delSatellite : delSatellite
+        delSatellite : delSatellite,
+        updateSatelliteTLE : updateSatelliteTLE,
+        verifyUser : verifyUser,
+        modToken : modToken,
+        getVHFRepeaters : getVHFRepeaters,
+        getUHFRepeaters : getUHFRepeaters,
+        addUHFRepeater : addUHFRepeater,
+        addVHFRepeater : addVHFRepeater
     }
 }
