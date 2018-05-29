@@ -7,7 +7,9 @@ app.directive('passesRegistration', function($http, $document) {
 
 
     function link(scope, element, attrs) {
+
         scope.$watch("logged", function(newValue, oldValue) {
+
             if (newValue == true) {
                 scope.passes.forEach(function (sat) {
                     sat.pass.forEach(function (pass) {
@@ -17,12 +19,14 @@ app.directive('passesRegistration', function($http, $document) {
 
                 scope.satelliteSelected = scope.passes[0];
                 scope.getPasses(scope.satelliteSelected);
+                scope.mySat = scope.satelliteSelected;
             }
         });
 
         scope.getPasses = function(sat){
             scope.satelliteSelected = sat;
         };
+
 
         scope.setPass = function(pass, trsp) {
             var problematicPasses = scope.scheduledPasses.filter(function (scheduledPass) {

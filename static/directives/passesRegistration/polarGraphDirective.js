@@ -12,6 +12,7 @@ app.directive('d3Bars', ['d3', function(d3) {
             data.push([-(elem.azi * conv + subpi), -0.5 + (elem.ele/180)]);
         });
 
+
         var tLenght = (data.length/5);
         var startDate = new Date(Date.parse(scope.satelliteSelected.pass[scope.selectedItem].startDateLocal));
         var selec = [];
