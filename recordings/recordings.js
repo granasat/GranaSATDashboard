@@ -128,6 +128,9 @@ module.exports = function Recordings(jsonName, recDir){
      * Get all recordings info: id, Name, path, Duration, etc.
      */
     function getRecordings(){
+
+        console.log(json);
+
         return json;
     }
 
