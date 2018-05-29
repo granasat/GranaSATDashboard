@@ -1,0 +1,82 @@
+
+<div class='page-header'>
+    <h1>My personal account</h1>
+</div>
+
+
+<div class="page-body">
+
+    <form class="form-horizontal">
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="username_changed">User name:</label>
+            <div class="col-sm-10">
+                <input ng-model="username_changed" type="text" class="form-control" id="username_changed" placeholder={{currentName}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="organization_changed">Organization:</label>
+            <div class="col-sm-10">
+                <input ng-model="organization_changed" type="text" class="form-control" id="organization_changed" placeholder={{currentOrganization}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="pwd_changed">New password:</label>
+            <div class="col-sm-10">
+                <input ng-model="pwd_changed" type="password" class="form-control" id="pwd_changed" placeholder="Enter password">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="pwd_changed_repeated">Confirm password:</label>
+            <div class="col-sm-10">
+                <input ng-model="pwd_changed_repeated" type="password" class="form-control" id="pwd_changed_repeated" placeholder="Repeat password">
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="pwd_changed_repeated">Image</label>
+            <div class="col-sm-10">
+                <img src="/user_image" class="img-responsive" style="width:10%; height:15%" alt="Image">
+                <a href=""
+                   ng-click="changePhoto()">Change photo</a>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default" ng-click="updateUserButton()">Update info</button>
+            </div>
+        </div>
+    </form>
+
+
+
+</div>
+
+<script type="text/ng-template" id="changePhoto.html">
+
+
+    <div class="modal-header">
+        <h3 class="modal-title">Change photo</h3>
+    </div>
+
+    <div class="modal-body">
+
+        <div style="font-size:12px;">
+            <form action="/upload_user_image" method="post" enctype="multipart/form-data">
+                <input onchange="validateImage()" id="img" type="file" name="upl" accept="image/*" ><br>
+                <input class="btn btn-default" type="submit" value="Submit" ng-click="updateImage()">
+                <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+
+            </form>
+        </div>
+
+    </div>
+
+
+</script>
