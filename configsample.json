@@ -36,7 +36,7 @@
   "scripts_update_satnogs_trsp_url" : "https://db.satnogs.org/api/transmitters/?format=json",
   "scripts_update_satnogs_modes_url" : "https://db.satnogs.org/api/modes/?format=json",
   "scripts_update_baseurl" : "http://www.celestrak.com/NORAD/elements/",
-  "scripts_update_linesneeded" : 3,
+  "scripts_update_linesneeded" : "3",
   "scripts_update_result_file" : "final.json",
   "scripts_update_files": ["amateur.txt",
     "cubesat.txt",
