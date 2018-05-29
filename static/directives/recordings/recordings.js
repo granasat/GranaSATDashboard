@@ -6,11 +6,12 @@ app.directive('recordings', function($http, $document, $uibModal) {
         scope.$watch("logged", function(newValue, oldValue) {           //Execute when the user is logged, call for satellites in db
             if (newValue == true) {
                 scope.getRecordings().then(function (res) {
-                    scope.recordings = res.data;
+                    scope.recordings = res.data; // recordings will have the json info
                 });
             }
         });
 
+        // Get recordings from the json
         scope.getRecordings = function () {
             return $http({
                 method: 'GET',
