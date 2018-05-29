@@ -10,8 +10,8 @@
 </tr>
 
 <tr ng-show="root.web.expanded">
-    <td>
-        <span class="glyphicon glyphicon-tasks" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.web_host}}></span> Web Host
+    <td data-toggle="tooltip" title={{mainTooltips.confTree.web.host}}>
+        <span class="glyphicon glyphicon-tasks" style="padding-left: 38px;" ></span> Web Host
     </td>
 
     <td ng-show="!root.web.web_host.edit">
@@ -32,8 +32,8 @@
 </tr>
 
 <tr ng-show="root.web.expanded">
-    <td>
-        <span class="glyphicon glyphicon-tasks" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.web_port}}></span> Web Port
+    <td data-toggle="tooltip" title={{mainTooltips.confTree.web.port}}>
+        <span class="glyphicon glyphicon-tasks" style="padding-left: 38px;" ></span> Web Port
     </td>
 
     <td ng-show="!root.web.web_port.edit">

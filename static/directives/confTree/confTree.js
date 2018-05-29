@@ -17,7 +17,7 @@ app.directive('confTree', function($http, $document) {
             }).then(function (res){
                 scope.config = res.data;
 
-                console.log(scope.config);
+                //console.log(scope.config);
             });
         }
 

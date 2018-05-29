@@ -14,7 +14,7 @@ app.directive('scripts', function($http) {
                 scope.root.scripts.update_library.runnning = false;
 
                 if(res.data.error){
-                    window.alert("Something goes wrong with python script");
+                    window.alert("Something went wrong with python script");
                 }
                 else{
                     scope.updateSatellites();           //Request to node for sending to the user the updated passes
