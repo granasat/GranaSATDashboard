@@ -1,4 +1,5 @@
 {
+  "email_sent": 0,
   "database_user": "",
   "database_password": "",
   "granasat_email" : "",

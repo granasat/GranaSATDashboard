@@ -10,6 +10,10 @@ var SerialPort = require("serialport");
 var Promise = require('bluebird');
 var log = require('../utils/logger.js').Logger;
 var leftPad = require('left-pad');
+var config = require('../config.json');
+var async = require('async');
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
 
 
 module.exports = function Icom9100(sAddress) {
@@ -49,10 +53,59 @@ module.exports = function Icom9100(sAddress) {
 
     serial.on('open', function () {
         log("ICOM 9100 serial port opened");
+
+        // This variable is set again to 0, so when the radio turns off again an e-mail (ONLY ONE) is sent
+        // to granasat@ugr.es (in the function below)
+        config.email_sent = 0;
+
     });
 
     serial.on('error', function () {
         log("Unable to open ICOM 9100 serial port");
+
+        // Sending e-mail when the radio is OFF
+        if (config.email_sent == 0) {
+
+            // Indicating that the e-mail has already been sent
+            config.email_sent = 1;
+
+            // Sending e-mail
+            async.waterfall([
+
+                // Sending e-mail
+                function () {
+
+                    var transporter = nodemailer.createTransport(smtpTransport({
+                        // host: 'smtp.gmail.com',
+                        host: 'smtp.ugr.es',
+                        port: 587,
+                        secureConnection: true,
+                        auth: {
+                            user: config.granasat_email,
+                            pass: config.granasat_password
+                        }
+                    }));
+
+                    var mailOptions = {
+                        from: config.granasat_email,
+                        to: config.granasat_email,
+                        subject: 'Transceiver Icom9100 status',
+                        html: '<h3>This e-mail is intended to inform you that the transceiver Icom9100 is currently OFF. Please turn it ON as soon as possible.\n\n</h3>'
+
+                    };
+
+                    transporter.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            res.json({status: "error"});
+                        } else {
+                            log('E-mail informing about transceiver status sent to' + config.granasat_email);
+                        }
+                    });
+
+                }
+            ])
+        }
+
     });
 
     // --------------------------------------------------------
