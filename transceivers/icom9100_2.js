@@ -96,7 +96,7 @@ module.exports = function Icom9100(sAddress) {
 
                     transporter.sendMail(mailOptions, function (error, info) {
                         if (error) {
-                            res.json({status: "error"});
+                            log("Error while sending and email because Icom is not available", "error");
                         } else {
                             log('E-mail informing about transceiver status sent to' + config.granasat_email);
                         }
