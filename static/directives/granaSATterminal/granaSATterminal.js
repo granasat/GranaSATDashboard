@@ -19,7 +19,7 @@ app.directive('granasatTerminal', function($http, $document) {
         document.getElementById("term").append(con.element);
 
         // It controls when to show direwolf output
-        var direwolfEnabled = false;
+        var direwolfEnabled = true;
 
         // It controls when telemetry is available for showing
         var telemetryAvailable = false;
