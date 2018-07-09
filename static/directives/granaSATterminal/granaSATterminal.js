@@ -92,23 +92,13 @@ app.directive('granasatTerminal', function($http, $document) {
         };
 
         var turnCurrentStatus = false;
-        con.logHTML(
-            "<div class='page-header'><h1>GranaSAT Terminal</h1></div>"
-        );
-
-        con.log("Type help for available commands")
 
         var f = {
             "clear": function(c) {
-                con.clear()
-                con.logHTML(
-                    "<div class='page-header'><h1>GranaSAT Terminal</h1></div>"
-                );
-                con.log("Type help for available commands")
-
+                con.clear();
             },
             "help": function(c) {
-                var s = "Available commands:"
+                var s = "Available commands:";
                 for (var key in f) {
                     s += "</br>" + key
                 }
