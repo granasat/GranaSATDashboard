@@ -121,6 +121,10 @@
                         <audio  autoplay controls>
                             <source src="https://granasat2.ugr.es/audio" />
                         </audio>
+
+                        <div class="alert alert-warning" role="alert">
+                            Remember that audio has a delay of 10 s
+                        </div>
                     </div>
 
 
@@ -254,7 +258,7 @@
                     <div style="padding-top:10px";>
                         <button id="attenuator" ng-click="attenuatorButton()" type="button" class="btn btn-primary btn-sm">ATT OFF</button>
                         <button id="nr" ng-click="NRButton()" type="button" class="btn btn-primary btn-sm">NR OFF</button>
-                        <button id="squelch" ng-click="squelchButton()" type="button" class="btn btn-primary btn-sm">SQL OFF</button>
+                        <button id="squelch" ng-click="squelchButton()" type="button" class="btn btn-primary btn-sm" href="#" title="{{mainTooltips.radioTab.sql_button}}" data-toggle="tooltip" data-placement="bottom">SQL OFF</button>
                         <button id="toneSQL" ng-click="ToneSQLButton()" type="button" class="btn btn-primary btn-sm">TSQL OFF</button>
                         <button id="repeaterTone" ng-click="RepeaterToneButton()" type="button" class="btn btn-primary btn-sm">Repeater OFF</button>
                         <button id="satmode" ng-click="satelliteButton()" type="button" class="btn btn-primary btn-sm">Satellite</button>

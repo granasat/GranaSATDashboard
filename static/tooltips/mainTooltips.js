@@ -167,7 +167,11 @@ var mainTooltips = {
         "such as amateur radio receivers or shortwave broadcast receivers. The scale markings are derived from a system " +
         "of reporting signal strength from S1 to S9 as part of the R-S-T system. The term S unit can be used to refer to the amount of signal " +
         "strength required to move an S meter indication from one marking to the next.",
-        setFrequencyButton: "example"
+        setFrequencyButton: "example",
+        sql_button : "Select whether or not to output the audio from the [USB] " +
+        "connector on the rear panel, according to the squelch state. ON -The received " +
+        "audio is sent when the squelch is open. OFF - The received audio is always sent," +
+        "regardless of the squelch state."
 
     },
 
