@@ -1085,39 +1085,6 @@ app.directive('radioIcom9100', function($http, $document, $uibModal) {
                 });
         };
 
-
-        /**
-         * It sets transceiver to APRS frequency (144.800 and FM mode)
-         */
-        scope.APRSButton = function () {
-            scope.setRadio({VFOA: "144800000", BFreq: null}).then (function (res) {
-
-                // If frequency changed correctly, change mode to FM as well
-                if (res.data.status == "Done") {
-
-                    return $http({
-                        method: 'POST',
-                        url: "radiostation/operating_mode",
-                        data: {mode : "FM"}
-                    }).then(function(res) {
-
-                        if (res.data.status == "Done") {
-                            window.alert("APRS frequency set correctly")
-                        } else {
-                            window.alert("Error while setting APRS frequency")
-                        }
-                    });
-                }
-
-                else {
-                    window.alert("Error while setting APRS frequency")
-                }
-
-            });
-        };
-
-
-
         /**
          * Modal menu that gets frequency
          */
