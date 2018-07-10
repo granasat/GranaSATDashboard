@@ -634,7 +634,7 @@ app.post('/delUserWhenWrongEmail', function (req, res) {
 
 var rotors = new Yaesu(config.serial_rotors);
 // var radioStation = new Kenwood(config.serial_transceiver_keenwoodts2000)
-var radioStation = new Icom9100(config.serial_transceiver_icom9100)
+var radioStation = new Icom9100(config.serial_transceiver_icom9100);
 
 // Direwolf creates a virtual KISS TNC on /tmp/kisstnc
 const tnc = new KISS_TNC('/tmp/kisstnc', 9600);
@@ -689,7 +689,7 @@ app.post('/radiostation/send_packet', isMember, function(req, res) {
 
 // Setting DUP+
 app.post('/radiostation/dup_plus', isMember, function(req, res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set DUP+ operation", "info");
     radioStation.setDUPPlusOperation(function(data) {
         res.json(data);
     })
@@ -697,7 +697,7 @@ app.post('/radiostation/dup_plus', isMember, function(req, res) {
 
 // Setting DUP-
 app.post('/radiostation/dup_minus', isMember, function(req, res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set DUP- operation", "info");
     radioStation.setDUPMinusOperation(function(data) {
         res.json(data);
     })
@@ -705,7 +705,7 @@ app.post('/radiostation/dup_minus', isMember, function(req, res) {
 
 // Setting Simplex operation
 app.post('/radiostation/simplex_operation', isMember, function(req, res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set simplex operation", "info");
     radioStation.setSimplexOperation(function(data) {
         res.json(data);
     })
@@ -713,7 +713,7 @@ app.post('/radiostation/simplex_operation', isMember, function(req, res) {
 
 // Setting MAIN Band
 app.post('/radiostation/main_band', isMember, function(req, res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set main band as the operative band", "info");
     radioStation.setMainBand(function(data) {
         res.json(data);
     })
@@ -721,7 +721,7 @@ app.post('/radiostation/main_band', isMember, function(req, res) {
 
 // Setting SUB Band
 app.post('/radiostation/sub_band', isMember, function(req, res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set sub band as the operative band", "info");
     radioStation.setSubBand(function(data) {
         res.json(data);
     })
@@ -729,7 +729,7 @@ app.post('/radiostation/sub_band', isMember, function(req, res) {
 
 // Exchange bands
 app.post('/radiostation/exchange_bands', isMember, function(req, res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] exchanges main and sub band", "info");
     radioStation.exchangeBands( function(data) {
         res.json(data);
     })
@@ -746,7 +746,7 @@ app.get('/radiostation/operating_mode', isMember, function(req, res) {
 
 // Setting operating mode
 app.post('/radiostation/operating_mode', isMember, function(req, res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set operative mode: " + req.body.mode, "info");
     radioStation.setOperatingMode(req.body.mode, function(data) {
         res.json(data);
     })
@@ -763,7 +763,7 @@ app.get('/radiostation/status', function(req, res) {
 
 // Setting transceiver status (RX or TX)
 app.post('/radiostation/status', isMember, function(req, res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set status to " + req.body.option, "info");
     radioStation.setTransceiverStatus(req.body.option, function(data) {
         res.json(data);
     })
@@ -791,7 +791,7 @@ app.post('/radiostation/freq', isMember, function(req, res) {
 
 // Setting satellite mode
 app.post('/radiostation/satmode', function(req,res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set satellite mode", "info");
     radioStation.setSatelliteMode(req.body.option, function(data) {
         res.json(data);
     });
@@ -809,7 +809,7 @@ app.get('/radiostation/satmode', function(req,res) {
 
 // Setting noise reduction (NR)
 app.post('/radiostation/nr', function(req,res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set noise reduction to " + req.body.option, "info");
     radioStation.setNoiseReduction(req.body.option, function(data) {
         res.json(data);
     });
@@ -826,7 +826,7 @@ app.get('/radiostation/nr', function(req,res) {
 // Setting Duplex offset frequency
 app.post('/radiostation/duplex_offset', function(req,res) {
 
-    log("Changing dupplex offset frequency to " + req.body.freq)
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set offset frequency to " + req.body.freq);
 
     radioStation.setOffSet(req.body.freq, function(data) {
         res.json(data);
@@ -851,7 +851,7 @@ app.get('/radiostation/repeater_tone', function(req,res) {
 
 // Setting repeater tone
 app.post('/radiostation/repeater_tone', function(req,res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set repeater tone status " + req.body.option, "info");
     radioStation.setRepeaterTone(req.body.option, function(data) {
         res.json(data);
     });
@@ -867,8 +867,7 @@ app.get('/radiostation/repeater_tone_freq', function(req,res) {
 
 // Sending repeater tone frequency (subtone)
 app.post('/radiostation/repeater_tone_freq', isMember, function(req, res) {
-
-    log("Changing subtone to " + req.body.freq)
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set subtone to " + req.body.freq, "info");
 
     radioStation.setRepeaterToneFrequency(req.body.freq, function(data) {
         res.json(data);
@@ -877,7 +876,6 @@ app.post('/radiostation/repeater_tone_freq', isMember, function(req, res) {
 
 // Sending Tone SQL frequency
 app.post('/radiostation/tone_sql_freq', isMember, function(req, res) {
-
     radioStation.setToneSquelchFrequency(req.body.freq, function(data) {
         res.json(data);
     })
@@ -885,7 +883,7 @@ app.post('/radiostation/tone_sql_freq', isMember, function(req, res) {
 
 // Setting Tone SQL
 app.post('/radiostation/tone_sql', function(req,res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set transceiver tone SQL status to" + req.body.option, "info");
     radioStation.setToneSquelch(req.body.option, function(data) {
         res.json(data);
     });
@@ -901,7 +899,7 @@ app.get('/radiostation/tone_sql', function(req,res) {
 
 // Setting attenuator
 app.post('/radiostation/attenuator', function(req,res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set attenuator to " + req.body.option, "info");
     radioStation.setAttenuator(req.body.option, function(data) {
         res.json(data);
     });
@@ -917,7 +915,7 @@ app.get('/radiostation/attenuator', function(req,res) {
 
 // Setting SQL (squelch)
 app.post('/radiostation/squelch', function(req,res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set SQL USB to " + req.body.option, "info");
     radioStation.setSQLStatus(req.body.option, function(data) {
         res.json(data);
     });
@@ -925,7 +923,6 @@ app.post('/radiostation/squelch', function(req,res) {
 
 // Getting SQL
 app.get('/radiostation/squelch', function(req,res) {
-
     radioStation.getSQL(function(data) {
         res.json(data);
     });
@@ -933,7 +930,7 @@ app.get('/radiostation/squelch', function(req,res) {
 
 // Setting RF-power position
 app.post('/radiostation/rf_power', function(req,res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set RF power to " + req.body.option + "/%", "info");
     radioStation.setRF_Power(req.body.option, function(data) {
         res.json(data);
     });
@@ -950,7 +947,7 @@ app.get('/radiostation/rf_power', function(req,res) {
 
 // Setting SQL position
 app.post('/radiostation/sql_position', function(req,res) {
-
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set sql position to " + req.body.option + "%", "info");
     radioStation.setSQLPosition(req.body.option, function(data) {
         res.json(data);
     });
@@ -967,6 +964,7 @@ app.get('/radiostation/sql_position', function(req,res) {
 
 // Setting AF position
 app.post('/radiostation/af', function(req,res) {
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set AF position to " + req.body.option + "%", "info");
     radioStation.setAF(req.body.option, function(data) {
         res.json(data);
     });
@@ -982,6 +980,7 @@ app.get('/radiostation/af', function(req,res) {
 
 // Setting [RF/SQL] position (RF gain level)
 app.post('/radiostation/rf_gain', function(req,res) {
+    log("{RadioStation} User [" + req.user.USR_NAME + "] set RF gain position to " + req.body.option + "%", "info");
     radioStation.setRFGainLevel(req.body.option, function(data) {
         res.json(data);
     });
