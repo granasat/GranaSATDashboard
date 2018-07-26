@@ -141,11 +141,11 @@ module.exports = function Icom9100(sAddress) {
     function readFreq(p) {
         var serialBuffer = new Buffer("");
         return function (data) {
-            serialBuffer = Buffer.concat([serialBuffer, data])
+            serialBuffer = Buffer.concat([serialBuffer, data]);
             if (serialBuffer.length >= 17) {
                 var freq = {
                     VFOA: cmd2freq(serialBuffer.slice(11, 16))
-                }
+                };
 
                 p.resolve(freq);
             }
@@ -163,7 +163,7 @@ module.exports = function Icom9100(sAddress) {
 
             var p = new Promise.defer();
 
-            var f = readFreq(p)
+            var f = readFreq(p);
             serial.on('data', f);
 
             serial.write(new Buffer("FEFE7CE003FD", "hex"))

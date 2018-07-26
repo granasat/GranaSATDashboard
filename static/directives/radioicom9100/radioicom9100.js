@@ -494,7 +494,7 @@ app.directive('radioIcom9100', function($http, $document, $uibModal) {
 
 
         /**
-         * It sets transceiver's tone SQL status (on/off)
+         * It sets repeater tone status (on/off)
          * @param {status} status to set ("on"/"off")
          */
         scope.setRepeaterTone = function(status) {
