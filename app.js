@@ -98,6 +98,9 @@ app.use(expressValidator());
 // Executing darkice (important that icecast2 is running on server beforehand)
 // Arguments: "-c file.cfg" in order to execute darkice with certain configuration
 const audioStreaming = spawn('darkice', ['-c', config.audio_file_configuration]);
+audioStreaming.stdout.on('data', function (data) {
+   log("[Darkice] " + data);
+});
 
 // --------------------------------------------------------
 // DIREWOLF STUFF START
@@ -147,7 +150,7 @@ server.listen(8003, function listening() {
 // "-p" for setting KISS-TNC port on /tmp/kisstnc
 // "-t 0" to disable colour text in output
 // "-c file.conf" to take configuration from file
-const direwolf = spawn('direwolf', ['-n','2','-p', '-t', '0', '-c', config.direwolf_configuration]);
+const direwolf = spawn('direwolf', ['-n','2','-p', '-q', 'hd', '-t', '0', '-c', config.direwolf_configuration]);
 
 
 wss.on('connection', function connection(ws) {
