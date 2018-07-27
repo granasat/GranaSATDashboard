@@ -1,8 +1,3 @@
-/**
- Created by Antonio Serrano (github: antserran)
-
- */
-
 app.directive('polar', ['d3', function(d3) {
     function link(scope, element, attrs) {
 

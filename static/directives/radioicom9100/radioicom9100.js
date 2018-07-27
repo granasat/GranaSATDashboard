@@ -24,8 +24,26 @@ app.directive('radioIcom9100', function($http, $document, $uibModal) {
             });
         };
 
+        /**
+         * On start set Main Band as operating band
+         * @returns {*}
+         */
+        scope.setMainBand = function(){
+            return $http({
+                method: 'POST',
+                url: "radiostation/main_band"
+            }).then(function(res) {
+                if(res.data.status){
+                    scope.band = "main";
+                }else {
+                    window.alert("Error while starting radio");
+                }
+            });
+        };
+
         scope.getVHFRepeaters();
         scope.getUHFRepeaters();
+        scope.setMainBand();
 
 
         scope.$watch("UTCTime", function(newValue, oldValue) {})
@@ -36,25 +54,22 @@ app.directive('radioIcom9100', function($http, $document, $uibModal) {
         setRFGainGauge();
         setSQLGauge();
 
-        var freqDisplays = {};
-        ["A"].forEach(function(e) {
-            freqDisplays["VFO" + e] = new SegmentDisplay("VFO" + e);
-            var display = freqDisplays["VFO" + e];
-            display.pattern = "####: ########### ##";
-            display.displayAngle = 5;
-            display.digitHeight = 20;
-            display.digitWidth = 15;
-            display.digitDistance = 2.5;
-            display.segmentWidth = 2.5;
-            display.segmentDistance = 0.1;
-            display.segmentCount = 14;
-            display.cornerType = 1;
-            display.colorOn = "#2B6908";
-            display.colorOff = "#EEEEEE";
+        var display = new SegmentDisplay("display");
+        display.pattern = "####: ########### ##";
+        display.displayAngle = 5;
+        display.digitHeight = 20;
+        display.digitWidth = 15;
+        display.digitDistance = 2.5;
+        display.segmentWidth = 2.5;
+        display.segmentDistance = 0.1;
+        display.segmentCount = 14;
+        display.cornerType = 1;
+        display.colorOn = "#2B6908";
+        display.colorOff = "#EEEEEE";
 
-            display.draw();
-            display.setValue('VF0' + e + ': ----------- Hz');
-        });
+        display.draw();
+        display.setValue('####: ########### ##');
+
 
         // ---------------------------------------------------------
         // Functions that control buttons
@@ -1307,10 +1322,10 @@ app.directive('radioIcom9100', function($http, $document, $uibModal) {
                         scope.radioON= true;
 
                         if (scope.band == "main") {
-                            freqDisplays["VFOA"].setValue('VF0A: ' + padLeft(scope.icom9100freq.VFOA, 11, " ") + ' Hz');
+                            display.setValue('MAIN: ' + padLeft(scope.icom9100freq.VFOA, 11, " ") + ' Hz');
                         }
                         else if (scope.band == "sub") {
-                            freqDisplays["VFOA"].setValue('VF0B: ' + padLeft(scope.icom9100freq.VFOA, 11, " ") + ' Hz');
+                            display.setValue(' SUB: ' + padLeft(scope.icom9100freq.VFOA, 11, " ") + ' Hz');
                         }
                     }
                     else {
