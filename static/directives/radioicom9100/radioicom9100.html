@@ -8,21 +8,273 @@
             <h1>ICOM 9100 <small>RadioStation</small></h1> 
 
         </div>
+
     </div>
 </div>
-<div class="page-body">
-    <div class="row">
-        <div class='col-md-4'>
-            <canvas id="VFOA" height="40">
+
+
+<div ng-show="!radioON" class="alert alert-danger" role="alert">
+    The transceiver is OFF right now. Sorry for the inconveniences.
+</div>
+
+
+<div class="page-body" ng-show="radioON">
+
+    <!-- pannel -->
+    <div class="panel panel-default" style="background-color: #EEEEEE">
+        <div class="panel-body">
+
+            <!-- Frequency -->
+            <div class="row">
+                <div class='col-md-4'>
+                    <canvas id="display" height="40">
+                </div>
+
+                <!-- Set frequency -->
+                <div class='col-md-7' style="padding-bottom: 15px">
+                    <button id="operating_mode" type="button" class="btn btn-info">Mode</button>
+
+                    <button ng-click="setFreqModal()" type="button" class="btn btn-primary btn-sm">Set Frequency</button>
+                    <button ng-click="setDuplexOffsetModal()" type="button" class="btn btn-primary btn-sm">Set Duplex</button>
+                    <button ng-click="setRepeaterSubtoneModal()" type="button" class="btn btn-primary btn-sm">Set Subtone</button>
+
+                    <b>subtone:</b> {{icom9100RepeaterToneFreq}} Hz
+                    <b>duplex:</b> {{icom9100DuplexOffset}} MHz
+
+                </div>
+
+
+            </div>
+
+            <!-- LCD and right part -->
+            <div class="row">
+
+                <!-- lcd screen -->
+                <div class='col-md-6'>
+
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+
+                            <!-- Bars -->
+
+                            <span title={{mainTooltips.radioTab.s_meters}}>S
+                                <img class="img-responsive" src="./images/commands/s-meters.svg">
+                            </span>
+                            <div id="myProgress" class="progress">
+                                <div id="s-meters" class="progress-bar progress-bar-striped active" role="progressbar"
+                                     aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <span >
+                                <img style="margin-top:-17px; margin-left:-7px" class="img-responsive" src="./images/commands/dBm.svg">
+                            </span>
+
+
+                            <br>
+
+                            Po
+                            <div id="myProgress" class="progress">
+                                <div id="rf-meter" class="progress-bar progress-bar-striped active" role="progressbar"
+                                     aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <img class="img-responsive" style="margin-top:-15px" src="./images/commands/rf.svg">
+
+
+                            <br>
+
+                            ALC
+                            <div id="myProgress" class="progress" style="width:40%">
+                                <div id="alc" class="progress-bar progress-bar-striped active" role="progressbar"
+                                     aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+
+                            SWR
+                            <div id="myProgress" class="progress">
+                                <div id="swr" class="progress-bar progress-bar-striped active" role="progressbar"
+                                     aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <img style="margin-top:-17px; margin-left:3px"  class="img-responsive" src="./images/commands/swr.svg">
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- Right part -->
+                <div class='col-md-6'>
+                    <button id="transmit" ng-click="transmittingButton()" type="button" class="btn btn-primary btn-sm">TRANSMIT</button>
+                    <button id="main_band" ng-click="mainBandButton()" type="button" class="btn btn-primary btn-sm">MAIN</button>
+                    <button id="sub_band" ng-click="subBandButton()" type="button" class="btn btn-primary btn-sm">SUB</button>
+                    <button id="exchange_bands" ng-click="exchangeBandsButton()" type="button" class="btn btn-primary btn-sm">MAIN/SUB</button>
+                    <button id="dup_plus" ng-click="setDUPPlus()" type="button" class="btn btn-primary btn-sm">DUP+</button>
+                    <button id="dup_minus" ng-click="setDUPMinus()" type="button" class="btn btn-primary btn-sm">DUP-</button>
+                    <button id="simplex" ng-click="setSimplexOperation()" type="button" class="btn btn-primary btn-sm">SIMPLEX</button>
+
+
+                    <div style="padding-top:15px; padding-bottom:10px;">
+
+                        <audio  autoplay controls>
+                            <source src="http://150.214.26.132/audio" />
+                        </audio>
+
+                        <div class="alert alert-warning" role="alert">
+                            Remember that audio has a delay of 10 s
+                        </div>
+                    </div>
+
+
+                    <div style="padding-bottom:10px;">
+
+                        <!-- repeaters -->
+                        <div style="width:40%">
+                            <select class="form-control" ng-model="selectedRepeater" ng-options="rep.OBSERVATION for rep in vhfRepeaters">
+                                <option value="">Select VHF repeater</option>
+                            </select>
+                        </div>
+
+
+                        <!-- repeaters -->
+                        <div style="width:40%; padding-bottom:10px;">
+                            <select class="form-control" ng-model="selectedRepeater" ng-options="rep.OBSERVATION for rep in uhfRepeaters">
+                                <option value="">Select UHF repeater</option>
+                            </select>
+                            <button type="submit" ng-click="setRepeater();" style="display: inline-block;" type="button" class="btn btn-default">Set</button>
+
+                        </div>
+
+                        <button ng-click="addRepeaterModal()"  class="btn btn-primary btn-sm">Add repeater</button>
+
+
+                        <button id="aprs_button" ng-click="APRSButton()" type="button" class="btn btn-primary btn-sm">APRS</button>
+
+
+                    </div>
+
+                    <!-- operating modes -->
+                    <div style="padding-bottom: 15px" class="btn-group" role="group" aria-label="Basic example" >
+                        <button ng-click="setOperatingMode('FM')" id="fm" type="button" class="btn">FM</button>
+                        <button ng-click="setOperatingMode('AM')" id="am" type="button" class="btn">AM</button>
+                        <button ng-click="setOperatingMode('USB')" id="usb" type="button" class="btn" >USB</button>
+                        <button ng-click="setOperatingMode('LSB')" id="lsb" type="button" class="btn">LSB</button>
+                        <button ng-click="setOperatingMode('CW')" id="cw" type="button" class="btn">CW</button>
+                        <button ng-click="setOperatingMode('RTTY')" id="rtty" type="button" class="btn ">RTTY</button>
+                        <button ng-click="setOperatingMode('CW-R')" id="cw_r" type="button" class="btn ">CW-R</button>
+                        <button ng-click="setOperatingMode('RTTY-R')" id="rtty_r" type="button" class="btn ">RTTY-R</button>
+                        <button ng-click="setOperatingMode('DV')" id="dv" type="button" class="btn ">DV</button>
+                    </div>
+
+                </div>
+
+
+
+    </div>
+
+            <!-- bottom part (gauges and modes) -->
+            <div class="row">
+
+
+                <div class="col-md-8">
+
+                    <!-- gauge pannel -->
+                    <table style="width:25em;margin:.4em">
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="position: relative; left: 10px; top: 0px; width: 160px; height: 60px">
+                                    <div class="displayTitle">RF power (W)</div>
+                                    <canvas id="rfPower_gauge" width="130" height="60"></canvas>
+                                    <div id="tfDisplayRFPower" class="display"></div>
+                                </div>
+                                <div class="input-group" style="width:100%; padding-top:50px">
+                                    <input type="text" id="rf_power" placeholder="Adjust" class="form-control">
+                                    <span class="input-group-btn">
+                                    <button class="btn btn-default" ng-click="RFPowerButton()" type="button">Set</button>
+                                </span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div style="position: relative; left: 0px; top: 0px; width: 160px; height: 60px">
+                                    <div class="displayTitle">AF (%)</div>
+                                    <canvas id="af_gauge" width="130" height="60"></canvas>
+                                    <div id="tfDisplayAF" class="display"></div>
+                                </div>
+                                <div class="input-group" style="padding-top:50px" >
+                                    <input type="text" id="af" placeholder="Adjust" class="form-control">
+                                    <span class="input-group-btn">
+                                            <button class="btn btn-default" ng-click="AFButton()" type="button">Set</button>
+                                            </span>
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <div style="position: relative; left: 0px; top: 0px; width: 160px; height: 60px">
+                                    <div class="displayTitle">RF gain (%)</div>
+                                    <canvas id="rfGain_gauge" width="130" height="60"></canvas>
+                                    <div id="tfDisplayRFGain" class="display"></div>
+                                </div>
+
+                                <div class="input-group" style="padding-top:50px" >
+                                    <input type="text" id="rf_gain" placeholder="Adjust" class="form-control">
+                                    <span class="input-group-btn">
+                                            <button class="btn btn-default" ng-click="RFGainButton()" type="button">Set</button>
+                                            </span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div style="position: relative; left: 0px; top: 0px; width: 160px; height: 60px">
+                                    <div class="displayTitle">SQL (%)</div>
+                                    <canvas id="SQL_gauge" width="130" height="60"></canvas>
+                                    <div id="tfDisplaySQL" class="display"></div>
+                                </div>
+                                <div class="input-group" style="padding-top:50px" >
+                                    <input type="text" id="sql" placeholder="Adjust" class="form-control">
+                                    <span class="input-group-btn">
+                                                <button class="btn btn-default" ng-click="SQLButton()" type="button">Set</button>
+                                                </span>
+                                </div>
+                            </td>
+
+                        </tr>
+                    </table>
+
+
+
+
+
+                    <!-- buttons -->
+                    <div style="padding-top:10px";>
+                        <button id="attenuator" ng-click="attenuatorButton()" type="button" class="btn btn-primary btn-sm">ATT OFF</button>
+                        <button id="nr" ng-click="NRButton()" type="button" class="btn btn-primary btn-sm">NR OFF</button>
+                        <button id="squelch" ng-click="squelchButton()" type="button" class="btn btn-primary btn-sm" href="#" title="{{mainTooltips.radioTab.sql_button}}" data-toggle="tooltip" data-placement="bottom">SQL OFF</button>
+                        <button id="toneSQL" ng-click="ToneSQLButton()" type="button" class="btn btn-primary btn-sm">TSQL OFF</button>
+                        <button id="repeaterTone" ng-click="RepeaterToneButton()" type="button" class="btn btn-primary btn-sm">Repeater OFF</button>
+                        <button id="satmode" ng-click="satelliteButton()" type="button" class="btn btn-primary btn-sm">Satellite</button>
+
+                    </div>
+                </div>
+
+            </div>
+
         </div>
+
     </div>
+
 </div>
 
-<div>
-    <button ng-click="setFreqModal()" type="button" class="btn btn-primary">Set Frequency</button>
-</div>
-
-
+<!-- script to set frequency -->
 <script type="text/ng-template" id="setFreqModal.html">
     <div class="modal-header">
         <h3 class="modal-title">Set Frequency</h3>
@@ -30,17 +282,115 @@
     <div class="modal-body">
         <form>
             <div class="form-group">
-                <label for="AFreq">A Freq</label>
+                <label for="AFreq">Freq</label>
                 <input ng-model="AFreq" type="text" class="form-control" id="AFreq" placeholder="14500000">
             </div>
+            <!--
             <div class="form-group">
                 <label for="BFreq">B Freq</label>
                 <input ng-model="BFreq" type="text" class="form-control" id="BFreq" placeholder="14500000">
+            </div>
+            -->
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" type="button" ng-click="set()">Set</button>
+        <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+
+
+
+</script>
+
+
+<!-- script to set duplex offset -->
+<script type="text/ng-template" id="setDuplexModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Set Duplex Offset frequency</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label for="duplex">Frequency</label>
+                <input ng-model="duplex" type="text" class="form-control" id="duplex" placeholder="0.6000">
             </div>
         </form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-success" type="button" ng-click="set()">Set</button>
+        <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+
+</script>
+
+
+<!-- script to set subtone -->
+<script type="text/ng-template" id="setRepeaterSubtoneModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Set Repeater Subtone</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label for="repeater_subtone">Frequency</label>
+                <input ng-model="repeater_subtone" type="text" class="form-control" id="repeater_subtone" placeholder="88.5">
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" type="button" ng-click="set()">Set</button>
+        <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+
+</script>
+
+
+<!-- script to add repeaters -->
+<script type="text/ng-template" id="addRepeaterModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Add Repeater</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+
+            <div class="form-group">
+                <label for="type">Band frequency</label>
+                <input placeholder="'VHF' or 'UHF'" ng-model="type" type="text" class="form-control" id="type">
+            </div>
+
+            <div class="form-group">
+                <label for="freq">Frequency</label>
+                <input placeholder="Set in MHz without dot (144.800MHz -> 144800)" ng-model="freq" type="text" class="form-control" id="freq">
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input placeholder="RVxx–xx" ng-model="name" type="text" class="form-control" id="name">
+            </div>
+            <div class="form-group">
+                <label for="indicative">Indicative</label>
+                <textarea placeholder="EDxxxx" ng-model="indicative" class="form-control" id="indicative"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="locator">Locator</label>
+                <input placeholder="xxxxxx" ng-model="locator" type="text" class="form-control" id="locator">
+            </div>
+            <div class="form-group">
+                <label for="duplex">Duplex offset</label>
+                <input placeholder="in Hz with 4 decimals, for example: '-0.6000' or '+7.6000'" ng-model="duplex" type="text" class="form-control" id="duplex">
+            </div>
+            <div class="form-group">
+                <label for="subtone">Subtone</label>
+                <input placeholder="in Hz, for example '82.5'" ng-model="subtone" type="text" class="form-control" id="subtone">
+            </div>
+            <div class="form-group">
+                <label for="observation">Observation</label>
+                <input placeholder="URE Granada" ng-model="observation" type="text" class="form-control" id="observation">
+            </div>
+
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" type="button" ng-click="add()">Add</button>
         <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
     </div>
 </script>

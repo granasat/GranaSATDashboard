@@ -1,4 +1,8 @@
 var app = angular.module('myApp', ['ui.bootstrap', 'luegg.directives']);
+
+
+
+
 app.controller('appController', function($scope, $http, $uibModal) {
     $scope.selectedTab = 0;
     $scope.logged = false;
@@ -10,7 +14,11 @@ app.controller('appController', function($scope, $http, $uibModal) {
     $scope.localTimeMode = false;
     $scope.scheduledPasses = [];
 
+    // With this we include all the tooltips from mainTooltips.js
+    $scope.mainTooltips = mainTooltips;
 
+
+    // Updates time
     setInterval(function() {
         $scope.UTCTime = new Date().toUTCString();
         $scope.localTime = new Date().toString();
@@ -39,19 +47,36 @@ app.controller('appController', function($scope, $http, $uibModal) {
             $scope.passes = res.data;
 
             $scope.passes.forEach(function (sat) {
-               var filtered = sat.pass.filter(function (pass) {
-                   return pass.scheduled === true;
-               });
+                var filtered = sat.pass.filter(function (pass) {
+                    return pass.scheduled === true;
+                });
 
-               if(filtered.length > 0)
-                   filtered.forEach(function (pass) {
-                       $scope.scheduledPasses.push(pass);
-                   });
+                if(filtered.length > 0)
+                    filtered.forEach(function (pass) {
+                        $scope.scheduledPasses.push(pass);
+                    });
             });
 
             $scope.sortScheduledPasses();
         });
     };
+
+
+    $scope.changePhoto = function() {
+        var changePhotoInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'changePhoto.html',
+            controller: 'changePhotoController as c',
+            size: "sm",
+            resolve: {
+                items: function () {
+                    return $scope.items;
+                }
+            }
+        });
+    }
+
+
 
     $scope.loginModal = function() {
         var loginModalInstance = $uibModal.open({
@@ -75,11 +100,46 @@ app.controller('appController', function($scope, $http, $uibModal) {
 
                     $scope.getUserInfo().then(function (res) {
                         $scope.userInfo = res.data;
+
+                        $scope.user_mail = res.data.USR_MAIL;
+
                     });
                 }
                 else{
                     window.alert("Account created successfully");
                 }
+            }
+        });
+    };
+
+    // NOTE:
+    // When the user restarts the page, all the $scope variables are restarted to the
+    // default value (see top of this file) , therefore, it is necessary to check if the user is logged
+    // in and if so, set the variables with the proper value.
+    // I'm sure this has been programmed wrongly in the past, but I do not know how to
+    // fix it in another way than this.
+
+    // This function will check the status of the web page's login.
+    // If there is someone logged, the appropriate tabs will be displayed,
+    // depending on the type of user is logged in.
+    $scope.checkLoginStatus = function() {
+        return $http({
+            method: 'GET',
+            url: "login"
+        }).then(function(res) {
+            var data = res.data;
+            if (data.status == "Done") {
+
+                // It is important to set "type" correctly,
+                // since the layout of tabs will depend on the type of user is logged in
+                $scope.logged = true;
+                $scope.type = data.type;
+
+                $scope.getUserInfo().then(function (res) {
+                    $scope.userInfo = res.data;
+                    $scope.user = res.data[0].USR_NAME;
+                });
+
             }
         });
     };
@@ -126,6 +186,7 @@ app.controller('appController', function($scope, $http, $uibModal) {
         });
     };
 
+
     /**
      *   Send to server the position to move the rotors
      * @param {Object} pos - Where you want to rotate the antennas.
@@ -148,6 +209,7 @@ app.controller('appController', function($scope, $http, $uibModal) {
             data: freq
         });
     };
+
 
     $scope.getScheduledPasses = function() {
         return $http({
@@ -217,7 +279,7 @@ app.controller('appController', function($scope, $http, $uibModal) {
             }
         });
     };
-    
+
     $scope.sortScheduledPasses = function () {
         $scope.scheduledPasses.sort(function (a, b) {
             return a.remainTime - b.remainTime;
@@ -229,6 +291,12 @@ app.controller('appController', function($scope, $http, $uibModal) {
             "/" +  (date.getMonth() + 1) +
             "/" +  date.getFullYear();
     };
+
+
+    // Checking if there is someone logged in every time the mainController is running, this is made
+    // in order to avoid the login to be closed when the web-page is refresh.
+    $scope.checkLoginStatus();
+
 });
 
 app.controller('loginModelController', function($scope, $http, $uibModalInstance, items) {
@@ -242,6 +310,10 @@ app.controller('loginModelController', function($scope, $http, $uibModalInstance
                     user : $scope.username,
                     userType: res.data.type
                 });
+
+                // Reloading page
+                setTimeout(function() { location.reload() }, 100);
+
             }
         }, function (err) {
             console.log(err);
@@ -254,6 +326,57 @@ app.controller('loginModelController', function($scope, $http, $uibModalInstance
 
     $scope.cancel = function() {
         $uibModalInstance.dismiss('cancel');
+    };
+
+
+    $scope.forgotButton = function () {
+
+        // Check whether the e-mail exists in the system
+        $scope.getUsersInfo().then(function (res) {
+
+            var user_name;
+            var user_org;
+            var users = res.data;
+            var user_exists = false;
+            users.forEach(function (elem) {
+                if (elem.USR_MAIL == $scope.mail_recovery) {
+                    user_exists = true;
+
+                    user_name = elem.USR_NAME;
+                    user_org = elem.USR_ORGANIZATION;
+
+                };
+            });
+
+            if (!user_exists) {
+                window.alert("The e-mail does not belong to the system")
+            }
+
+            else {
+                return $http({
+                    method: 'POST',
+                    url: "forgot",
+                    data: {mail: $scope.mail_recovery, name: user_name, org: user_org}
+                }).then(function (res) {
+
+                    if (res.data.status == "Done") {
+                        window.alert("Further instructions sent correctly to " + $scope.mail_recovery)
+                    }
+                    else if (res.data.status == "error") {
+                        window.alert("There was an error sending email to " + $scope.mail_recovery)
+                    }
+                });
+            }
+
+        });
+    };
+
+
+    $scope.getUsersInfo = function () {
+        return $http({
+            method: 'GET',
+            url: "/getUsersInfo"
+        });
     };
 
     $scope.signupButton = function () {
@@ -283,10 +406,60 @@ app.controller('loginModelController', function($scope, $http, $uibModalInstance
         }
         else{
             $scope.signup($scope.new_username, $scope.new_password, $scope.new_organization, $scope.new_mail).then(function(res) {
+
+                var user_name = $scope.new_username;
+
                 if (res.data.status == "Done") {
-                    $uibModalInstance.close({
-                        type: "signUp",
-                        status: "Done"
+
+                    // User needs to validate account
+                    return $http({
+                        method: 'POST',
+                        url: "/validate",
+                        data: {mail: $scope.new_mail, name: user_name}
+                        }).then (function (resp) {
+
+                            if (resp.data.status == "Done") {
+
+                                window.alert("Check your e-mail in order to verify your account");
+
+                                $uibModalInstance.close({
+                                        type: "signUp",
+                                        status: "Done"
+                                    });
+                            }
+
+                            else {
+
+                                window.alert("Something wrong happened while signing up. Please, try again")
+
+                                // Since the user is already registered in the system, we need to delete it if some
+                                // error has occurred while sending the email
+                                $scope.getUsersInfo().then(function (res) {
+
+                                    // Looking for the user just created
+                                    var users = res.data;
+                                    users.forEach(function (user) {
+
+                                        // Deleting user
+                                        if (user.USR_NAME == user_name) {
+
+                                            return $http({
+                                                method: 'POST',
+                                                url: "/delUserWhenWrongEmail",
+                                                data: user
+                                            }).then (function (res) {
+
+                                                if (res.data.status == "Done") {
+                                                    log("Problematic user deleted")
+                                                }
+
+                                            });
+                                        }
+
+                                    });
+                                });
+
+                            }
                     });
                 }
                 else if(res.data.error.errno == 19 || res.data.error.errno == 1062){
@@ -319,13 +492,13 @@ app.controller('loginModelController', function($scope, $http, $uibModalInstance
     function invalidSignUpUsername() {
         $scope.new_username = "";
         $scope.new_password = "";
-        window.alert("Invalid username");
+        window.alert("Invalid username or password");
     }
 
     function invalidSignInUsername(){
         $scope.username = "";
         $scope.password = "";
-        window.alert("Invalid username");
+        window.alert("Invalid username or password");
     }
 
     $scope.login = function(username, password) {
@@ -340,38 +513,41 @@ app.controller('loginModelController', function($scope, $http, $uibModalInstance
     };
 
     $scope.signup = function(username, password, org, mail) {
+
         return $http({
             method: 'POST',
             url: "signup",
-            data: "username=" + username + "&password=" + password + "&org=" + org + "&mail=" + mail,
+            data: "username=" + username + "&password=" + password + "&organization=" + org + "&mail=" + mail
+    ,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
     };
+
 });
 
 
 app.filter('millSecondsToTimeString', function() {
-  return function(millseconds) {
-    var days = Math.floor(millseconds/(1000*60*60*24));
-    millseconds -= days*(1000*60*60*24);
+    return function(millseconds) {
+        var days = Math.floor(millseconds/(1000*60*60*24));
+        millseconds -= days*(1000*60*60*24);
 
-    var hours = Math.floor(millseconds/(1000*60*60));
-    millseconds -= hours*(1000*60*60);
+        var hours = Math.floor(millseconds/(1000*60*60));
+        millseconds -= hours*(1000*60*60);
 
-    var minutes = Math.floor(millseconds/(1000*60));
-    millseconds -= minutes*(1000*60);
+        var minutes = Math.floor(millseconds/(1000*60));
+        millseconds -= minutes*(1000*60);
 
-    var seconds = Math.floor(millseconds / 1000);
+        var seconds = Math.floor(millseconds / 1000);
 
-    var timeString = '';
-    if(days > 0) timeString += days + "d ";
-    if(hours > 0) timeString +=  hours + "h ";
-    if(minutes >= 0) timeString += minutes + "m ";
-    if(seconds >= 0) timeString += seconds + "s";
-    return timeString;
-}
+        var timeString = '';
+        if(days > 0) timeString += days + "d ";
+        if(hours > 0) timeString +=  hours + "h ";
+        if(minutes >= 0) timeString += minutes + "m ";
+        if(seconds >= 0) timeString += seconds + "s";
+        return timeString;
+    }
 });
 
 function padLeft(nr, n, str) {

@@ -3,13 +3,19 @@
 
 <head>
     <title>GranaSAT Dashboard</title>
-    <link rel="icon" href="images/favicon.ico" />
+    <link rel="icon" href="images/favicon1.png" />
 
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="directives/granaSATterminal/simple-console.css">
     <link rel="stylesheet" href="directives/passesRegistration/polarPlotStyle.css">
     <link rel="stylesheet" href="directives/satellitesMenu/satellitesMenu.css">
+    <link rel="stylesheet" href="tooltips/tooltips.css">
+    <link rel="stylesheet" href="directives/radioicom9100/graphicElements.css"></link>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+          integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+          crossorigin=""/>
+
     <!-- Some custom styles -->
     <style type="text/css">
         html {
@@ -23,6 +29,7 @@
         }
 
         .footer {
+
             position: fixed;
             bottom: 0;
             width: 100%;
@@ -30,7 +37,66 @@
             height: 40px;
             background-color: #f5f5f5;
         }
+
+
+        /* polar graph */
+        .frame {
+            fill: none;
+            stroke: #000;
+        }
+
+        .axis text {
+            font: 10px sans-serif;
+        }
+
+        .axis line,
+        .axis circle {
+            fill: none;
+            stroke: #777;
+            stroke-dasharray: 1,4;
+        }
+
+        .axis :last-of-type circle {
+            stroke: #333;
+            stroke-dasharray: none;
+        }
+
+        .line {
+            fill: none;
+            stroke: red;
+            stroke-width: 1.5px;
+        }
+
+
+        /* navbar style */
+        .navbar-content
+        {
+            width:240px;
+            padding: 15px;
+            padding-bottom:0px;
+        }
+        .navbar-content:before, .navbar-content:after
+        {
+            display: table;
+            content: "";
+            line-height: 0;
+        }
+
+        .navbar-nav.navbar-right:last-child {
+            margin-right: 15px !important;
+        }
+        .navbar-footer
+        {
+            background-color:#DDD;
+        }
+        .navbar-footer-content { padding:15px 15px 15px 15px; }
+        .dropdown-menu {
+            padding: 0px;
+            overflow: hidden;
+        }
+
     </style>
+
 
     <!-- bower:js -->
     <script src="../bower_components/angular/angular.js"></script>
@@ -44,8 +110,10 @@
     <script src="../bower_components/SegmentDisplay/segment-display.js"></script>
     <script src="directives/granaSATterminal/simple-console-nolog.js"></script>
 
+    <script src="tooltips/mainTooltips.js"></script>
+    <script src="tooltips/tooltips.js"></script>
     <script src="mainController.js"></script>
-    <script src="directives/granaSATterminal/terminalDirective.js"></script>
+    <script src="directives/granaSATterminal/granaSATterminal.js"></script>
     <script src="directives/radioKenwoodTS2000/radioKenwoodTS2000.js"></script>
     <script src="directives/radioicom9100/radioicom9100.js"></script>
     <script src="directives/rotorsYaesu/rotorsYaesu.js"></script>
@@ -56,6 +124,38 @@
     <script src="directives/passesRegistration/d3.js"></script>
     <script src="directives/passesRegistration/polarGraphDirective.js"></script>
     <script src="directives/recordings/recordings.js"></script>
+    <script src="directives/trackingSatellites/trackingSatellites.js"></script>
+    <script src="directives/userAccount/userAccount.js"></script>
+    <script src="directives/userAccount/validateImage.js"></script>
+    <script src="directives/radioicom9100/gauge.min.js"></script>
+
+    <!-- Rotors Gauges -->
+    <script type="text/javascript" src="https://d3js.org/d3.v2.js"></script>
+    <script src="directives/rotorsYaesu/gauges/gaugesConfiguration.js"></script>
+    <script src="directives/rotorsYaesu/gauges/gaugesCreation.js"></script>
+
+    <!--
+    <script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+    -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+    <!-- transceiver gauges -->
+    <script src="//cdn.jsdelivr.net/raphael/2.1.2/raphael-min.js"></script>
+    <script src="//cdn.jsdelivr.net/justgage/1.0.1/justgage.min.js"></script>
+
+    <!-- Graphic bars -->
+    <script src="directives/radioicom9100/graphicElements.js"></script>
+
+
+    <!-- Map tracking satellite -->
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+            integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+            crossorigin=""></script>
+
+    <script type="text/javascript" src="./directives/trackingSatellites/L.Terminator.js"></script>
+
 
     <!-- TreeSet View Conf File Directives -->
     <script src="directives/confTree/resources.js"></script>
@@ -70,195 +170,299 @@
     <script src="directives/confTree/directives/YAESU/yaesu.js"></script>
     <script src="directives/confTree/directives/Web/web.js"></script>
 
+
+
 </head>
 
 
 <body ng-app="myApp" ng-controller="appController" style="padding-top: 50px;" ng-init="setupPasses()">
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="#" class="navbar-brand" ng-click="selectedTab = 0">GranaSAT Dashboard</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul ng-show="logged" class="nav navbar-nav">
-                    <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 1" ng-class="{'active': selectedTab == 1}"><a href="#">Rotors</a></li>
-                    <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 2" ng-class="{'active': selectedTab == 2}"><a href="#">Antennas</a></li>
-                    <li ng-show="type == 1" ng-click="selectedTab = 3" ng-class="{'active': selectedTab == 3}"><a href="#">Terminal</a></li>
-                    <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a href="#">Passes</span></a></li>
-                    <li ng-show="type == 1" ng-click="selectedTab = 5" ng-class="{'active': selectedTab == 5}"><a href="#">Management</a></li>
-                    <li ng-click="selectedTab = 6" ng-class="{'active': selectedTab == 6}"><a href="#">Satellites</a></li>
-                    <li ng-click="selectedTab = 8" ng-class="{'active': selectedTab == 8}"><a href="#">Recordings</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li ng-show="scheduledPasses.length > 0"><a><span class="label label-danger">{{scheduledPasses.length}} {{scheduledPasses.length > 1 ? "passes" : "pass"}}</a></li>
-                    <li ng-show="selectedTab != 0"><a ng-click="videoShow=!videoShow"><i class="fa fa-video-camera" aria-hidden="true"></i></a></li>
-                    <li><a href="https://github.com/granasat">GitHub</a></li>
-                    <li><a href="http://granasat.ugr.es">WebPage</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">...</a></li>
-                            <li ng-show="logged"><a href="#" ng-click="selectedTab = 7">Configuration</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li ng-click="loginModal()" ng-class="{'disabled': logged}"><a href="#">Login</a></li>
-                            <li ng-click="logout()" ng-class="{'disabled': !logged}"><a href="#">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
+<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand" ng-click="selectedTab = 0">GranaSAT Dashboard</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul ng-show="logged" class="nav navbar-nav">
+                <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 2" ng-class="{'active': selectedTab == 2}"><a  href="#" title="{{mainTooltips.mainMenu.radioTab}}" data-toggle="tooltip" data-placement="bottom" >Transceiver</a></li>
+                <li ng-show="type == 2 || type == 1" ng-click="selectedTab = 1" ng-class="{'active': selectedTab == 1}"><a  href="#" title="{{mainTooltips.mainMenu.rotorsTab}}" data-toggle="tooltip" data-placement="bottom" >Rotors</a></li>
+                <li ng-show="type == 1" ng-click="selectedTab = 3" ng-class="{'active': selectedTab == 3}"><a href="#" title={{mainTooltips.mainMenu.terminalTab}} data-toggle="tooltip" data-placement="bottom" >Terminal</a></li>
+                <li ng-show="type == 1" ng-click="selectedTab = 5" ng-class="{'active': selectedTab == 5}"><a href="#" title={{mainTooltips.mainMenu.managementTab}} data-toggle="tooltip" data-placement="bottom"> Management</a></li>
+                <li ng-show="type == 1" ng-click="selectedTab = 6" ng-class="{'active': selectedTab == 6}"><a href="#" title={{mainTooltips.mainMenu.satellitesTab}} data-toggle="tooltip" data-placement="bottom"> Satellites</a></li>
+                <li ng-click="selectedTab = 8" ng-class="{'active': selectedTab == 8}"><a href="#" title={{mainTooltips.mainMenu.recordingsTab}} data-toggle="tooltip" data-placement="bottom"> Recordings</a></li>
+            </ul>
 
-        <rotors-yaesu ng-show="selectedTab == 1"> </rotors-yaesu>
-        <!-- <radio-kenwoodts2000 ng-show="selectedTab == 2"> </radio-kenwoodts2000> -->
-        <radio-icom9100 ng-show="selectedTab == 2"> </radio-icom9100>
-        <granasat-terminal ng-show="selectedTab == 3"> </granasat-terminal>
-        <passes-registration ng-show="selectedTab == 4"> </passes-registration>
-        <manage-users ng-show="selectedTab == 5"> </manage-users>
-        <satellites-menu ng-show="selectedTab == 6"> </satellites-menu>
-        <conf-tree ng-show="selectedTab == 7 && logged"></conf-tree>
-        <recordings ng-show="selectedTab == 8 && logged"></recordings>
-        <webcam-video ng-show="videoShow == true && selectedTab != 0"> </webcam-video>
+            <ul class="nav navbar-nav">
+                <li ng-click="selectedTab = 4" ng-class="{'active': selectedTab == 4}"><a href="#" title={{mainTooltips.mainMenu.passesTab}} data-toggle="tooltip" data-placement="bottom"> Passes</span></a></li>
+                <li ng-click="selectedTab = 9" ng-class="{'active': selectedTab == 9}"><a href="#" title={{mainTooltips.mainMenu.trackingSatellitesTab}} data-toggle="tooltip" data-placement="bottom"> Tracking</a></li>
+            </ul>
 
-        <!-- Main menu -->
-        <div ng-show="selectedTab == 0">
-            <div class='page-header'>
-                <h1>Welcome to GranaSAT Ground Station</h1>
-            </div>
-            <div class="page-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img class="img-responsive" src="images/icom9100.png">
+
+            <!-- right dropdown when the user is logged in -->
+            <ul ng-show="logged" class="nav navbar-nav navbar-right">
+
+                <li ng-show="scheduledPasses.length > 0"><a><span class="label label-danger">{{scheduledPasses.length}} {{scheduledPasses.length > 1 ? "passes" : "pass"}}</a></li>
+                <li ng-show="selectedTab != 0"><a ng-click="videoShow=!videoShow"><i class="fa fa-video-camera cam_style"  aria-hidden="true"></i></a></li>
+
+                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-user"></span> 
+                    <strong>{{user}}</strong>
+                    <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <div class="navbar-content" style="padding-bottom: 5px">
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <img src="/user_image" alt="No image" class="img-responsive" />
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span>{{user}}</span>
+                                        <p ng-show="type==1" class="text-muted small">Admin</p>
+                                        <p ng-show="type==2" class="text-muted small">Special user</p>
+                                        <p ng-show="type==3" class="text-muted small">Normal user</p>
+
+                                        <div class="divider">
+                                        </div>
+                                        <a ng-click="selectedTab = 10" class="btn btn-primary btn-sm active">My Profile</a>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <h3>RadioStation <small>ICOM 9100</small></h3> Main frequency: <b>{{icom9100freq.VFOA/1000000}} MHz</b>
+                            <div class="navbar-footer">
+                                <div class="navbar-footer-content">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <a ng-click="selectedTab = 7 " ng-show="type == 1" class="btn btn-default btn-sm">Configuration</a>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <a ng-click="logout()" class="btn btn-default btn-sm pull-right">Logout</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <!-- right dropdown when the user is not logged in -->
+            <ul ng-show="!logged" class="nav navbar-nav navbar-right">
+                <li ng-show="scheduledPasses.length > 0"><a><span class="label label-danger">{{scheduledPasses.length}} {{scheduledPasses.length > 1 ? "passes" : "pass"}}</a></li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-user"></span> 
+                        <span class="caret"></span></a>
+
+                    <ul class="dropdown-menu">
+                        <li role="separator" class="divider"></li>
+                        <li ng-click="loginModal()"><a href="#">Login</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+
+
+
+<div class="container">
+
+    <rotors-yaesu ng-show="selectedTab == 1"> </rotors-yaesu>
+    <!-- <radio-kenwoodts2000 ng-show="selectedTab == 2"> </radio-kenwoodts2000> -->
+    <radio-icom9100 ng-show="selectedTab == 2"> </radio-icom9100>
+    <granasat-terminal ng-show="selectedTab == 3"> </granasat-terminal>
+    <passes-registration ng-show="selectedTab == 4"> </passes-registration>
+    <manage-users ng-show="selectedTab == 5"> </manage-users>
+    <satellites-menu ng-show="selectedTab == 6"> </satellites-menu>
+    <conf-tree ng-show="selectedTab == 7 && logged"></conf-tree>
+    <user-account ng-show="selectedTab == 10 && logged"></user-account>
+    <recordings ng-show="selectedTab == 8 && logged"></recordings>
+    <tracking-satellites ng-show="selectedTab == 9"></tracking-satellites>
+    <webcam-video ng-show="videoShow == true && selectedTab != 0"> </webcam-video>
+
+    <!-- Main menu -->
+    <div ng-show="selectedTab == 0">
+        <div class='page-header'>
+            <h1>Welcome to GranaSAT Ground Station</h1>
+        </div>
+        <div class="page-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img class="img-responsive" src="images/icom9100.png">
                         </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img class="img-responsive" src="images/yaesu.png">
-                            </div>
-                            <div class="col-md-6">
-                                <h3>Rotors <small>Yaesu</small></h3> Elevation: <b>{{yaesuPosition.ele}}º</b> Azimuth: <b>{{yaesuPosition.azi}}º</b>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h3>Scheduled passes</h3>
-                                <table class="table table-striped" style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Satellite</th>
-                                            <th>Start Date</th>
-                                            <th>Duration</th>
-                                            <th>Max Elevation</th>
-                                            <th>Scheduled by</th>
-                                            <th>Remain time</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="pass in scheduledPasses">
-                                            <td>{{pass.satellite}}</td>
-                                            <td>{{pass.startDateUTC}}</td>
-                                            <td>{{pass.duration | millSecondsToTimeString}}</td>
-                                            <td>{{pass.maxElevation}}º</td>
-                                            <td>{{pass.scheduledBy}}</td>
-                                            <td>{{pass.remainTime | millSecondsToTimeString}}
-                                            </td><td><button ng-if="logged" ng-click="undoSchedule(pass)" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="col-md-6">
+                            <h3>RadioStation <small>ICOM 9100</small></h3> Main frequency: <b>{{icom9100freq.VFOA/1000000}} MHz</b>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <img class="img-responsive" style="-webkit-user-select: none" src="http://granasat1.ugr.es:9091/">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img class="img-responsive" src="images/yaesu.png">
+                        </div>
+                        <div class="col-md-6">
+                            <h3 data-toggle="tooltip" data-placement="bottom" title={{mainTooltips.mainMenu.rotorsYaesu}}>Rotors <small>Yaesu</small></h3> Elevation: <b>{{yaesuPosition.ele}}º</b> Azimuth: <b>{{yaesuPosition.azi}}º</b>
+                        </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 data-toggle="tooltip" data-placement="right" title={{mainTooltips.mainMenu.scheduledPasses}}  >Scheduled passes</h3>
+                            <table class="table table-striped" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th>Satellite</th>
+                                    <th>Start Date</th>
+                                    <th>Duration</th>
+                                    <th>Max Elevation</th>
+                                    <th>Scheduled by</th>
+                                    <th>Remain time</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="pass in scheduledPasses">
+                                    <td>{{pass.satellite}}</td>
+                                    <td>{{pass.startDateUTC}}</td>
+                                    <td>{{pass.duration | millSecondsToTimeString}}</td>
+                                    <td>{{pass.maxElevation}}º</td>
+                                    <td>{{pass.scheduledBy}}</td>
+                                    <td>{{pass.remainTime | millSecondsToTimeString}}
+                                    </td><td><button ng-if="logged" ng-click="undoSchedule(pass)" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <img class="img-responsive" src="http://150.214.26.132/camera">
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <footer class="footer">
-        <div class="container row">
-            <div class="col-md-1">
-                <h5>
+
+<footer class="footer">
+    <div class="container row">
+        <div class="col-md-1">
+            <h5>
                 <button ng-click="localTimeMode=!localTimeMode" type="button" class="btn btn-danger btn-xs">
-                    {{(localTimeMode) ? "Local Time" : "GTM Time"}}
+                    {{(localTimeMode) ? "Local Time" : "UTC Time"}}
                 </button>
-                </h5>
-            </div>
-            <div class="col-md-4">
-                <h5><small>UTC time: <b>{{UTCTime}}</b></small></h5>
-            </div>
-            <div class="col-md-4">
-                <h5><small>Local time: <b>{{localTime}}</b></small></h5>
-            </div>
+            </h5>
         </div>
-    </footer>
+        <div ng-show="localTimeMode" class="col-md-4">
+            <h5><small>UTC time: <b>{{UTCTime}}</b></small></h5>
+        </div>
+        <div ng-show="!localTimeMode "class="col-md-4">
+            <h5><small>Local time: <b>{{localTime}}</b></small></h5>
+        </div>
 
-    <script type="text/ng-template" id="loginModal.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Login</h3>
+
+        <!-- Useful links -->
+        <div class="col-md-3" style="float:right">
+
+            <div class="col-md-1">
+                <h5><a href="https://granasat.ugr.es/" target="_blank"><img border="0" src="images/logo2.png" width="20" height="20"></a></h5>
+            </div>
+
+            <div class="col-md-1">
+                <h5><a href="https://github.com/granasat/" target="_blank"><img border="0" src="images/git-logo.jpg" width="20" height="20"></a></h5>
+            </div>
+
+            <div class="col-md-1">
+                <h5><a href="https://twitter.com/granasat/" target="_blank"><img border="0" src="images/tw-logo.png" width="20" height="20"></a></h5>
+            </div>
+
         </div>
-        <div class="modal-body" ng-show="!signUp">
-            <form>
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input ng-model="username" type="text" class="form-control" id="username" placeholder="Username">
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input ng-model="password" type="password" class="form-control" id="password" placeholder="Password">
-                </div>
-                <div>
-                    Create a account <a ng-click="signUp = !signUp">here</a>
-                </div>
-            </form>
+
+
+    </div>
+</footer>
+
+
+
+<script type="text/ng-template" id="loginModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Login</h3>
+    </div>
+    <div class="modal-body" ng-show="!signUp">
+        <form>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input ng-model="username" type="text" class="form-control" id="username" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input ng-model="password" type="password" class="form-control" id="password" placeholder="Password">
+            </div>
+            <div>
+                Create a account <a ng-click="signUp = !signUp; forgot = false">here</a>
+            </div>
+
+            <div>
+                <a ng-click="forgot = !forgot">Forgot password?</a>
+            </div>
+
+        </form>
+    </div>
+    <div class="modal-body" ng-show="signUp">
+        <form>
+            <div class="form-group">
+                <label for="new_username">Username</label>
+                <input ng-model="new_username" type="text" class="form-control" id="new_username" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <label for="new_password">Password</label>
+                <input ng-model="new_password" type="password" class="form-control" id="new_password" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="new_repetedpassword">Repeat password</label>
+                <input ng-model="new_repetedpassword" type="password" class="form-control" id="new_repetedpassword" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="new_organization">Organization</label>
+                <input ng-model="new_organization" type="text" class="form-control" id="new_organization" placeholder="Organization">
+            </div>
+            <div class="form-group">
+                <label for="new_mail">Mail</label>
+                <input ng-model="new_mail" type="text" class="form-control" id="new_mail" placeholder="Mail address">
+            </div>
+            <div>
+                I have <a ng-click="signUp = !signUp">an account.</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Recoverging password -->
+    <div class="modal-body" ng-show="forgot">
+        <div class="input-group">
+            <input type="text" ng-model="mail_recovery" placeholder="Recovery e-mail" class="form-control">
+            <span class="input-group-btn">
+                <button type="button" class="btn" ng-click="forgotButton()">Send</button>
+            </span>
         </div>
-        <div class="modal-body" ng-show="signUp">
-            <form>
-                <div class="form-group">
-                    <label for="new_username">Username</label>
-                    <input ng-model="new_username" type="text" class="form-control" id="new_username" placeholder="Username">
-                </div>
-                <div class="form-group">
-                    <label for="new_password">Password</label>
-                    <input ng-model="new_password" type="password" class="form-control" id="new_password" placeholder="Password">
-                </div>
-                <div class="form-group">
-                    <label for="new_repetedpassword">Repeat password</label>
-                    <input ng-model="new_repetedpassword" type="password" class="form-control" id="new_repetedpassword" placeholder="Password">
-                </div>
-                <div class="form-group">
-                    <label for="new_organization">Organization</label>
-                    <input ng-model="new_organization" type="text" class="form-control" id="new_organization" placeholder="Organization">
-                </div>
-                <div class="form-group">
-                    <label for="new_mail">Mail</label>
-                    <input ng-model="new_mail" type="text" class="form-control" id="new_mail" placeholder="Mail address">
-                </div>
-                <div>
-                    I have <a ng-click="signUp = !signUp">an account.</a>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-success" type="button" ng-show="!signUp" ng-click="loginButton()">Login</button>
-            <button class="btn btn-primary" type="button" ng-show="signUp" ng-click="signupButton()">Sign up</button>
-            <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-        </div>
-    </script>
+    </div>
+
+
+
+    <div class="modal-footer">
+        <button class="btn btn-success" type="button" ng-show="!signUp" ng-click="loginButton()">Login</button>
+        <button class="btn btn-primary" type="button" ng-show="signUp" ng-click="signupButton()">Sign up</button>
+        <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</script>
+
+
 
 </body>
 

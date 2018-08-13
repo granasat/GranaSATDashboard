@@ -1,11 +1,9 @@
 /*@import 'https://fonts.googleapis.com/css?family=VT323';*/
 
 granasat-Terminal {
-    height: 100%;
-    width: : 100%;
+    height: 50%;
+    width : 100%;
     margin: 0;
-    display: flex;
-    flex: 1;
     padding: 5px;
     list-style: none;
     background: #FFFFFF;
@@ -26,6 +24,9 @@ granasat-Terminal a {
 granasat-Terminal a:not(:hover) {
     text-decoration: none;
 }
+#term {
+    font-family: 'VT323', monospace;
+}
 granasat-Terminal code {
     font-family: inherit;
     padding: 0.1em 0.2em;
@@ -36,6 +37,7 @@ granasat-Terminal .simple-console {
     display: flex;
     flex: 1;
     flex-direction: column;
+    height: 600px;
     /*font-family: sans-serif;*/
 }
 granasat-Terminal .simple-console-output {

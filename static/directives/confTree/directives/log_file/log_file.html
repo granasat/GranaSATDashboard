@@ -10,8 +10,8 @@
 </tr>
 
 <tr ng-show="root.log_file.expanded">
-    <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.log_file}}></span> Path
+    <td data-toggle="tooltip" title={{mainTooltips.confTree.logFile.log_file}}>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  ></span> Path
     </td>
 
     <td ng-show="!root.log_file.path.edit">
@@ -33,8 +33,8 @@
 
 
 <tr ng-show="root.log_file.expanded">
-    <td>
-        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;"  data-toggle="tooltip" title={{R.log_size_sent}}></span> Bytes sent to user
+    <td data-toggle="tooltip" title={{mainTooltips.confTree.logFile.log_size_sent}}>
+        <span class="glyphicon glyphicon-map-marker" style="padding-left: 38px;" ></span> Bytes sent to user
     </td>
 
     <td ng-show="!root.log_file.size_sent.edit">

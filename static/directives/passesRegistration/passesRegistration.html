@@ -14,9 +14,15 @@
     <div ng-show="satelliteSelected != ''" class="col-md-10">
         <h4>Passes for: {{satelliteSelected.SAT_NAME}}</h4>
 
+
+        <h5 ng-show="!logged"><b>More available options when logged in</b></h5>
+
+
         <table class="table table-striped" style="width:100%">
             <thead>
                 <tr>
+
+                    <th> </th>
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>Duration</th>
@@ -26,14 +32,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat-start="pass in satelliteSelected.pass">
-                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{(localTimeMode) ? pass.startDateLocal : pass.startDateUTC}}</td>
-                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
-                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.duration | millSecondsToTimeString}}</td>
-                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.maxElevation}}º</td>
-                    <td ng-click="pass.expanded = !pass.expanded; selectedItem =$index">{{pass.remainTime | millSecondsToTimeString}}</td>
+                <tr ng-repeat-start="pass in satelliteSelected.pass" ng-show="pass.maxElevation>5"> <!-- only showing passes with elevation >5 -->
                     <td>
-                        <div class="dropdown">
+                        <button ng-show="logged" type="button" class="btn btn-xs" ng-click="pass.expanded = !pass.expanded; selectedItem =$index">More info</button>
+                    </td>
+
+                    <td>{{(localTimeMode) ? pass.startDateLocal : pass.startDateUTC}}</td>
+                    <td>{{(localTimeMode) ? pass.endDateLocal : pass.endDateUTC}}</td>
+                    <td>{{pass.duration | millSecondsToTimeString}}</td>
+                    <td>{{pass.maxElevation}}º</td>
+                    <td>{{pass.remainTime | millSecondsToTimeString}}</td>
+                    <td>
+                        <div ng-show="logged" class="dropdown">
                             <button ng-show="pass.scheduled" type="button" class="btn btn-danger btn-xs disabled">
                                 Schedule
                             </button>

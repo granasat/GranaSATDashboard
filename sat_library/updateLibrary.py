@@ -133,4 +133,3 @@ if len(sys.argv) > 1 and os.path.isdir(sys.argv[1]):
 
 else:
     print("Put a directory")
-

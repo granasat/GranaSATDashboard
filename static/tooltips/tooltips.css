@@ -1,0 +1,86 @@
+/*
+  Created by Antonio Serrano
+*/
+
+
+/*
+
+Tooltip customization 
+
+From here you can customize the settings's tooltips
+(background colours, box-size and font-size) by adding CSS classes.
+
+To add new colours, just copy and past the scheme, replace ."colour" by your
+new colour and change the properties as you want.
+
+
+To use it, just add class="colour" within the tag where you want to use it.
+For example:
+
+<a class="blue" href="#" title="{{mainTooltips.mainMenu.rotorsTab}}"
+data-toggle="tooltip" data-placement="bottom" >
+
+*/
+
+/*
+################# BLUE #################
+*/
+.blue + .tooltip > .tooltip-inner {
+    background-color: blue;
+    color: white;
+    border: 1px solid blue;
+    padding: 10px;
+    font-size: 12px;
+}
+
+/* Tooltip on top */
+.blue + .tooltip.top > .tooltip-arrow {
+    border-top: 5px solid blue;
+}
+
+/* Tooltip on bottom */
+.blue + .tooltip.bottom > .tooltip-arrow {
+    border-bottom: 5px solid blue;
+}
+
+/* Tooltip on left */
+.blue + .tooltip.left > .tooltip-arrow {
+    border-left: 5px solid blue;
+}
+
+/* Tooltip on right */
+.blue + .tooltip.right > .tooltip-arrow {
+    border-right: 5px solid blue;
+}
+
+
+/*
+################# RED #################
+*/
+.red + .tooltip > .tooltip-inner {
+    background-color: red;
+    color: #FFFFFF;
+    border: 1px solid red;
+    padding: 10px;
+    font-size: 12px;
+}
+
+/* Tooltip on top */
+.red + .tooltip.top > .tooltip-arrow {
+    border-top: 5px solid red;
+}
+
+/* Tooltip on bottom */
+.red + .tooltip.bottom > .tooltip-arrow {
+    border-bottom: 5px solid red;
+}
+
+/* Tooltip on left */
+.red + .tooltip.left > .tooltip-arrow {
+    border-left: 5px solid red;
+}
+
+/* Tooltip on right */
+.red + .tooltip.right > .tooltip-arrow {
+    border-right: 5px solid red;
+}

@@ -3,7 +3,8 @@
   "description": "GranaSAT Dashboard",
   "main": "app.js",
   "authors": [
-    "Pablo Garrido <pablogs9@gmail.com>"
+    "Pablo Garrido <pablogs9@gmail.com>",
+	"Antonio Serrano <serranoantonio@correo.ugr.es>"
   ],
   "license": "ISC",
   "homepage": "https://github.com/granasat/GranaSatDashboard",

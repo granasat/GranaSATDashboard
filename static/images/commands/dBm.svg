@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="565.77771"
+   height="20.174219"
+   id="svg4942"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="dBm.svg">
+  <metadata
+     id="metadata4959">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs4957" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1366"
+     inkscape:window-height="744"
+     id="namedview4955"
+     showgrid="false"
+     fit-margin-top="0.8"
+     fit-margin-bottom="0.8"
+     fit-margin-right="0.4"
+     fit-margin-left="0.4"
+     inkscape:zoom="1.3906433"
+     inkscape:cx="318.9189"
+     inkscape:cy="34.410099"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g4944" />
+  <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+  <g
+     id="g4944"
+     transform="translate(-13.130537,-204.26149)">
+    <title
+       id="title4946">Layer 1</title>
+    <text
+       stroke-linejoin="null"
+       stroke-linecap="null"
+       x="552.12323"
+       y="225.21057"
+       id="svg_3"
+       font-size="24"
+       xml:space="preserve"
+       font-weight="bold"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:22.69293022px;line-height:125%;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, Light';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;stroke-dasharray:none"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0085747,0.99149819)">dBm</text>
+    <text
+       stroke-linejoin="null"
+       stroke-linecap="null"
+       x="272.60663"
+       y="225.20009"
+       font-size="24"
+       xml:space="preserve"
+       id="svg_5"
+       font-weight="bold"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:22.69293022px;line-height:125%;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, Light';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;stroke-dasharray:none"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0085747,0.99149819)">-73</text>
+    <text
+       stroke-linejoin="null"
+       stroke-linecap="null"
+       x="42.212711"
+       y="225.19582"
+       font-size="24"
+       xml:space="preserve"
+       id="svg_6"
+       font-weight="bold"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:22.69293022px;line-height:125%;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, Light';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;stroke-dasharray:none"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0085747,0.99149819)">-121</text>
+    <text
+       stroke-linejoin="null"
+       stroke-linecap="null"
+       x="101.0993"
+       y="225.19688"
+       font-size="24"
+       xml:space="preserve"
+       id="svg_8"
+       font-weight="bold"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:22.69293022px;line-height:125%;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, Light';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;stroke-dasharray:none"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0085747,0.99149819)">-109</text>
+    <text
+       stroke-linejoin="null"
+       stroke-linecap="null"
+       x="160.94316"
+       y="225.20966"
+       font-size="24"
+       xml:space="preserve"
+       id="svg_9"
+       font-weight="bold"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:22.69293022px;line-height:125%;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, Light';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;stroke-dasharray:none"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0085747,0.99149819)">-97</text>
+    <text
+       stroke-linejoin="null"
+       stroke-linecap="null"
+       x="216.62424"
+       y="225.19688"
+       font-size="24"
+       xml:space="preserve"
+       id="svg_10"
+       font-weight="bold"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:22.69293022px;line-height:125%;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, Light';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;stroke-dasharray:none"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0085747,0.99149819)">-85</text>
+    <text
+       stroke-linejoin="null"
+       stroke-linecap="null"
+       x="327.513"
+       y="225.20586"
+       font-size="24"
+       xml:space="preserve"
+       id="svg_12"
+       font-weight="bold"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:22.69293022px;line-height:125%;font-family:'Roboto Condensed';-inkscape-font-specification:'Roboto Condensed, Light';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;stroke-dasharray:none"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0085747,0.99149819)">-63</text>
+  </g>
+</svg>

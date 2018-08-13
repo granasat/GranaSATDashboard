@@ -5,6 +5,11 @@ app.directive('ic910', function() {
     function link(scope, element, attrs) {
 
 
+        scope.showManual = function () {
+            window.open("../images/pdf/IC-9100-Manual.pdf");
+        };
+
+
     }
 
     return {

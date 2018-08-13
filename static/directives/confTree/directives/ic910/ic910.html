@@ -9,11 +9,22 @@
     <td></td>
 </tr>
 
+
+<tr ng-show="root.ic.expanded" ng-click="root.ic.radio_manual.expanded = !root.ic.radio_manual.expanded">
+    <td>
+        <a href="#" style="color: inherit; text-decoration: inherit"><span class="glyphicon glyphicon-file" ng-click="showManual()" style="padding-left: 38px;">&nbsp;</span></a>
+        Manual Instruction
+    </td>
+    <td></td>
+    <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
+    <td></td>
+</tr>
+
 <tr ng-show="root.ic.expanded" ng-click="root.ic.radio.expanded = !root.ic.radio.expanded">
     <td>
         <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="!root.ic.radio.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 38px;">&nbsp;</span></a>
         <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="root.ic.radio.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 38px;">&nbsp;</span></a>
-        <img src="../../images/icons/radio.png" height="20px" data-toggle="tooltip" title={{R.radio}} /> Radio
+        <img src="../../images/icons/radio.png" height="20px" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.radio}} /> Radio
     </td>
     <td></td>
     <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -22,7 +33,7 @@
 
     <tr ng-show="root.ic.expanded && root.ic.radio.expanded">
         <td>
-            <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.freq}}></span> f [Hz]
+            <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 57px;"  data-toggle="tooltip" title={{mainTooltips.confTree.ic910.freq}}></span> f [Hz]
         </td>
         <td>435423463</td>
         <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -31,7 +42,7 @@
 
     <tr ng-show="root.ic.expanded && root.ic.radio.expanded">
         <td>
-            <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 57px;"  data-toggle="tooltip" title={{R.rf_pw}}></span> RF power [%]
+            <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 57px;"  data-toggle="tooltip" title={{mainTooltips.confTree.ic910.rf_pw}}></span> RF power [%]
         </td>
         <td>0</td>
         <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -42,7 +53,7 @@
         <td>
             <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="!root.ic.radio.connection.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 57px;">&nbsp;</span></a>
             <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="root.ic.radio.connection.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 57px;">&nbsp;</span></a>
-            <span class="glyphicon glyphicon-cog"  data-toggle="tooltip" title={{R.connection}}></span> Connection
+            <span class="glyphicon glyphicon-cog"  data-toggle="tooltip" title={{mainTooltips.confTree.ic910.connection}}></span> Connection
         </td>
         <td></td>
         <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -51,7 +62,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.radio.expanded && root.ic.radio.connection.expanded">
             <td>
-                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;"  data-toggle="tooltip" title={{R.from_addr}}></span> From address [dec]
+                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;"  data-toggle="tooltip" title={{mainTooltips.confTree.ic910.from_addr}}></span> From address [dec]
             </td>
             <td>224</td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -60,7 +71,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.radio.expanded && root.ic.radio.connection.expanded">
             <td>
-                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;" data-toggle="tooltip" title={{R.to_addr}}></span> To address [dec]
+                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.to_addr}}></span> To address [dec]
             </td>
             <td>96</td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -69,7 +80,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.radio.expanded && root.ic.radio.connection.expanded">
             <td>
-                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;" data-toggle="tooltip" title={{R.timeout}}></span> Timeout [ms]
+                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.timeout}}></span> Timeout [ms]
             </td>
             <td>300</td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -78,7 +89,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.radio.expanded && root.ic.radio.connection.expanded">
             <td>
-                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;" data-toggle="tooltip" title={{R.delay}}></span> Delay between commands [ms]
+                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.delay}}></span> Delay between commands [ms]
             </td>
             <td>50</td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -87,7 +98,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.radio.expanded && root.ic.radio.connection.expanded">
             <td>
-                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;" data-toggle="tooltip" title={{R.repeats}}></span> Repeats
+                <span class="glyphicon glyphicon-sound-5-1" style="padding-left: 76px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.repeats}}></span> Repeats
             </td>
             <td>3</td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -99,7 +110,7 @@
     <td>
         <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="!root.ic.serial.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 38px;">&nbsp;</span></a>
         <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="root.ic.serial.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 38px;">&nbsp;</span></a>
-        <img src="../../images/icons/plug.png" height="25px" data-toggle="tooltip" title={{R.serial_radio}} /> Serial Radio
+        <img src="../../images/icons/plug.png" height="25px" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.serial_radio}} /> Serial Radio
     </td>
     <td></td>
     <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -108,7 +119,7 @@
 
     <tr ng-show="root.ic.expanded && root.ic.serial.expanded">
         <td>
-            <span class="glyphicon glyphicon-edit" style="padding-left: 57px;" data-toggle="tooltip" title={{R.debug_on_send}}></span> Debug on send
+            <span class="glyphicon glyphicon-edit" style="padding-left: 57px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.debug_on_send}}></span> Debug on send
         </td>
         <td><input id="checkBox" type="checkbox"></td>
         <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -117,7 +128,7 @@
 
     <tr ng-show="root.ic.expanded && root.ic.serial.expanded">
         <td>
-            <span class="glyphicon glyphicon-list-alt" style="padding-left: 57px;" data-toggle="tooltip" title={{R.debug}}></span> Debug
+            <span class="glyphicon glyphicon-list-alt" style="padding-left: 57px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.debug}}></span> Debug
         </td>
         <td>None</td>
         <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -126,7 +137,7 @@
 
     <tr ng-show="root.ic.expanded && root.ic.serial.expanded">
         <td>
-            <span class="glyphicon glyphicon-list-alt" style="padding-left: 57px;" data-toggle="tooltip" title={{R.port_name}}></span> Port Name
+            <span class="glyphicon glyphicon-list-alt" style="padding-left: 57px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.port_name}}></span> Port Name
         </td>
         <td>ttyUSB0</td>
         <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -135,7 +146,7 @@
 
     <tr ng-show="root.ic.expanded && root.ic.serial.expanded">
         <td>
-            <span class="glyphicon glyphicon-list-alt" style="padding-left: 57px;" data-toggle="tooltip" title={{R.provider}}></span> Provider
+            <span class="glyphicon glyphicon-list-alt" style="padding-left: 57px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.provider}}></span> Provider
         </td>
         <td>SerialConn</td>
         <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -146,7 +157,7 @@
         <td>
             <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="!root.ic.serial.connection.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 57px;">&nbsp;</span></a>
             <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="root.ic.serial.connection.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 57px;">&nbsp;</span></a>
-            <span class="glyphicon glyphicon-cog" data-toggle="tooltip" title={{R.conn}}></span> Connection
+            <span class="glyphicon glyphicon-cog" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.conn}}></span> Connection
         </td>
         <td></td>
         <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -155,7 +166,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.connection.expanded">
             <td>
-                <span class="glyphicon glyphicon-list-alt" style="padding-left: 76px;" data-toggle="tooltip" title={{R.baud_rate}}></span> Baud Rate
+                <span class="glyphicon glyphicon-list-alt" style="padding-left: 76px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.baud_rate}}></span> Baud Rate
             </td>
             <td>9600</td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -164,7 +175,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.connection.expanded">
             <td>
-                <span class="glyphicon glyphicon-list-alt" style="padding-left: 76px;" data-toggle="tooltip" title={{R.data_bits}}></span> Data Bits
+                <span class="glyphicon glyphicon-list-alt" style="padding-left: 76px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.data_bits}}></span> Data Bits
             </td>
             <td>8</td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -173,7 +184,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.connection.expanded">
             <td>
-                <span class="glyphicon glyphicon-list-alt" style="padding-left: 76px;" data-toggle="tooltip" title={{R.stop_bits}}></span> Stop bits
+                <span class="glyphicon glyphicon-list-alt" style="padding-left: 76px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.stop_bits}}></span> Stop bits
             </td>
             <td>1.0</td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -182,7 +193,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.connection.expanded">
             <td>
-                <span class="glyphicon glyphicon-edit" style="padding-left: 76px;" data-toggle="tooltip" title={{R.disable_on_broken_serial}}></span> Disable on broken serial
+                <span class="glyphicon glyphicon-edit" style="padding-left: 76px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.disable_on_broken_serial}}></span> Disable on broken serial
             </td>
             <td><input id="brokenSerial" type="checkbox"></td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -193,7 +204,7 @@
         <td>
             <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="!root.ic.serial.command.expanded" class="glyphicon glyphicon-chevron-right" style="padding-left: 57px;">&nbsp;</span></a>
             <a href="#" style="color: inherit; text-decoration: inherit"><span ng-show="root.ic.serial.command.expanded" class="glyphicon glyphicon-chevron-down" style="padding-left: 57px;">&nbsp;</span></a>
-            <span class="glyphicon glyphicon-console" data-toggle="tooltip" title={{R.commands}}></span> Commands
+            <span class="glyphicon glyphicon-console" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.commands}}></span> Commands
         </td>
         <td></td>
         <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -202,7 +213,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.command.expanded">
             <td>
-                <span class="glyphicon glyphicon-console" style="padding-left: 76px;" data-toggle="tooltip" title={{R.send}}></span> Send
+                <span class="glyphicon glyphicon-console" style="padding-left: 76px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.send}}></span> Send
             </td>
             <td><span class="glyphicon glyphicon-play" style="padding-left: 76px;"></span></td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -211,7 +222,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.command.expanded">
             <td>
-                <span class="glyphicon glyphicon-console" style="padding-left: 76px;" data-toggle="tooltip" title={{R.send_bits}}></span> Send bits
+                <span class="glyphicon glyphicon-console" style="padding-left: 76px;" data-toggle="tooltip" title={{mainTooltips.confTree.ic910.send_bits}}></span> Send bits
             </td>
             <td><span class="glyphicon glyphicon-play" style="padding-left: 76px;"></span></td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>
@@ -220,7 +231,7 @@
 
         <tr ng-show="root.ic.expanded && root.ic.serial.expanded && root.ic.serial.command.expanded">
             <td>
-                <span class="glyphicon glyphicon-console" style="padding-left: 76px;" data-toggle="tooltip" title={{R.send_hex}}></span> Send hex
+                <span class="glyphicon glyphicon-console" style="padding-left: 76px;" data-toggle="tooltip" data-html=true title={{mainTooltips.confTree.ic910.send_hex}}></span> Send hex
             </td>
             <td><span class="glyphicon glyphicon-play" style="padding-left: 76px;"></span></td>
             <td><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></td>

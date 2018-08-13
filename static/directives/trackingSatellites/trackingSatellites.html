@@ -1,0 +1,103 @@
+
+<div class='page-header'>
+    <h1>Satellites tracking</h1>
+</div>
+
+
+<div class="page-body">
+
+
+    <div class="row">
+        <!-- Satellite selection -->
+        <div class="col-md-6" style="width:25%">
+            <select class="form-control" ng-model="selectedSat" ng-options="sat.SAT_NAME for sat in passes">
+                <option value="">Select a satellite</option>
+            </select>
+
+        </div>
+        <div class="col-md-6" style="padding-top: 10px">
+            <button ng-show="disabled==false && logged==true && type==1" ng-click="updateTLE()" type="button" class="btn btn-primary active btn-xs">Update TLE's</button>
+            <button ng-show="disabled==true" type="button" class="btn btn-primary disabled btn-xs">Updating...</button>
+            <button ng-show="selectedSat!=null && following==false && logged==true && type==1" ng-click="following=true" type="button" class="btn btn-primary active btn-xs">Follow satellite</button>
+            <button ng-show="selectedSat!=null && following==true && logged==true && type==1" ng-click="following=false" type="button" class="btn btn-danger active btn-xs">Stop following satellite</button>
+
+        </div>
+    </div>
+
+
+    <br>
+
+    <div class="panel panel-default">
+
+        <div class="panel-body" >
+
+            <div class="col-md-9">
+                <div id="mapid" style="width: 100%; height: 400px;"></div>
+            </div>
+
+            <div class="col-md-3" style="overflow: hidden">
+
+                <table class="table table-responsive" >
+                    <thead>
+                    <tr>
+                        <th scope="col" style="font-size: large;">Parameter</th>
+                        <th scope="col" style="font-size: large;">Value</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <th scope="row">Longitude</th>
+                        <td style="font-size: small;">{{longitude}}º</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Latitude</th>
+                        <td style="font-size: small;">{{latitude}}º</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Altitude</th>
+                        <td style="font-size: small;">{{altitude}}Km</td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">Azimuth (relative to Groundstation)</th>
+                        <td style="font-size: small;">{{azimuth}}º</td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">Elevation (relative to Groundstation)</th>
+                        <td style="font-size: small;">{{elevation}}º</td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">Velocity</th>
+                        <td style="font-size: small;">{{velocity}}Km/s</td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">On light</th>
+                        <td style="font-size: small;">{{light}}</td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">Footprint</th>
+                        <td style="font-size: small;">{{footprint}}Km</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Over Groundstation</th>
+                        <td style="font-size: small;">{{over_groundstation}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+
+            <!-- polar graph -->
+            <polar style="float:right" ng-mousemove="coordsMove($event)"> </polar>
+
+        </div>
+
+    </div>
+
+</div>

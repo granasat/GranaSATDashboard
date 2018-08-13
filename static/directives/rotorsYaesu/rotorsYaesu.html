@@ -1,7 +1,7 @@
 <div class='page-header clearfix'>
     <div class="row">
-        <div class='col-md-2 hidden-sm hidden-xs'>
-            <img class="img-responsive" src="images/yaesu.png">
+        <div class='col-md-4 hidden-sm hidden-xs'>
+            <img class="img-responsive" width="200" height="200" src="images/yaesu.png">
         </div>
 
         <div class='col-md-10 col-sm-12 col-xs-12'>
@@ -13,19 +13,28 @@
             </a>
             </h1>
 
+
+
+
         </div>
     </div>
 </div>
 
-<div class="page-body">
-    Elevation: <b>{{yaesuPosition.ele}}º</b>
-    <br> Azimuth: <b>{{yaesuPosition.azi}}º</b>
+
+<!-- Gauges for azimuth and elevation -->
+<div>
+    <span id="azimuthGaugeContainer"></span>
+    <span id="elevationGaugeContainer"></span>
 </div>
 
+
+<br>
+
 <div>
-    <button ng-click="goToOrigin()" type="button" class="btn btn-success">Go to Origin</button>
-    <button ng-click="setPositionModal()" type="button" class="btn btn-primary">Move</button>
+    <button ng-click="goToOrigin()" type="button" class="btn btn-success" data-toggle="tooltip" data-placement="bottom" title={{mainTooltips.rotorsTab.goToOriginButton}} >Go to Origin</button>
+    <button ng-click="setPositionModal()" type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title={{mainTooltips.rotorsTab.moveButton}} >Move</button>
 </div>
+
 
 
 <script type="text/ng-template" id="setPositionModal.html">
